@@ -1411,8 +1411,8 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Scroll indicator -->
     <a href="#abou">
         <div class="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 z-20 animate-bounce hidden md:block">
-            <div class="w-6 h-10 md:w-8 md:h-12 border-2 border-white/50 rounded-full flex justify-center">
-                <div class="w-1 h-3 md:w-1.5 md:h-4 bg-white/50 rounded-full mt-1 md:mt-2 animate-pulse"></div>
+            <div class="w-6 h-10 md:w-8 md:h-12 border-2 dark:border-white/50 border-black/50 rounded-full flex justify-center">
+                <div class="w-1 h-3 md:w-1.5 md:h-4 dark:bg-white/50 border-black/50  rounded-full mt-1 md:mt-2 animate-pulse"></div>
             </div>
         </div>
     </a>
@@ -1527,18 +1527,17 @@ document.addEventListener('DOMContentLoaded', () => {
             </main>
 
             <!-- Modale de Réservation Ultra Complète, Large et Responsive (reformée : grid options supprimé, tooltips ajoutés, classes reservation-error, icône phone, error consent, animations) -->
-
-            <!-- Modale de Réservation Ultra Complète, Large et Responsive -->
+<!-- Modale de Réservation Simplifiée, Large et Responsive -->
 <div id="reservation-modal" class="fixed inset-0 z-[50] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-500 overflow-y-auto hidden">
-    <div class="modal-content relative bg-ll-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-y-auto transform scale-95 transition-transform duration-500 mx-4 md:max-h-[90vh] sm:max-w-[1200px] sm:w-[calc(100%-2rem)] max-w-[1200px] xs:max-w-full xs:mx-4 xs:mt-4">
+    <div class="modal-content relative bg-ll-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-y-auto transform scale-95 transition-transform duration-500 mx-4 md:max-h-[90vh] sm:max-w-[800px] sm:w-[calc(100%-2rem)] xs:max-w-full xs:mx-4 xs:mt-4">
         <button id="reservation-modal-close" class="modal-close absolute top-4 right-4 z-10 bg-ll-white dark:bg-gray-700 rounded-xl p-3 text-ll-text-gray dark:text-gray-300 hover:text-ll-blue dark:hover:text-ll-blue transition-colors shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
         <div class="p-6 md:p-8 border-b border-gray-200 dark:border-gray-700 bg-ll-blue/5">
-            <h2 id="reservation-modal-title" class="text-3xl font-cinzel font-bold text-ll-black dark:text-ll-white">Réserver ce Service</h2>
-            <p id="reservation-modal-subtitle" class="text-ll-text-gray dark:text-gray-400 mt-2">Remplissez le formulaire pour obtenir un devis personnalisé. Tous les champs marqués * sont obligatoires.</p>
+            <h2 id="reservation-modal-title" class="text-2xl font-cinzel font-bold text-ll-black dark:text-ll-white">Réserver ce Service</h2>
+            <p id="reservation-modal-subtitle" class="text-ll-text-gray dark:text-gray-400 mt-2">Remplissez le formulaire pour réserver votre service de nettoyage.</p>
         </div>
         <form id="reservation-form" class="p-6 md:p-8">
             <!-- Champs cachés pour service -->
@@ -1549,14 +1548,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Section Coordonnées -->
             <div class="mb-8 p-6 bg-gray-50/50 dark:bg-gray-700/20 rounded-3xl border border-gray-200/50 dark:border-gray-600/50">
                 <h3 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Vos Coordonnées</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-6">
                         <label for="reservation-name" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
                             Nom Complet <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Votre nom complet pour personnaliser le devis.</span>
-                            </span>
                         </label>
                         <input type="text" id="reservation-name" name="name" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" placeholder="Votre nom complet" required>
                         <div id="error-reservation-name" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Nom invalide</div>
@@ -1564,67 +1559,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="mb-6">
                         <label for="reservation-email" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
                             Adresse Email <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Nous vous enverrons le devis et la confirmation par email.</span>
-                            </span>
                         </label>
                         <input type="email" id="reservation-email" name="email" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" placeholder="votre.email@example.com" required>
                         <div id="error-reservation-email" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Email invalide</div>
                     </div>
                     <div class="mb-6">
                         <label for="reservation-phone" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
-                            Numéro de Téléphone <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Votre numéro nous permet de vous contacter rapidement si nécessaire.</span>
-                            </span>
+                            Numéro de Téléphone
                         </label>
                         <div class="relative">
-                            
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ll-text-gray">+33</span>
-                            <input type="tel" id="reservation-phone" name="phone" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base pl-12" placeholder="01 23 45 67 89" required>
-                          </div>
+                            <input type="tel" id="reservation-phone" name="phone" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base pl-12" placeholder="01 23 45 67 89">
+                        </div>
                         <div id="error-reservation-phone" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Téléphone invalide</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Section Date et Fréquence -->
+            <!-- Section Détails de la Réservation -->
             <div class="mb-8 p-6 bg-gray-50/50 dark:bg-gray-700/20 rounded-3xl border border-gray-200/50 dark:border-gray-600/50">
                 <h3 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Détails de la Réservation</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-6">
                         <label for="reservation-date" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
                             Date Souhaitée <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Choisissez une date future pour l'intervention.</span>
-                            </span>
                         </label>
                         <input type="date" id="reservation-date" name="date" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" required>
                         <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const dateInput = document.getElementById('reservation-date');
-                            if (dateInput) {
-                                const today = new Date();
-                                const yyyy = today.getFullYear();
-                                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                                const dd = String(today.getDate()).padStart(2, '0');
-                                const minDate = `${yyyy}-${mm}-${dd}`;
-                                dateInput.min = minDate;
-                            }
-                        });
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const dateInput = document.getElementById('reservation-date');
+                                if (dateInput) {
+                                    const today = new Date();
+                                    const yyyy = today.getFullYear();
+                                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                                    const dd = String(today.getDate()).padStart(2, '0');
+                                    dateInput.min = `${yyyy}-${mm}-${dd}`;
+                                }
+                            });
                         </script>
                         <div id="error-reservation-date" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Date invalide</div>
                     </div>
                     <div class="mb-6">
                         <label for="reservation-frequency" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
                             Fréquence <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Indiquez la récurrence souhaitée pour les interventions.</span>
-                            </span>
                         </label>
                         <select id="reservation-frequency" name="frequency" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" required>
                             <option value="">Sélectionnez...</option>
@@ -1638,10 +1615,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="mb-6">
                         <label for="reservation-address" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
                             Adresse d'Intervention <span class="text-red-500">*</span>
-                            <span class="tooltip ml-2">
-                                <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                                <span class="tooltiptext">Adresse précise où l'intervention doit avoir lieu.</span>
-                            </span>
                         </label>
                         <input type="text" id="reservation-address" name="address" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" placeholder="Votre adresse complète" required>
                         <div id="error-reservation-address" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Adresse invalide</div>
@@ -1649,29 +1622,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- Section Options Supplémentaires -->
+            <!-- Section Instructions -->
             <div class="mb-8 p-6 bg-gray-50/50 dark:bg-gray-700/20 rounded-3xl border border-gray-200/50 dark:border-gray-600/50">
-                <h3 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Options Supplémentaires</h3>
-                <p class="text-ll-text-gray dark:text-gray-400 mb-4">Sélectionnez les options adaptées à vos besoins.</p>
-                <input type="text" id="reservation-subjects-display" readonly class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base cursor-pointer" placeholder="Cliquez pour sélectionner des options" value="">
-                <input type="hidden" id="reservation-subjects" name="subjects">
-                <div id="reservation-selected-subjects" class="flex flex-wrap gap-2 mt-2"></div>
-                <div id="error-reservation-subjects" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Sélectionnez au moins une option</div>
-            </div>
-
-            <!-- Section Message -->
-            <div class="mb-8 p-6 bg-gray-50/50 dark:bg-gray-700/20 rounded-3xl border border-gray-200/50 dark:border-gray-600/50">
-                <h3 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Message ou Instructions Spéciales</h3>
+                <h3 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Instructions Spéciales</h3>
                 <div class="mb-6">
                     <label for="reservation-message" class="block text-sm font-semibold text-ll-black dark:text-ll-white mb-2">
-                        Instructions <span class="text-red-500">*</span>
-                        <span class="tooltip ml-2">
-                            <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                            <span class="tooltiptext">Dites-nous plus sur vos besoins spécifiques, allergies, horaires préférés, etc.</span>
-                        </span>
+                        Instructions
                     </label>
-                    <textarea id="reservation-message" name="message" rows="5" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" placeholder="Dites-nous plus sur vos besoins spécifiques..."></textarea>
-                    <div id="error-reservation-message" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Message requis</div>
+                    <textarea id="reservation-message" name="message" rows="5" class="w-full dark:text-ll-black p-4 border border-gray-300 dark:border-gray-600 rounded-3xl focus:ring-2 focus:ring-ll-blue focus:border-ll-blue transition-all text-base" placeholder="Instructions spécifiques (facultatif)..."></textarea>
+                    <div id="error-reservation-message" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden"><i class="fas fa-exclamation-triangle mr-1"></i>Message invalide</div>
                 </div>
             </div>
 
@@ -1679,28 +1638,22 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="mb-8 p-6 bg-gray-50/50 dark:bg-gray-700/20 rounded-3xl border border-gray-200/50 dark:border-gray-600/50">
                 <div class="flex items-center mb-6">
                     <input type="checkbox" id="reservation-consentement" name="consentement" required class="w-4 h-4 text-ll-blue focus:ring-ll-blue">
-                    <label for="reservation-consentement" class="ml-2 text-sm text-ll-text-gray dark:text-gray-400">J'accepte les <a href="#" class="text-ll-blue hover:underline">conditions d'utilisation</a> et la politique de confidentialité <span class="text-red-500">*</span>
-                        <span class="tooltip ml-2">
-                            <i class="fas fa-question-circle text-gray-400 text-sm"></i>
-                            <span class="tooltiptext">Obligatoire pour traiter votre réservation en conformité avec la RGPD.</span>
-                        </span>
-                    </label>
+                    <label for="reservation-consentement" class="ml-2 text-sm text-ll-text-gray dark:text-gray-400">J'accepte les <a href="#" class="text-ll-blue hover:underline">conditions d'utilisation</a> et la politique de confidentialité <span class="text-red-500">*</span></label>
                     <div id="error-reservation-consentement" class="reservation-error text-red-500 text-sm mt-1 flex items-center hidden ml-6"><i class="fas fa-exclamation-triangle mr-1"></i>Vous devez accepter les conditions</div>
                 </div>
                 <div class="flex justify-end space-x-4">
-                    <button type="button" id="reservation-cancel" class="px-6 py-3 border border-2 border-ll-blue   dark:hover:bg-ll-blue hover:bg-ll-medium-gray hover:text-ll-white text-ll-black dark:text-ll-white rounded-3xl transition-all duration-300">Annuler</button>
-                    <button type="submit" id="reservation-submit" class="w-full bg-ll-blue hover:bg-ll-dark-blue text-ll-white font-semibold py-4 px-8 rounded-3xl transition-all duration-300 transform hover:scale-105 shadow-lg" disabled>
+                    <button type="button" id="reservation-cancel" class="px-6 py-3 border border-ll-blue text-ll-black dark:text-ll-white rounded-3xl hover:bg-ll-medium-gray hover:text-ll-white dark:hover:bg-ll-blue transition-all duration-300">Annuler</button>
+                    <button type="submit" id="reservation-submit" class="px-8 py-4 bg-ll-blue hover:bg-ll-dark-blue text-ll-white font-semibold rounded-3xl transition-all duration-300 transform hover:scale-105 shadow-lg" disabled>
                         <i class="fas fa-paper-plane mr-2" aria-hidden="true"></i>
-                        Envoyer la Réservation
+                        Réserver
                     </button>
                 </div>
-                <div id="reservation-loading" class="text-ll-blue text-sm mt-1 flex items-center hidden mt-4"><i class="fas fa-spinner fa-spin mr-1"></i>Envoi en cours...</div>
-                <div id="reservation-success" class="text-ll-dark-green text-sm mt-1 flex items-center hidden mt-4"><i class="fas fa-check-circle mr-1"></i>Réservation envoyée avec succès !</div>
+                <div id="reservation-loading" class="text-ll-blue text-sm mt-4 flex items-center hidden"><i class="fas fa-spinner fa-spin mr-1"></i>Envoi en cours...</div>
+                <div id="reservation-success" class="text-ll-dark-green text-sm mt-4 flex items-center hidden"><i class="fas fa-check-circle mr-1"></i>Réservation envoyée avec succès !</div>
             </div>
         </form>
     </div>
 </div>
-
         
 
             <!-- Footer -->

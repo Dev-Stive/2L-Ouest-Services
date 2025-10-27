@@ -219,7 +219,7 @@ function updateContentLayout() {
 
     contentMain.style.transition = 'margin-left 0.5s ease-in-out, margin-right 0.5s ease-in-out, width 0.5s ease-in-out, padding 0.5s ease-in-out, border-radius 0.5s ease-in-out';
     
-    contentMain.classList.remove('rounded-l-3xl', 'rounded-r-3xl', 'rounded-3xl', 'border-r', 'border-white/20', 'dark:border-[#3E3E3A]/50');
+    contentMain.classList.remove('rounded-l-3xl', 'rounded-r-3xl', 'rounded-3xl');
     contentMain.style.padding = '0';
     contentMain.style.border = 'none';
 
@@ -252,8 +252,6 @@ function updateContentLayout() {
         let paddingRight = rightSidebarOpen ? '0px' : '6px';
         contentMain.style.padding = `6px ${paddingRight} 6px ${paddingLeft}`;
         
-        // Amélioration des bordures : border-2 pour épaisseur, rounded-3xl pour arrondi généreux et cohérent
-        contentMain.style.border = '2px solid';
         contentMain.classList.add('rounded-3xl');
 
         if (leftSidebarOpen && !rightSidebarOpen) {

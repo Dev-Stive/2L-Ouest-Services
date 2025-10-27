@@ -82,7 +82,7 @@ class AuthController {
    * @async
    * @param {Object} req - Requête HTTP.
    * @param {Object} res - Réponse HTTP.
-   * @param {Function} next - Middleware suivant.
+   * @param {Promise} next - Middleware suivant.
    */
   async getUserByEmail(req, res, next) {
     try {

@@ -441,6 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const serviceId = urlParams.get('service') || urlParams.get('id');
         const reserveParam = urlParams.get('reserve') === 'true';
+        
 
         if (!serviceId) {
             console.warn('Aucun ID de service trouvé');
@@ -462,12 +463,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Service trouvé: navigation et rendu
-        navigateService(null, serviceIndex);
         renderContent(true, allServices[serviceIndex], serviceIndex, allServices.length);
 
         // Vérifier si ouverture directe de la modale de réservation
         if (reserveParam) {
+            localStorage.setItem('serviceSelected',allServices[serviceIndex]);
             reservation.openReservationModal(allServices[serviceIndex], currentUser);
         }
 

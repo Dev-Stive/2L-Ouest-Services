@@ -107,10 +107,6 @@ textarea:focus-visible {
 }
 
 
-.content-main {
-  transition: margin-left 0.5s ease-in-out, margin-right 0.5s ease-in-out, width 0.5s ease-in-out;
-}
-
 .sidebar {
   transition: transform 0.5s ease-in-out, width 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }

@@ -34,6 +34,7 @@ const config = require('../config/config');
 const { default: emailTemplates } = require('./emailTemplates');
 const { randomInt } = require('crypto');
 const sanitizeHtml = require('sanitize-html');
+const { env } = require('process');
 
 /**
  * @template T
@@ -83,6 +84,7 @@ class AuthService {
         vapidKeyPresent: !!this.fcmVapidKey,
         senderIdPresent: !!this.fcmSenderId,
       });
+
     } else {
       logInfo('Service Firebase Messaging disponible pour notifications push', {
         senderId: this.fcmSenderId,

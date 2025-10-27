@@ -22,8 +22,8 @@ let firebaseConfigCache = null; // Note : Initialisé à null, mais pourrait êt
 const CONFIG_CACHE_KEY = 'firebaseConfigCache';
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
-export const API_BASE_URL = 'https://twol-ouest-services.onrender.com/api';
-//export const  API_BASE_URL = 'http://localhost:8000/api';
+//export const API_BASE_URL = 'https://twol-ouest-services.onrender.com/api';
+export const  API_BASE_URL = 'http://localhost:8000/api';
 export const USER_CACHE_KEY = 'userDataCache';
 
 let isShowingErrorModal = false;
@@ -878,15 +878,17 @@ export function invalidateEmailCache() {
     });
   }
 
-/**
+
+  /**
  * Validation robuste des champs de formulaire.
  * @param {string} field - Nom du champ.
  * @param {*} value - Valeur du champ.
  * @param {boolean} [signIn=false] - Mode connexion.
  * @param {boolean} [contact=false] - Mode contact.
+ * @param {boolean} [reservation=false] - Mode réservation.
  * @returns {string|null} Erreur ou null.
  */
-export function validateField(field, value, signIn = false, contact = false) {
+export function validateField(field, value, signIn = false, contact = false, reservation = false) {
   // Vérifications de sécurité
   if (!field || typeof field !== 'string') {
     console.warn('validateField: nom de champ invalide');
@@ -1059,7 +1061,14 @@ export function validateField(field, value, signIn = false, contact = false) {
     // ===== TÉLÉPHONE =====
     case 'phone':
     case 'telephone':
-      if (contact) {
+      if (reservation) {
+        if (!cleanedValue) return ''; // Optionnel en mode réservation
+        // Format national français si fourni
+        const nationalPattern = /^0[1-9](?:[\s\-]?\d{2}){4}$/;
+        if (!nationalPattern.test(cleanedValue)) {
+          return 'Format : 06 12 34 56 78 (10 chiffres)';
+        }
+      } else if (contact) {
         // Format international +33 (optionnel)
         if (!cleanedValue) return ''; // Optionnel en mode contact
         const intlPattern = /^\+33[\s\-]?[1-9](?:[\s\-]?\d{2}){4}$/;
@@ -1067,13 +1076,43 @@ export function validateField(field, value, signIn = false, contact = false) {
           return 'Format : +33 6 12 34 56 78';
         }
       } else {
-        
-       if (!cleanedValue) return 'Le numéro de téléphone est requis.';
+        if (!cleanedValue) return 'Le numéro de téléphone est requis.';
         // Format national français
         const nationalPattern = /^0[1-9](?:[\s\-]?\d{2}){4}$/;
         if (!nationalPattern.test(cleanedValue)) {
           return 'Format : 06 12 34 56 78 (10 chiffres)';
         }
+      }
+      return null;
+
+    // ===== DATE =====
+    case 'date':
+      if (!cleanedValue) return 'La date est requise.';
+      const selectedDate = new Date(cleanedValue);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      if (isNaN(selectedDate.getTime())) {
+        return 'Format de date invalide.';
+      }
+      if (selectedDate < today) {
+        return 'La date doit être aujourd\'hui ou dans le futur.';
+      }
+      return null;
+
+    // ===== FRÉQUENCE =====
+    case 'frequency':
+      if (!cleanedValue) return 'La fréquence est requise.';
+      const validFrequencies = ['ponctuelle', 'hebdomadaire', 'bi-mensuelle', 'mensuelle'];
+      if (!validFrequencies.includes(cleanedValue)) {
+        return 'Fréquence invalide. Sélectionnez une option valide.';
+      }
+      return null;
+
+    // ===== CONSENTEMENT =====
+    case 'consentement':
+      if (value !== true && value !== 'on' && value !== 1) {
+        return 'Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.';
       }
       return null;
 
@@ -1120,8 +1159,9 @@ export function validateField(field, value, signIn = false, contact = false) {
 
     // ===== MESSAGE =====
     case 'message':
+      if(reservation) return '';
       if (!cleanedValue) return 'Le message est requis.';
-      if (cleanedValue.length < 10) return 'Le message doit contenir au moins 10 caractères.';
+      if (cleanedValue.length < 10 && !reservation) return 'Le message doit contenir au moins 10 caractères.';
       if (cleanedValue.length > 1000) return 'Le message ne peut pas dépasser 1000 caractères.';
       return null;
 
@@ -1140,7 +1180,9 @@ export function validateField(field, value, signIn = false, contact = false) {
   }
 }
 
-/**
+
+
+  /**
  * Validation robuste des champs de formulaire.
  * @param {string} field - Nom du champ.
  * @param {*} value - Valeur du champ.
@@ -1339,6 +1381,40 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
       }
       return null;
 
+
+      // ===== DATE =====
+    case 'date':
+      if (!cleanedValue) return '';
+      const selectedDate = new Date(cleanedValue);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      if (isNaN(selectedDate.getTime())) {
+        return 'Format de date invalide.';
+      }
+      if (selectedDate < today) {
+        return 'La date doit être aujourd\'hui ou dans le futur.';
+      }
+      return null;
+
+    // ===== FRÉQUENCE =====
+    case 'frequency':
+      if (!cleanedValue) return '';
+      const validFrequencies = ['ponctuelle', 'hebdomadaire', 'bi-mensuelle', 'mensuelle'];
+      if (!validFrequencies.includes(cleanedValue)) {
+        return 'Fréquence invalide. Sélectionnez une option valide.';
+      }
+      return null;
+
+    // ===== CONSENTEMENT =====
+    case 'consentement':
+    
+      if (value !== true && value !== 'on' && value !== 1) {
+        return 'Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.';
+      }
+      return null;
+
+
     // ===== CODE DE VÉRIFICATION =====
     case 'code':
       if (!cleanedValue) return '';
@@ -1396,6 +1472,9 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
         return '';
       }
       return null;
+    case 'date':
+    case 'frequency':
+    case 'consentement':
 
     default:
       console.warn(`❌ Champ de validation inconnu: ${field}`);

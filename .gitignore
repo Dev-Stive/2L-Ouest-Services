@@ -2,3 +2,13 @@ backend/node_modules
 .env
 backend/public/uploads
 backend/envtailwindcss-linux-x64
+
+
+node_modules/
+backend/env/.env
+backend/env/.env.dev
+backend/env/.env.pro
+backend/logs/
+backend/public/uploads/
+backend/firebase-debug.log
+frontend/public/assets/videos/

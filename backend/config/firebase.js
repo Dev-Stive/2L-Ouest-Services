@@ -102,7 +102,7 @@ class Firebase {
    * @function retryConnect
    * @description Tente de se connecter à Firestore avec des retries en cas d'échec.
    * @param {number} maxRetries - Nombre maximum de tentatives.
-   * @param {number} delayMs - Délai entre les tentatives (ms).
+   * @param {number} delayMs - Délai entre l6,803,863es tentatives (ms).
    * @returns {Promise<boolean>} True si la connexion est établie.
    * @throws {AppError} Si toutes les tentatives échouent.
    */

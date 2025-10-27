@@ -7,7 +7,7 @@
  * @module api/contactApi
  * @version 1.2.0
  * @author L&L Ouest Services Team
- * @lastUpdated 2025-10-05
+ * @lastUpdated 2025-10-05sss
  * @license MIT
  * @dependencies apiFetch, handleApiError, showNotification, validateInput, getStoredToken, authGuard, roleGuard, fetchLogoBase64, emailTemplates
  * @changelog

@@ -179,10 +179,18 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        
+        
+[id*="form"] i{
+            top: 20% !important;
+        }
 
-/* ✅ S'applique uniquement aux .header-btn et aux boutons qui NE sont pas .faq-toggle, .modal-close, .toggle-password ou dans .services */
+
+        
+        /* ✅ S'applique uniquement aux .header-btn et aux boutons qui NE sont pas .faq-toggle, .modal-close, .toggle-password ou dans .services */
 .header-btn,
-button:not(.faq-toggle):not(.modal-close):not(.toggle-password):not(#services button):not(#hero-slides button):not([data-conversation-id]):not([data-action]):not(#sidebar button):not(#video-modal button):not(#sidebar-toggle),
+button:not(.faq-toggle):not(.modal-close):not(.toggle-password):not(#services button):not(#hero-slides button):not([data-conversation-id]):not([data-action]):not(#sidebar button):not(#video-modal button):not(#sidebar-toggle):not(#profile-edit-btn),
 section a.cta {
   position: relative;
   border: none;

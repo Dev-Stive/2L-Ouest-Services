@@ -361,7 +361,7 @@ app.get('/api/health', async (req, res) => {
       timestamp: new Date().toISOString(),
       environment: config.nodeEnv,
       firebaseStatus: 'connected',
-      mailersendStatus: emailService.isMailersendReady ? 'ready' : 'unverified',  // Adapté pour MailerSend
+      mailersendStatus: emailService.isMailersendReady ? 'ready' : 'unverified', 
       collections,
       socketStatus: socketService.io ? 'connected' : 'disconnected',
       networkStatus: global.networkStatus ? 'online' : 'offline',
