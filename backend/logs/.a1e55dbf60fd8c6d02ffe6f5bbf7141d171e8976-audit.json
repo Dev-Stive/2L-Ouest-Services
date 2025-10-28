@@ -6,49 +6,14 @@
     "auditLog": "logs/.a1e55dbf60fd8c6d02ffe6f5bbf7141d171e8976-audit.json",
     "files": [
         {
-            "date": 1759521424984,
-            "name": "logs/app-prod.log-error-2025-10-03.log",
-            "hash": "755340a177b96726e19da31fc558554251b8a722f2fdce8843e39421fbc54c4a"
-        },
-        {
-            "date": 1759533227912,
-            "name": "logs/app-prod.log-error-2025-10-04.log",
-            "hash": "cf407a39434b0bb1a5b3ae63c92365f8a8409ac8797c4606259d476ffd1da944"
-        },
-        {
-            "date": 1759620594159,
-            "name": "logs/app-prod.log-error-2025-10-05.log",
-            "hash": "6b617d5d97ff92261fe25b0398d2d61af0c0571b7429cb4a64ae37528356b3b1"
-        },
-        {
-            "date": 1759705303289,
-            "name": "logs/app-prod.log-error-2025-10-06.log",
-            "hash": "77b78ece37b00bb6b954de508da7be013f11deccbc9d43d5fe01fd53f343cb6c"
-        },
-        {
-            "date": 1760091022679,
-            "name": "logs/app-prod.log-error-2025-10-10.log",
-            "hash": "88be3e51b0943c163e9002366257c81dc4bffd7c631f92e19a7a1c0de5992948"
-        },
-        {
-            "date": 1760308058733,
-            "name": "logs/app-prod.log-error-2025-10-12.log",
-            "hash": "8c337528249e5ff680ebb398af10376280c2e375dc4735cc2e9b75414b947d0a"
-        },
-        {
-            "date": 1760310291128,
-            "name": "logs/app-prod.log-error-2025-10-13.log",
-            "hash": "379f5788a77858c3ae4a1957a6e0237d0ad75014c230155ad7f8246d4ff6cb17"
-        },
-        {
-            "date": 1760422162952,
-            "name": "logs/app-prod.log-error-2025-10-14.log",
-            "hash": "bf448aa01b2274b45f0c4ad8aa0a8555a3162db597750d93d18caa84619d88c1"
-        },
-        {
             "date": 1760525099950,
             "name": "logs/app-prod.log-error-2025-10-15.log",
             "hash": "704f00b8527c39d946478e60b61ebc7c14e4512070ba3897f0a1ab11697ddfa7"
+        },
+        {
+            "date": 1761641947105,
+            "name": "logs/app-prod.log-error-2025-10-28.log",
+            "hash": "e64d8e28566676e4ecc56b8a0a5c2c0c8a4ce6d01a145df5eabe0c1ef0a9e097"
         }
     ],
     "hashType": "sha256"

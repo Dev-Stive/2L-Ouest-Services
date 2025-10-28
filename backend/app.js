@@ -384,6 +384,15 @@ app.get('/api/check', async (req, res) => {
   });
 });
 
+app.get('/api/auth', async (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Auth is running',
+    timestamp: new Date().toISOString(),
+    environment: config.nodeEnv
+  });
+});
+
 
 // --- Route de base API ---
 app.get('/api', (req, res) => {

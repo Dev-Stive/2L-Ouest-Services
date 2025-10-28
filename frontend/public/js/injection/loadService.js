@@ -192,8 +192,6 @@ export async function toggleServicesLoading(show, noServices = false) {
         }
     }
 
-    // Refresh AOS pour fluidité
-    if (typeof AOS !== 'undefined') AOS.refresh();
 }
 
 /**
@@ -222,7 +220,7 @@ async function loadMockServices(retries = 3) {
                     // Defaults pour robustesse
                     images: service.images || [{ url: '/assets/images/placeholder.jpg', type: 'after' }],
                     features: service.features || ['Service professionnel', 'Équipé moderne'],
-                    members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/placeholder-avatar.jpg' }],
+                    members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/instrument.png' }],
                     availability: service.availability || { isAvailable: true, schedule: [{ day: 'Lun-Ven', hours: ['9h-18h'] }] },
                     rating: service.rating || 4.5,
                     reviews: service.reviews || 100,
@@ -306,7 +304,7 @@ export async function loadServices(filters = {}) {
                         // Defaults pour API data
                         images: service.images || [{ url: '/assets/images/placeholder.jpg', type: 'after' }],
                         features: service.features || ['Service professionnel', 'Équipé moderne'],
-                        members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/placeholder-avatar.jpg' }],
+                        members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/instrument.png' }],
                         availability: service.availability || { isAvailable: true, schedule: [{ day: 'Lun-Ven', hours: ['9h-18h'] }] },
                         rating: service.rating || 4.5,
                         reviews: service.reviews || 100,
@@ -492,7 +490,7 @@ export function renderServicesSidebar(services) {
 
     // SYNCHRO: Si services > 0 et index valide, update detail IMMEDIATEMENT
     if (services.length > 0 && currentServiceIndex < services.length) {
-        AOS.refreshHard(); // Refresh AOS pour animations
+      
         renderServiceDetail(services[currentServiceIndex], currentServiceIndex, services.length);
     } else if (services.length === 0) {
         showNoServicesMessage();
@@ -626,7 +624,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
             images: [{ url: '/assets/images/placeholder.jpg', type: 'after', description: 'Description par défaut' }],
             features: ['Feature 1'],
             equipment: [{ icon: '🧹', name: 'Default' }],
-            members: [{ name: 'Équipe', role: 'Pro', photo: '/assets/images/placeholder-avatar.jpg' }],
+            members: [{ name: 'Équipe', role: 'Pro', photo: '/assets/images/instrument.png' }],
             availability: { isAvailable: true, schedule: [{ day: 'Lun-Ven', hours: ['9h-18h'] }] },
             rating: 4.5,
             reviews: 100,
@@ -773,7 +771,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     if (membersEl) {
         membersEl.innerHTML = service.members.map(member => `
             <div class="flex items-center gap-4 p-4 bg-white/50 dark:bg-gray-600/30 rounded-xl hover:bg-white dark:hover:bg-gray-600 transition-all duration-300 group">
-                <img src="${member.photo}" alt="${member.name}" class="w-12 h-12 md:w-16 md:h-16 rounded-xl object-cover border-2 border-transparent group-hover:border-ll-blue transition-colors" onerror="this.src='/assets/images/placeholder-avatar.jpg'">
+                <img src="${member.photo}" alt="${member.name}" class="w-12 h-12 md:w-16 md:h-16 rounded-xl object-cover border-2 border-transparent group-hover:border-ll-blue transition-colors" onerror="this.src='/assets/images/instrument.png'">
                 <div class="flex-1">
                     <p class="font-semibold text-gray-900 dark:text-white group-hover:text-ll-blue transition-colors">${member.name}</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${member.role}</p>
@@ -846,7 +844,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     // Update mobile selector
     updateMobileServiceSelector(allFilteredServices);
 
-    if (typeof AOS !== 'undefined') AOS.refresh();
 }
 
 /**
@@ -1011,7 +1008,6 @@ export function navigateService(direction, delta = 1) {
         currentServiceIndex = newIndex;
         renderServiceDetail(allFilteredServices[currentServiceIndex], currentServiceIndex, total);
         renderServicesSidebar(allFilteredServices);
-        if (typeof AOS !== 'undefined') AOS.refresh();
     }
 }
 

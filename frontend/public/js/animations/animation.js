@@ -421,119 +421,152 @@ async function loadMockData() {
 // Added 'hybrid' type for slides with both image and video: video blurred in background, symbolic image oblique as preview.
 // Sources: Real Unsplash images and Mixkit videos, curated for relevance (professional cleaning, French context where possible).
 // Variety: Offices, teams, eco products, before/after, tools, local Angers vibes, handyman for small jobs.
+// HERO_SLIDES with 15 slides (unchanged from previous response)
 const HERO_SLIDES = [
+  {
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/after-veranda.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
+      { type: 'image', src: '/assets/images/instrument_seau.png', alt: 'Équipements de nettoyage' },
+      { type: 'image', src: '/assets/images/img1.jpeg', alt: 'Détail nettoyage professionnel' },
+    ],
+    title: 'Nettoyage Professionnel à Angers',
+    subtitle: 'L&L Ouest Services : Propreté impeccable pour bureaux, commerces et espaces extérieurs.',
+    thumbnail: '/assets/images/after-veranda.png',
+    sidebarMessage: 'Solutions sur mesure pour un environnement éclatant.',
+    delay: 6000,
+  },
   {
     type: 'video',
     src: 'https://assets.mixkit.co/videos/preview/mixkit-woman-cleaning-a-room-39865-large.mp4',
-    poster: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Espaces Impeccables à Angers',
-    subtitle: 'Nettoyage professionnel L&L Ouest Services : redonnez vie à vos bureaux et locaux avec expertise locale',
-    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Propreté sur mesure pour entreprises angevines.',
-    delay: 12000
+    poster: '/assets/images/cleaning-room-poster.jpeg',
+    title: 'Transformations Visibles',
+    subtitle: 'Avant et après : Interventions rapides pour révéler l’éclat de vos espaces.',
+    thumbnail: '/assets/images/before-bureau.png',
+    sidebarMessage: 'Résultats qui impressionnent vos clients.',
+    delay: 7000,
+  },
+
+  {
+    type: 'grid',
+     images: [
+      { type: 'image', src: '/assets/images/bureau3.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
+     ],
+    title: 'Résultats qui impressionnent nos clients.',
+    subtitle: 'Avant et après : Nos interventions rapides révèlent l’éclat de vos espaces professionnels.',
+    thumbnail: '/assets/images/before-bureau.png',
+    sidebarMessage: 'Résultats qui impressionnent vos clients.',
+    delay: 9000,
+  },
+
+
+  {
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/bureau1.png', alt: 'Bureau avant nettoyage' },
+      { type: 'image', src: '/assets/images/bureau2.png', alt: 'Détail bureau nettoyé' },
+      { type: 'image', src: '/assets/images/bureau3.png', alt: 'Espace de travail propre' },
+    ],
+    title: 'Bureaux Impeccables',
+    subtitle: 'Nettoyage méticuleux pour des environnements de travail sains à Angers.',
+    thumbnail: '/assets/images/before-bureau.png',
+    sidebarMessage: 'Un cadre professionnel toujours prêt.',
+    delay: 6500,
   },
   {
-    type: 'image',
-    src: 'https://images.unsplash.com/photo-1558618048-6f3546cc0c3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Équipe Dédiée et Locale',
-    subtitle: 'Nos professionnels passionnés à Angers transforment la propreté en art pour vos espaces de travail',
-    thumbnail: 'https://images.unsplash.com/photo-1558618048-6f3546cc0c3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Une équipe fiable pour tous vos besoins en hygiène et maintenance.',
-    delay: 6000
-  },
-  {
-    type: 'hybrid', // New type: blurred video bg + oblique symbolic image overlay
-    src_video: 'https://assets.mixkit.co/videos/preview/mixkit-cleaning-dirty-furniture-with-a-steam-vacuum-cleaner-45041-large.mp4',
-    poster: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    src_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Eco products symbolic
-    title: 'Solutions Écologiques',
-    subtitle: 'Produits biodégradables et verts pour un nettoyage responsable au cœur de l\'Ouest français',
-    thumbnail: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Engagement éco-responsable pour un Angers plus propre.',
-    delay: 8000
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/img3.jpeg', alt: 'Nettoyage extérieur' },
+    ],
+    title: 'Espaces Extérieurs Propres',
+    subtitle: 'Jardins, vérandas et façades : Redonnez vie à vos extérieurs.',
+    thumbnail: '/assets/images/img3.jpeg',
+    sidebarMessage: 'Extérieurs éclatants pour une première impression parfaite.',
+    delay: 5500,
   },
   {
     type: 'video',
     src: 'https://assets.mixkit.co/videos/preview/mixkit-cleaning-a-window-1255-large.mp4',
     poster: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Avant & Après : Transformation',
-    subtitle: 'De l\'ordre au chaos, nos interventions rapides révèlent l\'éclat de vos espaces professionnels',
-    thumbnail: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Résultats visibles qui impressionnent vos clients.',
-    delay: 10000
+    title: 'Nettoyage de Vitres',
+    subtitle: 'Clarté et transparence pour vos fenêtres avec des techniques avancées.',
+    thumbnail: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    sidebarMessage: 'Des vitres sans traces pour une vue parfaite.',
+    delay: 7000,
   },
   {
-    type: 'image',
-    src: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Service Express 24/7',
-    subtitle: 'Interventions discrètes et rapides pour ne jamais perturber votre activité à Angers',
-    thumbnail: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Efficacité pour vos horaires flexibles.',
-    delay: 6000
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/img5.jpeg', alt: 'Équipe au travail' },
+      { type: 'image', src: '/assets/images/team-cleaning.jpeg', alt: 'Équipe professionnelle' },
+    ],
+    title: 'Équipe Dédiée Locale',
+    subtitle: 'Une équipe passionnée à Angers, offrant un service fiable et personnalisé.',
+    thumbnail: '/assets/images/img5.jpeg',
+    sidebarMessage: 'Confiance et proximité avec L&L Ouest Services.',
+    delay: 6000,
   },
   {
-    type: 'hybrid',
-    src_video: 'https://assets.mixkit.co/videos/preview/vacuum-cleaner-cleaning-a-sofa-45039-large.mp4',
-    poster: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    src_image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Tool symbolic
-    title: 'Outils Innovants',
-    subtitle: 'Technologie de pointe pour un nettoyage impeccable et durable dans vos locaux ouest-français',
-    thumbnail: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Innovation au service de la qualité premium.',
-    delay: 7000
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/before-veranda.png', alt: 'Véranda avant nettoyage' },
+      { type: 'image', src: '/assets/images/after-veranda.png', alt: 'Véranda après nettoyage' },
+      { type: 'image', src: '/assets/images/hygiene-office.jpeg', alt: 'Hygiène certifiée' },
+    ],
+    title: 'Hygiène Premium Certifiée',
+    subtitle: 'Standards élevés pour une sécurité optimale dans vos espaces professionnels.',
+    thumbnail: '/assets/images/before-veranda.png',
+    sidebarMessage: 'Hygiène au sommet pour votre sérénité.',
+    delay: 6500,
+  },
+  {
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/before-garden.png', alt: 'Jardin avant nettoyage' },
+    ],
+    title: 'Personnalisation Totale',
+    subtitle: 'Solutions sur mesure : nettoyage, petits boulots, et prestations extérieures adaptées.',
+    thumbnail: '/assets/images/before-garden.png',
+    sidebarMessage: 'Adapté à chaque client, chaque défi unique.',
+    delay: 5500,
   },
   {
     type: 'video',
-    src: 'https://assets.mixkit.co/videos/preview/mixkit-portrait-of-cleaning-lady-39866-large.mp4',
-    poster: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Engagement Local à Angers',
-    subtitle: 'Soutien aux communautés angevines : propreté, petits boulots et services extérieurs solidaires',
-    thumbnail: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Partenaire de confiance pour l\'Ouest de la France.',
-    delay: 11000
+    src: 'https://assets.mixkit.co/videos/preview/mixkit-cleaning-dirty-furniture-with-a-steam-vacuum-cleaner-45041-large.mp4',
+    poster: '/assets/images/furniture-cleaning-poster.jpeg',
+    title: 'Nettoyage de Meubles',
+    subtitle: 'Redonnez vie à vos meubles avec nos techniques de nettoyage à la vapeur.',
+    thumbnail: '/assets/images/img7.jpeg',
+    sidebarMessage: 'Mobilier comme neuf, durablement.',
+    delay: 7000,
   },
   {
-    type: 'image',
-    src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Hygiène Premium Certifiée',
-    subtitle: 'Standards élevés pour une sécurité optimale dans bureaux, commerces et espaces privés',
-    thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Hygiène au sommet pour votre sérénité quotidienne.',
-    delay: 6000
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/img8.jpeg', alt: 'Service express' },
+    ],
+    title: 'Service Express 24/7',
+    subtitle: 'Interventions rapides et discrètes pour ne jamais perturber votre activité.',
+    thumbnail: '/assets/images/img8.jpeg',
+    sidebarMessage: 'Efficacité à toute heure pour vos besoins.',
+    delay: 5500,
   },
   {
-    type: 'image',
-    src: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Personnalisation Totale',
-    subtitle: 'Solutions sur mesure : nettoyage, petits boulots, messagerie et prestations extérieures adaptées',
-    thumbnail: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Adapté à chaque client, chaque défi unique.',
-    delay: 6000
+    type: 'grid',
+    images: [
+      { type: 'image', src: '/assets/images/img9.jpeg', alt: 'Technologie de pointe' },
+      { type: 'image', src: '/assets/images/instrument.png', alt: 'Outils modernes' },
+    ],
+    title: 'Outils Innovants',
+    subtitle: 'Technologie de pointe pour un nettoyage impeccable et durable à Angers.',
+    thumbnail: '/assets/images/img9.jpeg',
+    sidebarMessage: 'Innovation pour une propreté premium.',
+    delay: 6000,
   },
-  {
-    type: 'hybrid',
-    src_video: 'https://assets.mixkit.co/videos/preview/man-cleaning-and-jamming-at-home-101303-large.mp4',
-    poster: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    src_image: 'https://images.unsplash.com/photo-1558618048-6f3546cc0c3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Team symbolic for trust
-    title: 'Confiance Gagnée',
-    subtitle: 'Années d\'excellence L&L : le choix n°1 pour services polyvalents à Angers et alentours',
-    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Réputation bâtie sur des résultats exceptionnels et fiables.',
-    delay: 9000
-  },
-  {
-    type: 'image',
-    src: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-    title: 'Futur Propre et Durable',
-    subtitle: 'Investissez dans un nettoyage éco-responsable pour un demain radieux en Pays de la Loire',
-    thumbnail: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-    sidebarMessage: 'Vers un monde plus propre, ensemble avec L&L Ouest Services.',
-    delay: 6000
-  }
 ];
 
 /**
- * Fisher-Yates shuffle for random order without repetition in cycle
+ * Fisher-Yates shuffle for random order without repetition
  * @param {Array} array - Array to shuffle
  * @returns {Array} Shuffled copy
  */
@@ -547,131 +580,129 @@ function shuffleSlides(array) {
 }
 
 /**
- * Lazy load des images avec IntersectionObserver
- * @param {NodeList} images - Liste des images à charger paresseusement
+ * Lazy load images with IntersectionObserver
+ * @param {NodeList} images - List of images to lazy load
  */
 function lazyLoadImages(images) {
-  const observer = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
-          img.classList.remove('lazy');
-          observer.unobserve(img);
-        }
+  images.forEach((img) => {
+    if ('loading' in HTMLImageElement.prototype) {
+      img.src = img.dataset.src || img.src;
+    } else {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src || img.src;
+            obs.unobserve(img);
+          }
+        });
       });
-    },
-    { rootMargin: '0px 0px 200px 0px' }
-  );
-
-  images.forEach(img => observer.observe(img));
+      observer.observe(img);
+    }
+  });
 }
 
 let activeSlide = 0;
 let swiperInstance = null;
 let currentTimer = null;
 
-/**
- * Initialize hero carousel with navigation buttons
- * Now shuffles slides randomly on init for unexpected order, no repeats in loop.
- */
 async function initHeroCarousel() {
   const slidesContainer = document.getElementById('hero-slides');
   if (!slidesContainer) return;
 
   const shuffledSlides = shuffleSlides(HERO_SLIDES);
 
-  // Generate Slides with text animation classes and hybrid support
-slidesContainer.innerHTML = shuffledSlides.map((slide, index) => `
-  <div class="swiper-slide relative w-full h-full flex items-center justify-center transition-opacity duration-700 ease-in-out overflow-hidden" role="group" aria-label="Slide ${index + 1} de ${shuffledSlides.length}">
-    ${slide.type === 'video' ? `
-      <div class="absolute inset-0 z-0">
-        <video class="w-full h-full object-cover object-center" poster="${slide.poster}" muted loop playsinline preload="metadata" src="${slide.src}" aria-hidden="true">
-          <source src="${slide.src}" type="video/mp4">
-        </video>
-      </div>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70 z-[5]"></div>
-    ` : slide.type === 'image' ? `
-      <div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700" style="background-image: url('${slide.src}');"></div>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70 z-[5]"></div>
-    ` : slide.type === 'hybrid' ? `
-      <div class="absolute inset-0 z-0 flex flex-col lg:flex-row h-full w-full">
-        <!-- Vidéo blurred : Pleine largeur sur mobile (top half), 2/3 sur desktop (left) -->
-        <div class="relative w-full lg:w-2/3 h-1/2 lg:h-full flex-shrink-0">
-          <video class="blurred-video w-full h-full object-cover object-center" poster="${slide.poster}" muted loop playsinline preload="metadata" src="${slide.src_video}" aria-hidden="true">
-            <source src="${slide.src_video}" type="video/mp4">
-          </video>
-        </div>
-        <!-- Séparateur blurry fade : Invisible sur mobile, ligne verticale fade sur desktop -->
-        <div class="hidden lg:block absolute inset-y-0 left-2/3 w-1 bg-gradient-to-b from-transparent via-white/20 to-transparent z-[6] backdrop-blur-xl"></div>
-        <!-- Image symbolique : Pleine largeur sur mobile (bottom half), 1/3 sur desktop (right) -->
-        <div class="relative w-full hidden lg:block lg:w-1/3 h-1/2 lg:h-full flex-shrink-0 overflow-hidden rounded-r-xl lg:rounded-none">
-          <img src="${slide.src_image}" alt="Aperçu symbolique : ${slide.title}" class="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105" loading="lazy">
-        </div>
-      </div>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70 z-[5]"></div>
-    ` : ''}
-    <!-- Contenu textuel : Centré, responsive, overlay sur split pour hybrid -->
-    <div class="relative z-10 flex flex-col justify-center items-center text-center text-white h-full px-2 sm:px-4 lg:px-6 w-full max-w-4xl mx-auto transform transition-all duration-700 ease-in-out group">
-      <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel font-bold mb-2 sm:mb-4 tracking-tight text-shadow-lg gradient-hero">${slide.title}</h1>
-      <p class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-4 sm:mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed font-light opacity-100 transform translate-y-0 transition-all duration-700 line-clamp-3">${slide.subtitle}</p>
-      <a href="#contact" class="btn-container btn-right text-ll-white hover:text-ll-white py-3 sm:py-4 px-6 sm:px-8 rounded-xl font-semibold shadow-lg !bg-transparent border !border-ll-medium-gray hover:!border-0 font-medium text-sm sm:text-base shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ll-blue/50 transition-all duration-300 transform flex items-center justify-center min-h-[44px] sm:min-h-[56px] hover:bg-ll-light-bg dark:hover:bg-sidebar-dark" aria-label="Contactez L&L Ouest Services pour ${slide.title.toLowerCase()}">
-        <div class="progress-fill bg-gradient-to-r from-ll-dark-blue to-ll-blue rounded-xl absolute inset-0 -z-10"></div>
-        <div class="btn-content shine-effect relative z-10 flex items-center">
-          <div class="icon-wrapper text-ll-white mr-2 sm:mr-4 flex-shrink-0">
-            <svg class="icon-default w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </svg>
-            <svg class="icon-hover w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 hidden group-hover:block" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </svg>
-          </div>
-          <span class="btn-text whitespace-nowrap">Contactez-nous</span>
-        </div>
-      </a>
-    </div>
-  </div>
-`).join('');
-
-if (!document.querySelector('#hero-hybrid-css')) {
-  const style = document.createElement('style');
-  style.id = 'hero-hybrid-css';
-  style.textContent = `
-    .blurred-video { filter: blur(3px) saturate(0.8); opacity: 0.85; }
-    .text-shadow-lg { text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .touch-manipulation { touch-action: manipulation; }
-    @media (max-width: 1024px) {
-      .oblique-symbol { display: none; } /* Hide if any legacy */
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .transition-all { transition: none !important; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-  // Add CSS for hybrid elements (blurred video and oblique image) - inject if needed
-  if (!document.querySelector('#hero-hybrid-css')) {
-    const style = document.createElement('style');
-    style.id = 'hero-hybrid-css';
-    style.textContent = `
-      .blurred-video { filter: blur(4px); opacity: 0.7; }
-      .oblique-symbol { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
-      @media (max-width: 768px) { .oblique-symbol { transform: rotate(-3deg) scale(0.8); right: 5%; top: 10%; } }
-    `;
-    document.head.appendChild(style);
+  function generateGridLayout(images) {
+    const imageCount = images.length;
+    const layouts = {
+      1: {
+        gridCols: 'grid-cols-1',
+        gridRows: 'grid-rows-1',
+        items: [{ class: 'col-span-1 row-span-1', scale: '110', visible: true }],
+      },
+      2: {
+        gridCols: 'grid-cols-2',
+        gridRows: 'grid-rows-1',
+        items: [
+          { class: 'col-span-1 row-span-1 z-10', scale: '108', visible: true },
+          { class: 'col-span-1 row-span-1 z-0 -ml-8', scale: '105', visible: true },
+        ],
+      },
+      3: {
+        gridCols: 'grid-cols-3',
+        gridRows: 'grid-rows-2',
+        items: [
+          { class: 'col-span-2 row-span-2 z-10', scale: '110', visible: true },
+          { class: 'col-span-1 row-span-1 z-0 -ml-8', scale: '105', visible: true },
+          { class: 'col-span-1 row-span-1 z-5 -ml-8 mt-8', scale: '105', visible: true },
+        ],
+      },
+    };
+    return layouts[imageCount] || layouts[1];
   }
 
-  // DOM Variables
+  slidesContainer.innerHTML = shuffledSlides.map((slide, index) => {
+    const isVideoSlide = slide.type === 'video';
+    const isGridSlide = slide.type === 'grid';
+    let gridCols = '', gridRows = '', gridItems = [];
+
+    if (isGridSlide) {
+      const layout = generateGridLayout(slide.images);
+      gridCols = layout.gridCols;
+      gridRows = layout.gridRows;
+      gridItems = layout.items;
+    }
+
+    return `
+      <div class="swiper-slide relative w-full h-full flex items-center justify-center transition-all duration-500 ease-in-out overflow-hidden transform scale-100 group" role="group" aria-label="Slide ${index + 1} de ${shuffledSlides.length}">
+        ${isVideoSlide ? `
+          <div class="absolute inset-0 z-0">
+            <video class="w-full h-full object-cover object-center transition-all duration-500 ease-out" poster="${slide.poster}" muted loop playsinline preload="metadata" src="${slide.src}" aria-hidden="true">
+              <source src="${slide.src}" type="video/mp4">
+            </video>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/70 z-[5]"></div>
+        ` : isGridSlide ? `
+          <div class="absolute inset-0 z-0 grid ${gridCols} ${gridRows} gap-0">
+            ${slide.images.map((img, idx) => `
+              <div class="${gridItems[idx]?.class || 'col-span-1 row-span-1'} relative rounded-none overflow-hidden transform transition-transform duration-500 ease-out group-[.swiper-slide-active]:scale-${gridItems[idx]?.scale || '100'} ${gridItems[idx]?.visible ? '' : 'hidden'}">
+                ${img.type === 'image' ? `
+                  <img src="${img.src}" alt="${img.alt}" class="w-full h-full object-cover object-center transition-all duration-500 ease-out" loading="lazy">
+                ` : `
+                  <video class="w-full h-full object-cover object-center transition-all duration-500 ease-out" poster="${img.poster}" muted loop playsinline preload="metadata" src="${img.src}" aria-hidden="true">
+                    <source src="${img.src}" type="video/mp4">
+                  </video>
+                `}
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/${idx === 0 ? '60' : '40'} transition-opacity duration-500 ease-out"></div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        <div class="relative z-10 flex flex-col justify-center md:justify-end items-center text-center text-white pb-4 md:pb-12 px-4 sm:px-6 lg:px-8 w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out group-[.swiper-slide-active]:translate-y-0 group-[.swiper-slide-active]:opacity-100 translate-y-10 opacity-0">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-cinzel font-bold mb-2 sm:mb-3 tracking-tight text-shadow-lg">${slide.title}</h1>
+          <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed font-light line-clamp-2">${slide.subtitle}</p>
+          <a href="#contact" class="btn-container text-white hover:text-white py-2 sm:py-3 px-6 sm:px-8 rounded-xl font-semibold shadow-lg bg-transparent border border-white/60 hover:border-transparent font-medium text-sm sm:text-base shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 transform hover:scale-105 flex items-center justify-center min-h-[40px] sm:min-h-[48px] hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-800">
+            <div class="progress-fill bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="btn-content shine-effect relative z-10 flex items-center">
+              <div class="icon-wrapper text-white mr-2 sm:mr-3 flex-shrink-0">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+              </div>
+              <span class="btn-text whitespace-nowrap">Contactez-nous</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    `;
+  }).join('');
+
   const swiperSlides = slidesContainer.querySelectorAll('.swiper-slide');
 
-  // Handle slide media (videos) - play current, pause others
   function handleSlideMedia(swiper) {
     swiperSlides.forEach((slide, idx) => {
-      const video = slide.querySelector('video');
-      if (video) {
+      const videos = slide.querySelectorAll('video');
+      videos.forEach((video) => {
         if (idx === swiper.realIndex) {
           video.currentTime = 0;
           video.play().catch(() => console.log('Autoplay blocked'));
@@ -679,36 +710,36 @@ if (!document.querySelector('#hero-hybrid-css')) {
           video.pause();
           video.currentTime = 0;
         }
-      }
+      });
     });
   }
 
-  // Start timer for next slide based on slide delay
   function startSlideTimer(swiper) {
     if (currentTimer) clearTimeout(currentTimer);
     const currentSlide = shuffledSlides[swiper.realIndex % shuffledSlides.length];
-    const delay = currentSlide.delay || 7000;
+    const delay = currentSlide.delay || 6000;
     currentTimer = setTimeout(() => {
       swiper.slideNext();
     }, delay);
   }
 
-  // Initialize Swiper with fade effect and navigation
   const swiper = new Swiper('[data-carousel]', {
-    effect: 'fade',
-    fadeEffect: { crossFade: true },
+    effect: 'cube',
+    cubeEffect: {
+      slideShadows: false,
+      shadow: false,
+    },
     loop: true,
-    speed: 800, // Smooth transition speed
+    speed: 500,
     resizeObserver: true,
-    // Custom navigation
     navigation: {
       prevEl: '.custom-prev-btn',
       nextEl: '.custom-next-btn',
     },
-    a11y: { 
-      enabled: true, 
-      prevSlideMessage: 'Slide précédent', 
-      nextSlideMessage: 'Slide suivant' 
+    a11y: {
+      enabled: true,
+      prevSlideMessage: 'Slide précédent',
+      nextSlideMessage: 'Slide suivant',
     },
     on: {
       init: (swiper) => {
@@ -716,30 +747,20 @@ if (!document.querySelector('#hero-hybrid-css')) {
         startSlideTimer(swiper);
       },
       slideChange: (swiper) => {
-        // Animate text out (up for previous, down for next? But fade handles, add class for extra)
-        const oldSlide = swiperSlides[(swiper.previousIndex || swiperSlides.length - 1) % swiperSlides.length];
-        const newSlide = swiperSlides[swiper.realIndex];
-        if (oldSlide) {
-          oldSlide.querySelector('.group').classList.add('translate-y-[-20px]', 'opacity-0');
-        }
-        setTimeout(() => {
-          if (newSlide) newSlide.querySelector('.group').classList.remove('translate-y-full', 'opacity-0');
-        }, 100);
         handleSlideMedia(swiper);
         startSlideTimer(swiper);
       },
       resize: (swiper) => {
         swiper.update();
-      }
-    }
+        slidesContainer.style.height = `${window.innerHeight}px`;
+      },
+    },
   });
 
   swiperInstance = swiper;
 
-  // Set initial height
   slidesContainer.style.height = `${window.innerHeight}px`;
 
-  // Resize handler
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -749,9 +770,10 @@ if (!document.querySelector('#hero-hybrid-css')) {
     }, 100);
   });
 
-  // Lazy load any lazy images if needed (though backgrounds are inline)
-  lazyLoadImages(document.querySelectorAll('img.lazy'));
+  lazyLoadImages(document.querySelectorAll('img[loading="lazy"]'));
 }
+
+
 
 /**
  * Initialise le carrousel des témoignages avec un design futuriste et une boucle infinie
@@ -1101,7 +1123,7 @@ let typingInterval = null;
           btn.addEventListener('click', () => {
             currentPage = parseInt(btn.dataset.page);
             renderFAQItems(currentPage, currentFilter);
-            AOS.refresh();
+           
           });
         });
 
@@ -1109,7 +1131,7 @@ let typingInterval = null;
           if (currentPage > 1) {
             currentPage--;
             renderFAQItems(currentPage, currentFilter);
-            AOS.refresh();
+      
           }
         });
 
@@ -1117,11 +1139,10 @@ let typingInterval = null;
           if (currentPage < Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE)) {
             currentPage++;
             renderFAQItems(currentPage, currentFilter);
-            AOS.refresh();
+           
           }
         });
 
-        AOS.refresh();
       }
 
       // Gestion des filtres
@@ -1179,11 +1200,10 @@ function initTeamSection() {
                 // Initialise l'offset pour l'animation
                 circleElement.style.strokeDashoffset = circumference; 
 
-                // Démarre l'animation CSS
                 setTimeout(() => {
                     circleElement.style.transition = 'stroke-dashoffset 1.5s ease-out';
                     circleElement.style.strokeDashoffset = offset;
-                }, 50); // Petit délai pour garantir l'application du style initial
+                }, 50);
 
                 // Animation du compteur de valeur
                 const valueDisplay = circleElement.closest('.circular-progress').querySelector('.progress-value');
@@ -1217,7 +1237,7 @@ function initTeamSection() {
 
                 teamContainer.innerHTML = filteredTeam.map((member, index) => `
                     <div class="swiper-slide">
-                        <div class="team-card bg-ll-white-800 dark:bg-ll-black-950 rounded-3xl border border-blue-600/20 dark:border-ll-medium-gray shadow-lg p-6 flex flex-col items-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="${index * 100}  ">
+                        <div class="team-card bg-ll-white-800 dark:bg-ll-black-950 rounded-3xl border border-blue-600/20 dark:border-ll-medium-gray shadow-lg p-6 flex flex-col items-start hover:shadow-xl transition-all duration-300 transform "  ">
                             <div class="flex items-center space-x-4 mb-4">
                                 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="${member.image}" class="w-20 h-20 rounded-full object-cover border-2 border-blue-400 lazy" alt="Photo de ${member.name}" loading="lazy">
                                 <div>
@@ -1300,10 +1320,7 @@ function initTeamSection() {
                     }
                 });
 
-                if (AOS) {
-                    AOS.refreshHard();
-                }
-
+               
 
                 // Attach modal button listeners
                 document.querySelectorAll('.team-modal-btn').forEach(btn => {
@@ -1521,6 +1538,7 @@ function initTeamSection() {
                     button.classList.add('active', 'bg-blue-600', 'text-white');
                     button.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-200');
                     renderTeamCards(currentFilter);
+                    AOS.refresh();
                    
                 });
             });
@@ -3758,16 +3776,6 @@ function renderStarRatingForReviews(rating) {
 }
 
 /**
- * Initialise l'affichage des étoiles pour reviews
- */
-function initReviewsDisplay() {
-    const display = document.getElementById('reviews-star-display');
-    if (display) {
-        display.innerHTML = renderStarRatingForReviews(0);
-    }
-}
-
-/**
  * Réinitialise tous les filtres et AUTO-UPDATE
  */
 function resetAllFilters() {
@@ -3835,8 +3843,6 @@ async function updateServices() {
         const servicesCount = document.getElementById('services-count');
         if (servicesCount) servicesCount.textContent = services.length;
         
-        // Refresh global pour fluidité
-        if (typeof AOS !== 'undefined') AOS.refresh();
         
     } catch (error) {
         console.error('Erreur lors du chargement des services:', error);
@@ -3914,64 +3920,9 @@ export function hideNoServicesMessage() {
     noServicesDiv.classList.add('hidden');
   }
 
-  // 3. Refresh AOS pour animations fluides
-  if (typeof AOS !== 'undefined') AOS.refresh();
 }
 
 
-/**
- * Initialise les particules interactives
- */
-function initParticles() {
-  if (typeof particlesJS === 'undefined' || !document.getElementById('particles-js')) {
-    //console.warn('particlesJS non chargé');
-    return;
-  }
-
-  const particleDensity = window.innerWidth < 768 ? 50 : 100;
-  particlesJS('particles-js', {
-    particles: {
-      number: { value: particleDensity, density: { enable: true, value_area: 800 } },
-      color: { value: '#2563EB' },
-      shape: { type: 'circle' },
-      opacity: { value: 0.5, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
-      size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.3 } },
-      line_linked: { enable: true, distance: 150, color: '#2563EB', opacity: 0.4, width: 1 },
-      move: { enable: true, speed: 3, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false },
-    },
-    interactivity: {
-      detect_on: 'canvas',
-      events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
-      modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } },
-    },
-    retina_detect: true,
-  });
-}
-
-
-
-/**
- * Initialise les animations de défilement
- */
-function initScrollAnimations() {
-  
-
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        window.scrollTo({
-          top: targetElement.offsetTop - 80,
-          behavior: 'smooth',
-        });
-      }
-    });
-  });
-}
 
 
 
@@ -4080,9 +4031,6 @@ function initEco(){
 function initAbout() {
     
   
-
-
-    // Gérer l'état du thème
     let themeState = {
         themeToApply: detectTheme(),
         fontColor: getFontColor(detectTheme()),
@@ -4118,7 +4066,7 @@ function initAbout() {
     // Initialisation du DOM
     const statsContainer = document.getElementById('company-stats');
     if (!statsContainer) {
-       // console.warn('Conteneur des statistiques non trouvé');
+
         return;
     }
 
@@ -4132,7 +4080,7 @@ function initAbout() {
     });
 
     statsContainer.innerHTML = uniqueStats.map((stat, index) => `
-        <div class="stat-item flex flex-col items-center" data-aos="fade-up" data-aos-delay="${500 + index * 100}">
+        <div class="stat-item flex flex-col items-center">
             <div class="relative w-[140px] h-[140px] aspect-square  mb-2">
                 <canvas id="stat-canvas-${index}"  class="w-full h-full absolute "></canvas>
                 <div class="absolute inset-0 flex items-center justify-center z-10">
@@ -4215,6 +4163,7 @@ function initAbout() {
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                  AOS.refresh();
                     animateCanvasCounter(index, stat.value, stat.unit);
                     animateStatValue(index, stat.value, stat.unit);
                     observer.unobserve(statItem);
@@ -4374,8 +4323,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initPricingSection();
   initContactsSection();
  // initBeforeAfterSliders();
-  initParticles();
-  initScrollAnimations();
+ // initParticles();
+ // initScrollAnimations();
   initVideoModal();
   initWhyUsSection();
   initEco();
@@ -4422,12 +4371,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Refresh AOS after dynamic content
-    window.addEventListener('load', () => {
-        AOS.refresh();
-    });
-
-
+    
 
 // Sélectionne les images pour lightbox, en excluant celles de sections spécifiques (ex. : footer, header, ou avec classe .no-lightbox)
 const images = Array.from(

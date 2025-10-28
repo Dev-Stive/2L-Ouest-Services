@@ -180,7 +180,6 @@ function clearUserCache() {
 function updateAuthMenu(userData) {
   const authContainer = document.querySelector('#auth.chat-toggle-button');
   if (!authContainer) {
-    console.error('Authentication container not found');
     return;
   }
 

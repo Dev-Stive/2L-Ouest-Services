@@ -22,8 +22,8 @@ let firebaseConfigCache = null; // Note : Initialisé à null, mais pourrait êt
 const CONFIG_CACHE_KEY = 'firebaseConfigCache';
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
-export const API_BASE_URL = 'https://twol-ouest-services-pjew.onrender.com/api';
-//export const  API_BASE_URL = 'http://localhost:8000/api';
+//export const API_BASE_URL = 'https://twol-ouest-services-pjew.onrender.com/api';
+export const  API_BASE_URL = 'http://localhost:8000/api';
 export const USER_CACHE_KEY = 'userDataCache';
 
 let isShowingErrorModal = false;
@@ -401,7 +401,6 @@ export async function checkNetwork(options = {}) {
         timestamp: Date.now()
       };
 
-      // Cache le succès (5min TTL)
       networkStatusCache = result;
       console.log(`✅ Serveur disponible pour ${context} (temps: ${Math.round(responseTime)}ms, tentative ${attempt})`);
       return result;
@@ -511,12 +510,7 @@ export async function monitorBackend(options = {}) {
       if (networkStatus.backendConnected) {
         console.log('✅ Backend disponible après cold start');
         await showNotification('Connexion au serveur rétablie !', 'success');
-        logError({
-          context,
-          errorId,
-          message: 'Serveur reconnecté avec succès',
-          details: { retryCount, duration: Date.now() - pollingStartTime }
-        });
+       
         stopMonitoring();
       } else {
         throw new Error('Serveur inaccessible');
@@ -2688,11 +2682,6 @@ export function openLightbox(images, initialIndex = 0, captions = '') {
   });
 
   firstFocusable?.focus();
-
-  // Refresh AOS si disponible
-  if (typeof AOS !== 'undefined') {
-    setTimeout(() => AOS.refresh(), 100);
-  }
 
   // Cleanup on remove
   const observer = new MutationObserver(() => {

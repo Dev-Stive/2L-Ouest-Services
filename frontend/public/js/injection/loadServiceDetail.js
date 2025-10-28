@@ -227,7 +227,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         ];
         
         galleryEl.innerHTML = images.map((img, idx) => `
-            <div class="service-image-item relative overflow-hidden rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:scale-102 bg-gray-100 dark:bg-gray-800 hover:shadow-[0_8px_30px_rgba(37,99,235,0.2)]" data-aos="fade-up" data-aos-delay="${idx * 100}">
+            <div class="service-image-item relative overflow-hidden rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:scale-102 bg-gray-100 dark:bg-gray-800 hover:shadow-[0_8px_30px_rgba(37,99,235,0.2)]" >
                 <img src="${img.url}" alt="${img.description || service.name}" 
                      class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                      loading="${idx === 0 ? 'eager' : 'lazy'}"
@@ -410,16 +410,10 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         });
     });
 
-    // 10. Initialisation des animations
-    if (typeof AOS !== 'undefined') {
-        setTimeout(() => AOS.refresh(), 500);
-    }
-
+    
     // 11. Mise à jour de la sidebar
     renderServicesSidebar(allServices);
 
-    // 12. Scroll smooth vers le haut
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     console.log('Service detail rendered professionally:', service.name);
 }

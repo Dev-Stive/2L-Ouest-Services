@@ -219,7 +219,6 @@ function updateContentLayout() {
 
     contentMain.style.transition = 'margin-left 0.5s ease-in-out, margin-right 0.5s ease-in-out, width 0.5s ease-in-out, padding 0.5s ease-in-out, border-radius 0.5s ease-in-out';
     
-    contentMain.classList.remove('rounded-l-3xl', 'rounded-r-3xl', 'rounded-3xl');
     contentMain.style.padding = '0';
     contentMain.style.border = 'none';
 
@@ -254,15 +253,6 @@ function updateContentLayout() {
         
         contentMain.classList.add('rounded-3xl');
 
-        if (leftSidebarOpen && !rightSidebarOpen) {
-            contentMain.classList.add('rounded-l-3xl');
-            contentMain.classList.remove('rounded-r-3xl');
-        } else if (rightSidebarOpen && !leftSidebarOpen) {
-            contentMain.classList.add('rounded-r-3xl');
-            contentMain.classList.remove('rounded-l-3xl');
-        } else if (leftSidebarOpen && rightSidebarOpen) {
-            contentMain.classList.add('rounded-l-3xl', 'rounded-r-3xl');
-        }
     }
 
     if (availableWidth < 800) {

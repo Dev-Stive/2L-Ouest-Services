@@ -439,8 +439,15 @@ async function initializeApp() {
       return false;
     }
 
+    
     if (typeof AOS !== 'undefined') {
-      AOS.init();
+      AOS.init({
+        once: true,
+        mirror: false,
+        duration: 800,
+        easing: 'ease-in-out',
+        offset: 100,
+      });
     }
 
     for (const module of Object.values(Api).filter(m => m.init)) {
