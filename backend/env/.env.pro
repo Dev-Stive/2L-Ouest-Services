@@ -3,7 +3,7 @@ NODE_ENV=production
 PORT=8000
 
 # URL du frontend pour la configuration CORS
-FRONTEND_URL=https://ll-ouest-services.netlify.app
+FRONTEND_URL=https://ll-ouest-service.netlify.app
 
 # JWT (JSON Web Token)
 JWT_SECRET=68fd08297e0bdc1bd282e74ac64920e069d8b427816afc83766c34729e145322
