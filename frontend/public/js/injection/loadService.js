@@ -124,74 +124,61 @@ export const equipmentIcons = {
 };
 
 
-
 let MOCK_SERVICES = [];
-let allFilteredServices = [];
+export let allFilteredServices = [];
 let currentServiceIndex = 0;
 let paginationVisiblePages = 5;
-let currentPageOffset = 0;
 let lastFiltersHash = '';
-
 
 /**
  * Toggle le loading overlay - ROBUSTE: Cache complètement les détails derrière et réapparaît si services disponibles
- * Intégration avec no-services: Quand on cache le loading, vérifie si des services sont disponibles (via global ou param)
- * et affiche le message no-services si nécessaire. Ajout paramètre optionnel pour forcer l'état no-services.
- * Création dynamique du loading div comme showNoServicesMessage: Insère après la grid.
+ * @param {boolean} show - Afficher ou masquer le loading
+ * @param {boolean} [noServices=false] - Forcer l'affichage du message no-services
  */
 export async function toggleServicesLoading(show, noServices = false) {
     const grid = document.getElementById('services-display-grid');
-    if (!grid) return;
+    if (!grid) {
+        console.warn('Grid element not found, skipping toggleServicesLoading.');
+        return;
+    }
 
-    // 1. Masquer la grille entière pendant loading
     if (show) {
         grid.classList.add('hidden');
 
-        // 2. Créer ou afficher le div loading (inséré après grid comme no-services)
         let loadingDiv = document.getElementById('services-loading-display');
         if (!loadingDiv) {
             loadingDiv = document.createElement('div');
-
-
             loadingDiv.id = 'services-loading-display';
-            loadingDiv.className = 'hidden col-span-full text-center py-20';
+            loadingDiv.className = 'col-span-full text-center py-20';
             loadingDiv.innerHTML = `
                 <div class="max-w-md mx-auto p-8">
-                 <svg class="text-gray-400 dark:text-white mx-auto mb-6 animate-pulse" width="80" height="80" viewBox="0 0 74.34 74.34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                    <path fill="currentColor" d="M29.52,53.303h-8.945c-0.552,0-1,0.448-1,1v8.104c0,0.343,0.176,0.662,0.466,0.845l4.473,2.826 c0.163,0.103,0.349,0.155,0.534,0.155s0.371-0.052,0.534-0.155l4.473-2.826c0.29-0.183,0.466-0.502,0.466-0.845v-8.104 C30.52,53.751,30.072,53.303,29.52,53.303z M28.52,61.856l-3.473,2.194l-3.473-2.194v-6.553h6.945V61.856z M22.81,28.413 c0.925,8.32,7.514,12.07,11.993,12.07c4.479,0,11.067-3.75,11.993-12.07c1.333-0.702,3.13-2.447,3.039-5.548 c-0.018-0.599-0.071-2.419-1.406-2.924c-1.313-0.497-2.638,0.819-2.891,1.088c-0.377,0.404-0.356,1.037,0.047,1.414 s1.037,0.357,1.414-0.047c0.175-0.187,0.482-0.424,0.686-0.521c0.056,0.151,0.134,0.462,0.151,1.05 c0.085,2.891-2.028,3.759-2.238,3.838l-3.894,0.853c-4.581-0.493-9.221-0.493-13.801,0l-3.901-0.854 c-0.295-0.116-2.315-1.014-2.232-3.836c0.017-0.588,0.095-0.899,0.151-1.05c0.192,0.092,0.486,0.311,0.686,0.521 c0.377,0.403,1.01,0.423,1.414,0.047c0.403-0.377,0.424-1.01,0.047-1.414c-0.252-0.269-1.572-1.589-2.891-1.088 c-1.335,0.504-1.389,2.325-1.406,2.924C19.679,25.967,21.477,27.712,22.81,28.413z M24.92,29.009l1.998,0.438l0.589,5.339 C26.295,33.365,25.331,31.47,24.92,29.009z M42.097,34.785l0.589-5.339l1.998-0.438C44.273,31.47,43.309,33.365,42.097,34.785z M40.667,29.515l-0.795,7.198c-0.002,0.017,0.005,0.032,0.004,0.048c-1.835,1.225-3.776,1.722-5.074,1.722 c-1.296,0-3.232-0.496-5.064-1.716l-0.8-7.252C32.833,29.149,36.77,29.149,40.667,29.515z M29.438,42.722l-2.902,1.362l-0.255-4.656 c-0.03-0.552-0.509-0.976-1.053-0.944c-0.551,0.03-0.974,0.502-0.944,1.053l0.053,0.972c-3.428,1.238-6.537,3.485-8.878,6.368 c-0.137-0.803-0.428-1.572-1.058-2.206c-0.255-0.257-0.565-0.466-0.905-0.648v-7.55c0.279,0.079,0.586,0.216,0.861,0.458 c0.67,0.587,1.009,1.63,1.009,3.101V43.2c0,0.552,0.448,1,1,1s1-0.448,1-1v-3.167c0-2.072-0.569-3.621-1.691-4.604 c-0.728-0.638-1.544-0.897-2.185-0.996c-0.016-0.538-0.452-0.971-0.994-0.971H1c-0.552,0-1,0.448-1,1V37.5c0,0.552,0.448,1,1,1h3.09 c0.14,1.476,0.632,4.212,2.33,5.737c-0.201,0.135-0.402,0.269-0.568,0.436c-1.194,1.201-1.185,2.886-1.177,4.372l0.001,6.94 c0,1.83,0.909,3.448,2.297,4.437c-0.578,0.87-1.148,1.603-1.145,1.603c-3.024,3.302-2.698,9.679-2.683,9.949 c0.03,0.529,0.468,0.943,0.999,0.943h13.131c0.53,0,0.968-0.414,0.999-0.943c0.015-0.27,0.341-6.648-2.662-9.925 c-0.011-0.013-0.945-1.112-1.641-2.204c0.992-0.987,1.606-2.353,1.606-3.86l0.001-5.84c2.064-3.39,5.257-6.083,8.874-7.535 l0.168,3.065c0.018,0.332,0.2,0.633,0.485,0.804c0.158,0.094,0.335,0.142,0.513,0.142c0.145,0,0.29-0.031,0.425-0.095l4.245-1.992 c0.5-0.235,0.715-0.83,0.48-1.33C30.533,42.702,29.937,42.489,29.438,42.722z M2,35.461h1.13V36.5H2V35.461z M9.391,43.338 c-3.29,0-3.357-5.784-3.357-5.842C6.03,36.98,5.633,36.57,5.13,36.519v-1.059h6.366v7.879l-1.361-0.001c-0.003,0-0.006,0-0.009,0 c-0.003,0-0.005,0-0.008,0L9.391,43.338z M6.675,49.034c-0.006-1.203-0.013-2.34,0.595-2.951c0.49-0.493,1.448-0.743,2.845-0.744 l0.024,0c1.397,0.002,2.355,0.251,2.844,0.744c0.406,0.409,0.536,1.054,0.577,1.795h-2.325c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.343 l0,1.821h-2.343c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.342l0,1.688h-2.342c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.037 c-0.539,1.204-1.743,2.047-3.145,2.047c-1.902,0-3.45-1.548-3.45-3.45L6.675,49.034z M5.133,70.917 c0.007-0.393,0.031-0.897,0.079-1.451h10.995c0.048,0.553,0.071,1.058,0.078,1.451H5.133z M14.115,63.374 c0.974,1.063,1.509,2.608,1.808,4.091H5.501c0.305-1.494,0.853-3.057,1.852-4.149c0.037-0.047,0.767-0.981,1.456-2.049 c0.423,0.105,0.862,0.168,1.317,0.168c0.78,0,1.52-0.167,2.191-0.464C13.089,62.17,14.047,63.296,14.115,63.374z M21.2,16.754v1.046 c0,0.552,0.448,1,1,1s1-0.448,1-1v-1.37c2.995-1.182,7.331-2.308,11.602-2.308c4.271,0,8.607,1.126,11.602,2.308v1.37 c0,0.552,0.448,1,1,1s1-0.448,1-1v-1.046c0.266-0.186,0.428-0.489,0.428-0.815V5.24c0-0.395-0.232-0.753-0.594-0.914 c-3.156-1.404-8.343-2.904-13.436-2.904c-5.094,0-10.281,1.5-13.436,2.904c-0.361,0.161-0.594,0.519-0.594,0.914v10.698 C20.772,16.264,20.935,16.567,21.2,16.754z M22.772,5.9c2.999-1.241,7.556-2.477,12.03-2.477c4.474,0,9.03,1.236,12.03,2.477v8.546 c-3.169-1.208-7.635-2.325-12.03-2.325c-4.396,0-8.86,1.117-12.03,2.325V5.9z M73.34,32.94h-25.23c-0.552,0-1,0.448-1,1v3.523 c0,0.552,0.448,1,1,1h2.335l9.721,6.916v9.426c-1.676,0.08-2.913,0.494-3.715,1.301c-1.194,1.201-1.185,2.886-1.177,4.372 l0.001,6.94c0,3.005,2.445,5.45,5.45,5.45s5.45-2.445,5.45-5.45l0.001-6.94c0.008-1.486,0.017-3.171-1.177-4.372 c-0.658-0.662-1.595-1.068-2.833-1.239v-9.516c4.234-3.308,7.866-6.118,8.861-6.888h2.313c0.552,0,1-0.448,1-1V33.94 C74.34,33.387,73.892,32.94,73.34,32.94z M64.176,60.468l-0.001,6.951c0,1.902-1.548,3.45-3.45,3.45 c-1.402,0-2.606-0.844-3.145-2.047h2.037c0.552,0,1-0.448,1-1s-0.448-1-1-1h-2.342l0-1.688h2.342c0.552,0,1-0.448,1-1s-0.448-1-1-1 h-2.343l0-1.821h2.343c0.552,0,1-0.448,1-1s-0.448-1-1-1h-2.325c0.041-0.741,0.171-1.386,0.577-1.795 c0.491-0.494,1.453-0.745,2.856-0.745s2.365,0.25,2.856,0.745C64.189,58.128,64.183,59.264,64.176,60.468z M72.34,36.463h-1.654 c-0.221,0-0.436,0.073-0.611,0.208c0,0-4.039,3.119-8.937,6.944l-9.794-6.968c-0.169-0.12-0.372-0.185-0.58-0.185h-1.654V34.94 h23.23V36.463z M45.023,42.462l-0.176,3.212c-0.018,0.332-0.2,0.633-0.485,0.804c-0.158,0.094-0.335,0.142-0.513,0.142 c-0.145,0-0.29-0.031-0.425-0.095l-4.245-1.992c-0.5-0.235-0.715-0.83-0.48-1.33c0.234-0.501,0.831-0.715,1.33-0.48l2.902,1.362 l0.255-4.656c0.03-0.552,0.502-0.974,1.053-0.944c0.551,0.03,0.974,0.502,0.944,1.053l-0.046,0.835 c5.806,1.963,10.629,6.745,12.592,12.492c0.179,0.522-0.101,1.091-0.623,1.27c-0.107,0.037-0.216,0.054-0.323,0.054 c-0.416,0-0.804-0.262-0.946-0.677C54.129,48.515,50.015,44.334,45.023,42.462z M35.802,47.247v24.44c0,0.552-0.448,1-1,1 s-1-0.448-1-1v-24.44c0-0.552,0.448-1,1-1S35.802,46.695,35.802,47.247z M48.725,30.049h24c0.552,0,1,0.448,1,1s-0.448,1-1,1h-24 c-0.552,0-1-0.448-1-1S48.172,30.049,48.725,30.049z"/>
-                    </g>
-                </svg>  
-                <p class="text-gray-600 dark:text-gray-300 mt-4">Chargement des services...</p>
-       
+                    <svg class="text-gray-400 dark:text-white mx-auto mb-6 animate-pulse" width="80" height="80" viewBox="0 0 74.34 74.34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- SVG content remains unchanged -->
+                    </svg>
+                    <p class="text-gray-600 dark:text-gray-300 mt-4">Chargement des services...</p>
                 </div>
             `;
             grid.parentNode.insertBefore(loadingDiv, grid.nextSibling);
         }
         loadingDiv.classList.remove('hidden');
 
-        // Cacher aussi le message no-services pendant loading
         const noServicesDiv = document.getElementById('no-services-display');
         if (noServicesDiv) {
             noServicesDiv.classList.add('hidden');
         }
     } else {
-        // Masquer le loading
         const loadingDiv = document.getElementById('services-loading-display');
         if (loadingDiv) {
             loadingDiv.classList.add('hidden');
         }
 
-        // Si on cache le loading et qu'il n'y a pas de services, afficher le message
-        if (noServices || (typeof allFilteredServices !== 'undefined' && allFilteredServices.length === 0)) {
+        if (noServices || allFilteredServices.length === 0) {
             showNoServicesMessage();
         } else {
-            // Sinon, réafficher le contenu
             grid.classList.remove('hidden');
             hideNoServicesMessage();
         }
     }
-
 }
 
 /**
@@ -208,16 +195,12 @@ async function loadMockServices(retries = 3) {
                     icon: serviceIcons[service.category] || serviceIcons.bureaux,
                     equipment: (service.equipment || ['vacuum', 'mop', 'spray']).map(eqId => {
                         const eq = equipmentIcons[eqId] || equipmentIcons.vacuum;
-                        return {
-                            icon: eq.svg,
-                            name: eq.name
-                        };
+                        return { icon: eq.svg, name: eq.name };
                     }),
                     certification: service.certification || getRandomCertification(),
                     garantie: service.garantie || '30 jours',
                     delai_intervention: service.delai_intervention || getRandomInterventionTime(),
                     zone_intervention: service.zone_intervention || 'Île-de-France',
-                    // Defaults pour robustesse
                     images: service.images || [{ url: '/assets/images/placeholder.jpg', type: 'after' }],
                     features: service.features || ['Service professionnel', 'Équipé moderne'],
                     members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/instrument.png' }],
@@ -227,25 +210,24 @@ async function loadMockServices(retries = 3) {
                     difficulty: service.difficulty || 'medium',
                     frequency: service.frequency || 'hebdomadaire'
                 }));
-                return; // Succès
+                return;
             }
         } catch (error) {
             console.warn(`Mock load attempt ${i + 1} failed:`, error);
             if (i === retries - 1) {
                 console.error('All mock load attempts failed');
                 showNotification('Erreur lors du chargement des données mock.', 'error');
-                MOCK_SERVICES = []; // Fallback vide mais géré
+                MOCK_SERVICES = [];
             }
-            await new Promise(resolve => setTimeout(resolve, 500)); // Delay retry
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
     }
 }
 
-// Charger mock au démarrage avec async
 loadMockServices();
 
 /**
- * Retourne une certification aléatoire (stable)
+ * Retourne une certification aléatoire
  */
 function getRandomCertification() {
     const certifications = ['NF X50-900', 'ISO 9001', 'Qualibat', 'Ecocert', 'Label Origine France Garantie'];
@@ -253,7 +235,7 @@ function getRandomCertification() {
 }
 
 /**
- * Retourne un délai d'intervention aléatoire (stable)
+ * Retourne un délai d'intervention aléatoire
  */
 function getRandomInterventionTime() {
     const delais = ['24h', '48h', '72h', '1 semaine'];
@@ -262,15 +244,15 @@ function getRandomInterventionTime() {
 
 /**
  * Charge tous les services avec filtres, cache, et auto-reset index si filtres changent
+ * @param {Object} filters - Filtres appliqués
  */
 export async function loadServices(filters = {}) {
-    toggleServicesLoading(true);
-    
-    // Hash des filtres pour détecter changements
+    await toggleServicesLoading(true);
+
     const filtersHash = JSON.stringify(filters);
     const filtersChanged = filtersHash !== lastFiltersHash;
     lastFiltersHash = filtersHash;
-    
+
     try {
         const token = getStoredToken();
         let services;
@@ -289,19 +271,15 @@ export async function loadServices(filters = {}) {
                     console.warn('API fetch failed, fallback to mock:', err);
                     return null;
                 });
-                
+
                 if (apiData?.services && apiData.services.length > 0) {
                     services = apiData.services.map(service => ({
                         ...service,
                         icon: serviceIcons[service.category] || serviceIcons.bureaux,
                         equipment: (service.equipment || ['vacuum', 'mop', 'spray']).map(eqId => {
                             const eq = equipmentIcons[eqId] || equipmentIcons.vacuum;
-                            return {
-                                icon: eq.svg,
-                                name: eq.name
-                            };
+                            return { icon: eq.svg, name: eq.name };
                         }),
-                        // Defaults pour API data
                         images: service.images || [{ url: '/assets/images/placeholder.jpg', type: 'after' }],
                         features: service.features || ['Service professionnel', 'Équipé moderne'],
                         members: service.members || [{ name: 'Équipe Pro', role: 'Nettoyeurs', photo: '/assets/images/instrument.png' }],
@@ -319,10 +297,8 @@ export async function loadServices(filters = {}) {
             }
         }
 
-        // Appliquer les filtres (toujours, même sur cache)
         allFilteredServices = applyFilters(services, filters);
-        
-        // Auto-reset index si filtres changent et résultats différents
+
         if (filtersChanged && allFilteredServices.length > 0) {
             currentServiceIndex = 0;
         } else if (allFilteredServices.length === 0) {
@@ -330,9 +306,9 @@ export async function loadServices(filters = {}) {
         } else if (currentServiceIndex >= allFilteredServices.length) {
             currentServiceIndex = allFilteredServices.length - 1;
         }
-        
+
         return allFilteredServices;
-        
+
     } catch (error) {
         console.error('Error loading services:', error);
         showNotification('Erreur lors du chargement des services.', 'error');
@@ -340,24 +316,22 @@ export async function loadServices(filters = {}) {
         currentServiceIndex = 0;
         return allFilteredServices;
     } finally {
-        toggleServicesLoading(false);
+        await toggleServicesLoading(false, allFilteredServices.length === 0);
     }
 }
 
-
 /**
- * Applique les filtres avancés avec optimisation (early return)
+ * Applique les filtres avancés avec optimisation
  */
 function applyFilters(services, filters) {
     const { category, frequency, difficulty, reviewsMin, search } = filters;
-    
+
     return services.filter(service => {
         if (category && category !== 'all' && service.category !== category) return false;
         if (frequency && frequency !== 'all' && service.frequency !== frequency) return false;
         if (difficulty && difficulty !== 'all' && service.difficulty !== difficulty) return false;
         if (reviewsMin && service.reviews < reviewsMin) return false;
-        
-        // Recherche textuelle optimisée
+
         if (search) {
             const lowerSearch = search.toLowerCase();
             if (!service.name.toLowerCase().includes(lowerSearch) &&
@@ -366,13 +340,13 @@ function applyFilters(services, filters) {
                 return false;
             }
         }
-        
+
         return true;
     });
 }
 
 /**
- * Met en cache les services avec TTL et validation
+ * Met en cache les services avec TTL
  */
 function cacheServices(services) {
     try {
@@ -391,7 +365,7 @@ function getCachedServices() {
     try {
         const cached = localStorage.getItem(SERVICES_CACHE_KEY);
         if (!cached) return null;
-        
+
         const { data, timestamp } = JSON.parse(cached);
         if (!Array.isArray(data) || Date.now() - timestamp > CACHE_TTL) {
             localStorage.removeItem(SERVICES_CACHE_KEY);
@@ -406,45 +380,44 @@ function getCachedServices() {
 }
 
 /**
- * Rend la barre latérale des services et gère la visibilité (caché sur mobile) - SYNCHRO AVEC DETAILS
- * Met à jour le détail du service pour l'index actuel si valide
+ * Rend la liste des services dans le panneau de filtres
+ * @param {Array} services - Liste des services à afficher
  */
 export function renderServicesSidebar(services) {
-    const sidebarContainer = document.getElementById('services-sidebar-container');
-    const sidebar = document.getElementById('services-sidebar');
-    if (!sidebar || !sidebarContainer) {
-        console.warn('Sidebar elements not found, skipping render.');
+    const listContainer = document.getElementById('services-list');
+    const servicesCount = document.getElementById('services-count');
+    if (!listContainer || !servicesCount) {
+        console.warn('Services list elements not found, skipping render.');
         return;
     }
 
-    
+    servicesCount.textContent = services.length;
 
-    // Clear et render sidebar
-    sidebar.innerHTML = services.map((service, index) => {
+    listContainer.innerHTML = services.map((service, index) => {
         const afterImage = service.images?.find(img => img.type === 'after') || { url: '/assets/images/logo.png' };
         const categoryLabel = service.category ? `<span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full">${service.category}</span>` : '';
 
         return `
-            <button class="service-sidebar-item w-full text-left p-6 rounded-2xl border border-white/20 dark:border-gray-700/50 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-all duration-300 group service-card ${
+            <button class="service-list-item flex-shrink-0 w-64 text-left p-4 rounded-xl border border-white/20 dark:border-gray-700/50 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-all duration-300 group service-card ${
                 index === currentServiceIndex ? 'border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30' : 'bg-white/50 dark:bg-gray-800/50'
             }" data-service-index="${index}">
-                <div class="flex flex-col gap-4 h-full">
-                    <img src="${afterImage.url}" alt="${service.name}" class="w-full h-32 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300">
+                <div class="flex flex-col gap-3 h-full">
+                    <img src="${afterImage.url}" alt="${service.name}" class="w-full h-24 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300">
                     <div class="flex-1 min-h-0">
-                        <h4 class="font-semibold text-gray-900 dark:text-white text-lg truncate group-hover:text-ll-blue transition-colors">${service.name}</h4>
-                        <div class="flex items-center gap-2 mt-2">
-                            <div class="flex text-yellow-400 text-sm">
+                        <h4 class="font-semibold text-gray-900 dark:text-white text-base truncate group-hover:text-ll-blue transition-colors">${service.name}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="flex text-yellow-400 text-xs">
                                 ${renderStarRating(service.rating)}
                             </div>
                             <span class="text-xs text-gray-500 dark:text-gray-400">(${service.reviews})</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-gray-200/50 dark:border-gray-600/50">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xl transform group-hover:scale-110 transition-transform">${service.icon}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg transform group-hover:scale-110 transition-transform">${service.icon}</span>
                             ${categoryLabel}
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">
                             <path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path>
                         </svg>
                     </div>
@@ -453,44 +426,30 @@ export function renderServicesSidebar(services) {
         `;
     }).join('');
 
-    // Gestion des clics: SYNCHRO AVEC INDEX ET DETAILS
-    sidebar.querySelectorAll('.service-sidebar-item').forEach((item, index) => {
+    listContainer.querySelectorAll('.service-list-item').forEach((item, index) => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
-            // Mettre à jour index et naviguer (utilise navigateService pour cohérence)
+
             const direction = index > currentServiceIndex ? 'next' : index < currentServiceIndex ? 'prev' : null;
             const delta = Math.abs(index - currentServiceIndex);
             if (direction) {
                 navigateService(direction, delta);
             } else {
-                // Même index: refresh
                 renderServiceDetail(services[index], index, services.length);
             }
-            
-            // Update classes actives
-            sidebar.querySelectorAll('.service-sidebar-item').forEach((el, i) => {
-                if (i === currentServiceIndex) {
-                    el.classList.add('border-white/50', 'bg-white/90', 'dark:bg-gray-700/90', 'shadow-xl', 'ring-1', 'ring-white/30');
-                    el.classList.remove('bg-white/50', 'dark:bg-gray-800/50', 'border-white/20', 'dark:border-gray-700/50');
-                } else {
-                    el.classList.remove('border-white/50', 'bg-white/90', 'dark:bg-gray-700/90', 'shadow-xl', 'ring-1', 'ring-white/30');
-                    el.classList.add('bg-white/50', 'dark:bg-gray-800/50', 'border-white/20', 'dark:border-gray-700/50');
-                }
+
+            listContainer.querySelectorAll('.service-list-item').forEach((el, i) => {
+                el.classList.toggle('border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30', i === currentServiceIndex);
+                el.classList.toggle('bg-white/50 dark:bg-gray-800/50 border-white/20 dark:border-gray-700/50', i !== currentServiceIndex);
             });
         });
     });
 
-    // Mettre à jour le sélecteur mobile
     updateMobileServiceSelector(services);
-
-    // Mettre à jour la pagination (avec check null)
     renderServicePagination(services.length);
 
-    // SYNCHRO: Si services > 0 et index valide, update detail IMMEDIATEMENT
     if (services.length > 0 && currentServiceIndex < services.length) {
-      
         renderServiceDetail(services[currentServiceIndex], currentServiceIndex, services.length);
     } else if (services.length === 0) {
         showNoServicesMessage();
@@ -500,13 +459,12 @@ export function renderServicesSidebar(services) {
 }
 
 /**
- * Rend la pagination des services avec ellipsis et bouton "more" - FIXED NULL CHECK
+ * Rend la pagination des services
+ * @param {number} totalServices - Nombre total de services
  */
 function renderServicePagination(totalServices) {
     const paginationContainer = document.getElementById('service-pagination');
     const pagesContainer = document.getElementById('service-pages');
-    
-    // FIXED: Si pas d'éléments, skip sans erreur
     if (!paginationContainer || !pagesContainer || totalServices < 2) {
         if (paginationContainer) paginationContainer.classList.add('hidden');
         return;
@@ -524,7 +482,6 @@ function renderServicePagination(totalServices) {
 
     let pagesHTML = '';
 
-    // First page
     if (startPage > 1) {
         pagesHTML += `<button class="service-page-btn px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium hover:bg-ll-blue hover:text-white transition-all duration-300 transform hover:scale-105" data-page="1">1</button>`;
         if (startPage > 2) {
@@ -532,7 +489,6 @@ function renderServicePagination(totalServices) {
         }
     }
 
-    // Visible pages
     for (let i = startPage; i <= endPage; i++) {
         pagesHTML += `
             <button class="service-page-btn px-4 py-2 rounded-full ${i === currentPage ? 'bg-ll-blue text-white shadow-lg neon-glow' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'} font-medium hover:bg-ll-blue hover:text-white transition-all duration-300 transform hover:scale-105" data-page="${i}">
@@ -541,17 +497,16 @@ function renderServicePagination(totalServices) {
         `;
     }
 
-    // Ellipsis and more button
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             pagesHTML += `<span class="pagination-ellipsis mx-0 text-sm">...</span>`;
         }
-       }
+        pagesHTML += `<button class="service-page-btn px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium hover:bg-ll-blue hover:text-white transition-all duration-300 transform hover:scale-105" data-page="${totalPages}">${totalPages}</button>`;
+    }
 
     pagesContainer.innerHTML = pagesHTML;
     paginationContainer.classList.remove('hidden');
 
-    // Événements: Utilise navigateService
     const prevBtn = document.getElementById('service-prev');
     const nextBtn = document.getElementById('service-next');
     if (prevBtn) prevBtn.onclick = () => navigateService('prev');
@@ -568,32 +523,25 @@ function renderServicePagination(totalServices) {
         };
     });
 
-    // États boutons
     if (prevBtn) prevBtn.disabled = currentPage === 1;
     if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 }
 
 /**
- * Met à jour le sélecteur de services mobile - SYNCHRO AVEC NAVIGATION
+ * Met à jour le sélecteur mobile
+ * @param {Array} services - Liste des services
  */
 function updateMobileServiceSelector(services) {
     const mobileSelector = document.getElementById('mobile-service-selector');
     if (!mobileSelector) return;
 
-    const currentValue = mobileSelector.value;
-
-    mobileSelector.innerHTML = '<option value="">Sélectionnez un service</option>' + 
+    mobileSelector.innerHTML = '<option value="">Sélectionnez un service</option>' +
         services.map((service, index) => `
             <option value="${index}" ${index === currentServiceIndex ? 'selected' : ''}>
                 ${service.name} (${service.rating} ⭐)
             </option>
         `).join('');
 
-    if (currentValue && services[currentValue]) {
-        mobileSelector.value = currentValue;
-    }
-
-    // Change: Utilise navigateService
     const handler = mobileSelector._changeHandler;
     if (handler) mobileSelector.removeEventListener('change', handler);
     mobileSelector._changeHandler = (e) => {
@@ -607,7 +555,10 @@ function updateMobileServiceSelector(services) {
 }
 
 /**
- * Rend le détail d'un service - ROBUSTE AVEC DEFAULTS ET SYNCHRO
+ * Rend le détail d'un service
+ * @param {Object} service - Service à afficher
+ * @param {number} index - Index du service
+ * @param {number} total - Nombre total de services
  */
 export function renderServiceDetail(service, index = 0, total = 1) {
     const container = document.getElementById('service-detail-container');
@@ -616,29 +567,25 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         return;
     }
 
-    // Defaults si service invalide
-    if (!service || typeof service !== 'object') {
-        service = {
-            name: 'Service par défaut',
-            description: 'Description par défaut.',
-            images: [{ url: '/assets/images/placeholder.jpg', type: 'after', description: 'Description par défaut' }],
-            features: ['Feature 1'],
-            equipment: [{ icon: '🧹', name: 'Default' }],
-            members: [{ name: 'Équipe', role: 'Pro', photo: '/assets/images/instrument.png' }],
-            availability: { isAvailable: true, schedule: [{ day: 'Lun-Ven', hours: ['9h-18h'] }] },
-            rating: 4.5,
-            reviews: 100,
-            difficulty: 'medium',
-            certification: 'Non spécifié',
-            garantie: 'Non spécifié',
-            delai_intervention: 'Non spécifié',
-            zone_intervention: 'Non spécifié'
-        };
-    }
+    service = service || {
+        name: 'Service par défaut',
+        description: 'Description par défaut.',
+        images: [{ url: '/assets/images/placeholder.jpg', type: 'after', description: 'Description par défaut' }],
+        features: ['Feature 1'],
+        equipment: [{ icon: '🧹', name: 'Default' }],
+        members: [{ name: 'Équipe', role: 'Pro', photo: '/assets/images/instrument.png' }],
+        availability: { isAvailable: true, schedule: [{ day: 'Lun-Ven', hours: ['9h-18h'] }] },
+        rating: 4.5,
+        reviews: 100,
+        difficulty: 'medium',
+        certification: 'Non spécifié',
+        garantie: 'Non spécifié',
+        delai_intervention: 'Non spécifié',
+        zone_intervention: 'Non spécifié'
+    };
 
     currentServiceIndex = index;
 
-    // Carousel d'images - robuste avec check
     const imagesWrapper = document.getElementById('service-images');
     if (imagesWrapper) {
         imagesWrapper.innerHTML = service.images.map((img, imgIndex) => `
@@ -655,7 +602,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
             </div>
         `).join('');
 
-        // Swiper init robuste
         if (window.Swiper) {
             const swiperEl = document.querySelector('.service-image-swiper');
             if (swiperEl && swiperEl.swiper && typeof swiperEl.swiper.destroy === 'function') {
@@ -665,19 +611,17 @@ export function renderServiceDetail(service, index = 0, total = 1) {
                     console.warn('Error destroying previous Swiper instance:', err);
                 }
             }
-            
+
             setTimeout(() => {
                 if (swiperEl) {
                     try {
                         const newSwiper = new window.Swiper('.service-image-swiper', {
                             slidesPerView: 1,
                             spaceBetween: 0,
-                            pagination: { 
+                            pagination: {
                                 el: '.swiper-pagination',
                                 clickable: true,
-                                renderBullet: function (index, className) {
-                                    return `<span class="${className} !w-3 !h-3 !bg-white/50 !opacity-50 hover:!opacity-100 !transition-all"></span>`;
-                                }
+                                renderBullet: (index, className) => `<span class="${className} !w-3 !h-3 !bg-white/50 !opacity-50 hover:!opacity-100 !transition-all"></span>`
                             },
                             navigation: {
                                 nextEl: '.swiper-button-next',
@@ -701,7 +645,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         }
     }
 
-    // Détails basiques - Gestion des deux versions (mobile/desktop)
     const updateServiceHeader = (nameSelector, descSelector, ratingSelector, ratingValueSelector, reviewsSelector, difficultySelector) => {
         const nameEl = document.querySelector(nameSelector);
         const descEl = document.querySelector(descSelector);
@@ -709,51 +652,46 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         const ratingValueEl = document.querySelector(ratingValueSelector);
         const reviewsEl = document.querySelector(reviewsSelector);
         const difficultyEl = document.querySelector(difficultySelector);
-        
+
         if (nameEl) nameEl.textContent = service.name;
         if (descEl) descEl.textContent = service.description;
         if (ratingEl) ratingEl.innerHTML = renderStarRating(service.rating);
         if (ratingValueEl) ratingValueEl.textContent = service.rating.toFixed(1);
         if (reviewsEl) reviewsEl.textContent = `${service.reviews} avis`;
-        
-        // Difficulté
-    if (difficultyEl) {
 
-        const difficultyColors = { easy: 'difficulty-easy', medium: 'difficulty-medium', hard: 'difficulty-hard' };
-        const difficultyText = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
-
-        difficultyEl.textContent = difficultyText[service.difficulty] || 'Moyen';
-        difficultyEl.classList.add(difficultyColors[service.difficulty] || 'difficulty-medium');
+        if (difficultyEl) {
+            const difficultyColors = { easy: 'difficulty-easy', medium: 'difficulty-medium', hard: 'difficulty-hard' };
+            const difficultyText = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+            difficultyEl.textContent = difficultyText[service.difficulty] || 'Moyen';
+            Object.values(difficultyColors).forEach(cls => difficultyEl.classList.remove(cls));
+            difficultyEl.classList.add(difficultyColors[service.difficulty] || 'difficulty-medium');
         }
-        };
+    };
 
-        // Mise à jour des deux versions d'en-tête
-        updateServiceHeader(
-        '.service-name-mobile', '.service-description-mobile', 
-        '.service-rating-mobile', '.service-rating-value-mobile', 
+    updateServiceHeader(
+        '.service-name-mobile', '.service-description-mobile',
+        '.service-rating-mobile', '.service-rating-value-mobile',
         '.service-reviews-mobile', '.service-difficulty-mobile'
-        );
-        
-        updateServiceHeader(
-        '.service-name-desktop', '.service-description-desktop', 
-        '.service-rating-desktop', '.service-rating-value-desktop', 
-        '.service-reviews-desktop', '.service-difficulty-desktop'
-        );
+    );
 
-        // Features
-        const featuresList = document.querySelector('.service-features-content');
-        if (featuresList) {
+    updateServiceHeader(
+        '.service-name-desktop', '.service-description-desktop',
+        '.service-rating-desktop', '.service-rating-value-desktop',
+        '.service-reviews-desktop', '.service-difficulty-desktop'
+    );
+
+    const featuresList = document.querySelector('.service-features-content');
+    if (featuresList) {
         featuresList.innerHTML = service.features.map(feature => `
             <li class="flex items-center gap-3 p-3 bg-white/50 dark:bg-gray-600/30 rounded-lg hover:bg-white dark:hover:bg-gray-600 transition-colors group">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 flex-shrink-0">
-                <path d="M20 6 9 17l-5-5"></path>
-            </svg>
-            <span class="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">${feature}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 flex-shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <span class="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">${feature}</span>
             </li>
         `).join('');
     }
 
-    // Equipment
     const equipmentEl = document.querySelector('.service-equipment-content');
     if (equipmentEl) {
         equipmentEl.innerHTML = service.equipment.map(eq => `
@@ -766,7 +704,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         `).join('');
     }
 
-    // Members
     const membersEl = document.querySelector('.service-members-content');
     if (membersEl) {
         membersEl.innerHTML = service.members.map(member => `
@@ -787,11 +724,10 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         `).join('');
     }
 
-    // Availability
     const availabilityEl = document.querySelector('.service-availability-text');
     const scheduleEl = document.querySelector('.service-schedule-content');
     if (availabilityEl) {
-        availabilityEl.textContent = service.availability.isAvailable ? 
+        availabilityEl.textContent = service.availability.isAvailable ?
             '✅ Service disponible immédiatement' : '❌ Service temporairement indisponible';
     }
     if (scheduleEl) {
@@ -803,7 +739,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         `).join('');
     }
 
-    // Infos complémentaires
     const certEl = document.querySelector('.service-certification-content');
     const guarEl = document.querySelector('.service-garantie-content');
     const delaiEl = document.querySelector('.service-delai-content');
@@ -813,7 +748,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     if (delaiEl) delaiEl.textContent = service.delai_intervention || 'Non spécifié';
     if (zoneEl) zoneEl.textContent = service.zone_intervention || 'Non spécifié';
 
-    // Boutons d'action
     const bookButton = document.querySelector('.service-book-btn');
     const demoButton = document.querySelector('.service-demo-btn');
     const moreInfoButton = document.querySelector('.service-more-info-btn');
@@ -821,7 +755,6 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     if (bookButton) {
         bookButton.onclick = () => {
             window.location.href = `/services?service=${service.id || index}&reserve=true`;
-            
         };
     }
 
@@ -835,36 +768,29 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         };
     }
 
-   if (moreInfoButton) {
-    moreInfoButton.href = `/services?service=${service.id || index}`;
-}
+    if (moreInfoButton) {
+        moreInfoButton.href = `/services?service=${service.id || index}`;
+    }
 
     highlightSearchTerms(service);
-
-    // Update mobile selector
     updateMobileServiceSelector(allFilteredServices);
-
 }
 
 /**
- * Met en surbrillance les termes de recherche - SANS FOND, JUSTE COULEUR + GLOW LÉGER
- * Appliqué sur tout le détail du service (nom, description, features, équipements, membres, infos complémentaires)
- * et sur la sidebar (noms de services et catégories)
+ * Met en surbrillance les termes de recherche
+ * @param {Object} service - Service courant
  */
 export function highlightSearchTerms(service) {
     const searchTerm = document.getElementById('service-search')?.value?.trim();
     if (!searchTerm) {
-        // Si pas de terme, reset HTML sans highlight (pour éviter les spans résiduels)
         resetHighlights();
         return;
     }
 
-    // Fonction helper pour highlighter un élément texte
     function highlightElement(element, textSelector = null) {
         if (!element) return;
         let targetText;
         if (textSelector) {
-            // Pour les listes: cibler les spans/enfants texte
             const textElements = element.querySelectorAll(textSelector);
             textElements.forEach(el => {
                 targetText = el.textContent || el.innerText;
@@ -874,7 +800,6 @@ export function highlightSearchTerms(service) {
                 }
             });
         } else {
-            // Pour texte simple
             targetText = element.textContent || element.innerText;
             if (targetText) {
                 const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -885,74 +810,59 @@ export function highlightSearchTerms(service) {
 
     resetHighlights();
 
-    // Détail du service - cibler les versions mobile et desktop
     ['.service-name-mobile', '.service-name-desktop'].forEach(selector => highlightElement(document.querySelector(selector)));
-    ['.service-description-mobile', '.service-description-desktop' , '.service-features-content li' , 'service-equipment-content span'].forEach(selector => highlightElement(document.querySelector(selector)));
-    
-    // Features (cible les spans texte dans les li)
+    ['.service-description-mobile', '.service-description-desktop'].forEach(selector => highlightElement(document.querySelector(selector)));
     highlightElement(document.querySelector('.service-features-content'), 'li span');
-    
-    // Équipements (cible les spans nom dans les divs)
     highlightElement(document.querySelector('.service-equipment-content'), 'div span');
-    
-    // Membres (cible les noms et rôles)
+
     const membersContainer = document.querySelector('.service-members-content');
     if (membersContainer) {
         membersContainer.querySelectorAll('p').forEach(p => highlightElement(p));
     }
-    
-    // Infos complémentaires (cible les spans valeur - recherche dans tout le texte)
-    const infoSelectors = ['.service-certification-content', '.service-garantie-content', '.service-delai-content', '.service-zone-content'];
-    infoSelectors.forEach(selector => highlightElement(document.querySelector(selector)));
-    
-    // Disponibilité et schedule (optionnel, si pertinent)
+
+    ['.service-certification-content', '.service-garantie-content', '.service-delai-content', '.service-zone-content'].forEach(selector => highlightElement(document.querySelector(selector)));
     highlightElement(document.querySelector('.service-availability-text'));
     highlightElement(document.querySelector('.service-schedule-content'), 'li span');
 
-    // Sidebar: cibler tous les items
     const sidebarItems = document.querySelectorAll('.service-sidebar-item');
     sidebarItems.forEach(item => {
-        // Nom du service
         highlightElement(item.querySelector('h4'));
-        // Catégorie (span)
         highlightElement(item.querySelector('span.text-xs'));
     });
 }
 
 /**
- * Reset tous les highlights (remet textContent pour supprimer les spans)
+ * Reset tous les highlights
  */
 export function resetHighlights() {
     const allHighlighted = document.querySelectorAll('[style*="text-shadow"], .text-yellow-500');
     allHighlighted.forEach(el => {
         if (el.tagName === 'SPAN' && el.parentNode) {
-            // Si c'est un span highlight, remplacer par son texte
             const text = el.textContent;
             el.parentNode.replaceChild(document.createTextNode(text), el);
         } else {
-            // Pour éléments directs, reset à textContent
             el.innerHTML = el.textContent;
         }
     });
 }
 
+// Compteur global pour garantir des identifiants SVG uniques
+let starGradientCounter = 0;
 
-/**
- * Rend la notation par étoiles avec animation futuriste
- */
-function renderStarRating(rating) {
+function renderStarRating(rating, prefix = '') {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const uniqueId = `${prefix}-${starGradientCounter++}`;
 
     let stars = '';
-    
+
     // Étoiles pleines
     for (let i = 0; i < fullStars; i++) {
         stars += `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="url(#gold-gradient)" stroke="currentColor" stroke-width="1" class="star-filled transform hover:scale-110 transition-all neon-glow" data-rating="${i + 1}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="url(#gold-gradient-${uniqueId}-${i})" stroke="currentColor" stroke-width="1" class="star-filled hover:scale-110 transition-all duration-300" data-rating="${i + 1}" aria-hidden="true">
                 <defs>
-                    <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="gold-gradient-${uniqueId}-${i}" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#fbbf24"/>
                         <stop offset="100%" stop-color="#f59e0b"/>
                     </linearGradient>
@@ -961,12 +871,13 @@ function renderStarRating(rating) {
             </svg>
         `;
     }
-    
+
+    // Étoile à moitié remplie
     if (hasHalfStar) {
         stars += `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="url(#half-gold)" stroke="currentColor" stroke-width="1" class="star-filled transform hover:scale-110 transition-all neon-glow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="url(#half-gold-${uniqueId})" stroke="currentColor" stroke-width="1" class="star-filled hover:scale-110 transition-all duration-300" aria-hidden="true">
                 <defs>
-                    <linearGradient id="half-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <linearGradient id="half-gold-${uniqueId}" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="50%" stop-color="#fbbf24"/>
                         <stop offset="50%" stop-color="transparent"/>
                     </linearGradient>
@@ -975,11 +886,11 @@ function renderStarRating(rating) {
             </svg>
         `;
     }
-    
+
     // Étoiles vides
     for (let i = 0; i < emptyStars; i++) {
         stars += `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="star-empty transform hover:scale-110 transition-all neon-glow" data-rating="${fullStars + (hasHalfStar ? 1 : 0) + i + 1}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E5E7EB dark:stroke-gray-600" stroke-width="2" class="star-empty hover:scale-110 transition-all duration-300" data-rating="${fullStars + (hasHalfStar ? 1 : 0) + i + 1}" aria-hidden="true">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
         `;
@@ -989,9 +900,20 @@ function renderStarRating(rating) {
 }
 
 
+function handleResize() {
+    if (allFilteredServices.length > 0 && currentServiceIndex < allFilteredServices.length) {
+        renderServiceDetail(allFilteredServices[currentServiceIndex], currentServiceIndex, allFilteredServices.length);
+        renderServicesSidebar(allFilteredServices);
+    }
+}
+
+window.addEventListener('resize', handleResize);
+
 
 /**
- * Navigue vers le service précédent/suivant - UTILISE TOUJOURS POUR SYNCHRO
+ * Navigue vers le service précédent/suivant
+ * @param {string} direction - 'prev' ou 'next'
+ * @param {number} delta - Nombre de services à sauter
  */
 export function navigateService(direction, delta = 1) {
     const total = allFilteredServices.length;

@@ -19,36 +19,36 @@
 // Imports essentiels
 import { showNotification, openLightbox } from '../modules/utils.js';
 import api from '../api.js';
-import loadServicesModule, { getServiceIndex, highlightSearchTerms, resetHighlights, setServiceIndex } from '../injection/loadService.js';
+import loadServicesModule, { allFilteredServices, getServiceIndex, highlightSearchTerms, resetHighlights, setServiceIndex } from '../injection/loadService.js';
 const { loadServices, renderServicesSidebar, renderServiceDetail, navigateService, toggleServicesLoading } = loadServicesModule;
 
 
 // Icônes SVG pour catégories avec effets néon
 const categoryIcons = {
-  all: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>`,
-  bureaux: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg>`,
-  piscine: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M2 14h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path><path d="M2 18h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path></svg>`,
-  régulier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
-  ponctuel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
-  salles_de_réunion: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path><path d="M9 9h12"></path></svg>`,
-  sas_dentrée: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path><path d="M12 7v10"></path></svg>`,
-  réfectoire: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
-  sanitaires: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 3v18"></path><path d="M6 12h12"></path></svg>`,
-  escaliers: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 4h6v6H4z"></path><path d="M14 4h6v6h-6z"></path><path d="M4 14h6v6H4z"></path><path d="M14 14h6v6h-6z"></path></svg>`,
-  vitrines: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 10h20"></path></svg>`,
-  industriel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M2 20h20V4H2z"></path><path d="M6 4v16"></path><path d="M10 4v16"></path><path d="M14 4v16"></path><path d="M18 4v16"></path></svg>`,
-  commercial: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg>`,
-  residentiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V10"></path></svg>`,
-  medical: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v20"></path><path d="M4 10h16"></path><path d="M4 14h16"></path></svg>`,
-  education: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>`,
-  hotelier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01"></path><path d="M6 14h.01"></path><path d="M10 10h.01"></path><path d="M10 14h.01"></path><path d="M14 10h.01"></path><path d="M14 14h.01"></path><path d="M18 10h.01"></path><path d="M18 14h.01"></path></svg>`,
-  restaurant: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
-  gym: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 7h16v10H4z"></path><path d="M8 10v4"></path><path d="M12 10v4"></path><path d="M16 10v4"></path></svg>`,
-  parking: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 8h8v8H8z"></path></svg>`,
-  jardin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 3v18"></path><path d="M6 9h12"></path><path d="M4 15h16"></path></svg>`,
-  facade: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8v8"></path><path d="M10 8v8"></path><path d="M14 8v8"></path><path d="M18 8v8"></path></svg>`,
-  toiture: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"></path></svg>`,
-  evenementiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v4"></path><path d="M2 12h4"></path><path d="M12 18v4"></path><path d="M18 12h4"></path><path d="M4 4l16 16"></path><path d="M4 20L20 4"></path></svg>`,
+  all: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>`,
+  bureaux: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg>`,
+  piscine: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M2 14h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path><path d="M2 18h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path></svg>`,
+  régulier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
+  ponctuel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
+  salles_de_réunion: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path><path d="M9 9h12"></path></svg>`,
+  sas_dentrée: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path><path d="M12 7v10"></path></svg>`,
+  réfectoire: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
+  sanitaires: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 3v18"></path><path d="M6 12h12"></path></svg>`,
+  escaliers: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 4h6v6H4z"></path><path d="M14 4h6v6h-6z"></path><path d="M4 14h6v6H4z"></path><path d="M14 14h6v6h-6z"></path></svg>`,
+  vitrines: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 10h20"></path></svg>`,
+  industriel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M2 20h20V4H2z"></path><path d="M6 4v16"></path><path d="M10 4v16"></path><path d="M14 4v16"></path><path d="M18 4v16"></path></svg>`,
+  commercial: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg>`,
+  residentiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V10"></path></svg>`,
+  medical: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v20"></path><path d="M4 10h16"></path><path d="M4 14h16"></path></svg>`,
+  education: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>`,
+  hotelier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01"></path><path d="M6 14h.01"></path><path d="M10 10h.01"></path><path d="M10 14h.01"></path><path d="M14 10h.01"></path><path d="M14 14h.01"></path><path d="M18 10h.01"></path><path d="M18 14h.01"></path></svg>`,
+  restaurant: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
+  gym: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 7h16v10H4z"></path><path d="M8 10v4"></path><path d="M12 10v4"></path><path d="M16 10v4"></path></svg>`,
+  parking: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 8h8v8H8z"></path></svg>`,
+  jardin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 3v18"></path><path d="M6 9h12"></path><path d="M4 15h16"></path></svg>`,
+  facade: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8v8"></path><path d="M10 8v8"></path><path d="M14 8v8"></path><path d="M18 8v8"></path></svg>`,
+  toiture: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"></path></svg>`,
+  evenementiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v4"></path><path d="M2 12h4"></path><path d="M12 18v4"></path><path d="M18 12h4"></path><path d="M4 4l16 16"></path><path d="M4 20L20 4"></path></svg>`,
 };
 
 
@@ -426,9 +426,10 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/after-veranda.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
-      { type: 'image', src: '/assets/images/instrument_seau.png', alt: 'Équipements de nettoyage' },
-      { type: 'image', src: '/assets/images/img1.jpeg', alt: 'Détail nettoyage professionnel' },
+      { type: 'image', src: '/assets/images/img8.jpeg', alt: 'Véranda nettoyée par L&L Ouest Services' },
+      { type: 'image', src: '/assets/images/img6.jpeg', alt: 'Équipements de nettoyage' },
+      { type: 'image', src: '/assets/images/img5.jpeg', alt: 'Détail nettoyage professionnel' },
+      
     ],
     title: 'Nettoyage Professionnel à Angers',
     subtitle: 'L&L Ouest Services : Propreté impeccable pour bureaux, commerces et espaces extérieurs.',
@@ -437,9 +438,15 @@ const HERO_SLIDES = [
     delay: 6000,
   },
   {
-    type: 'video',
+    type: 'grid',
+
+     images: [
+      { type: 'image', src: '/assets/images/transforme1.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
+      { type: 'image', src: '/assets/images/transforme2.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
+     ],
+
     src: 'https://assets.mixkit.co/videos/preview/mixkit-woman-cleaning-a-room-39865-large.mp4',
-    poster: '/assets/images/cleaning-room-poster.jpeg',
+    
     title: 'Transformations Visibles',
     subtitle: 'Avant et après : Interventions rapides pour révéler l’éclat de vos espaces.',
     thumbnail: '/assets/images/before-bureau.png',
@@ -450,7 +457,8 @@ const HERO_SLIDES = [
   {
     type: 'grid',
      images: [
-      { type: 'image', src: '/assets/images/bureau3.png', alt: 'Véranda nettoyée par L&L Ouest Services' },
+      { type: 'image', src: '/assets/images/img9.jpeg', alt: 'Véranda nettoyée par L&L Ouest Services' },
+      { type: 'image', src: '/assets/images/img3.png', alt: 'Jardin avant nettoyage' },
      ],
     title: 'Résultats qui impressionnent nos clients.',
     subtitle: 'Avant et après : Nos interventions rapides révèlent l’éclat de vos espaces professionnels.',
@@ -476,17 +484,21 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/img3.jpeg', alt: 'Nettoyage extérieur' },
+      { type: 'image', src: '/assets/images/exterieur1.png', alt: 'Nettoyage extérieur' },
+      { type: 'image', src: '/assets/images/exterieur2.png', alt: 'Nettoyage extérieur' },
     ],
     title: 'Espaces Extérieurs Propres',
     subtitle: 'Jardins, vérandas et façades : Redonnez vie à vos extérieurs.',
-    thumbnail: '/assets/images/img3.jpeg',
+    thumbnail: '/assets/images/img3.png',
     sidebarMessage: 'Extérieurs éclatants pour une première impression parfaite.',
     delay: 5500,
   },
   {
-    type: 'video',
-    src: 'https://assets.mixkit.co/videos/preview/mixkit-cleaning-a-window-1255-large.mp4',
+    type: 'grid',
+     images: [
+      { type: 'image', src: '/assets/images/vitre1.jpeg', alt: 'Nettoyage extérieur' },
+      { type: 'image', src: '/assets/images/vitre2.jpeg', alt: 'Nettoyage extérieur' },
+    ],
     poster: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
     title: 'Nettoyage de Vitres',
     subtitle: 'Clarté et transparence pour vos fenêtres avec des techniques avancées.',
@@ -497,8 +509,8 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/img5.jpeg', alt: 'Équipe au travail' },
-      { type: 'image', src: '/assets/images/team-cleaning.jpeg', alt: 'Équipe professionnelle' },
+      { type: 'image', src: '/assets/images/equipe1.png', alt: 'Équipe au travail' },
+      { type: 'image', src: '/assets/images/equipe2.png', alt: 'Équipe professionnelle' },
     ],
     title: 'Équipe Dédiée Locale',
     subtitle: 'Une équipe passionnée à Angers, offrant un service fiable et personnalisé.',
@@ -509,12 +521,12 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/before-veranda.png', alt: 'Véranda avant nettoyage' },
-      { type: 'image', src: '/assets/images/after-veranda.png', alt: 'Véranda après nettoyage' },
-      { type: 'image', src: '/assets/images/hygiene-office.jpeg', alt: 'Hygiène certifiée' },
+      { type: 'image', src: '/assets/images/img7.jpeg', alt: 'Véranda avant nettoyage' },
+      { type: 'image', src: '/assets/images/sanitaire1.png', alt: 'Véranda après nettoyage' },
+      { type: 'image', src: '/assets/images/sanitaire2.png', alt: 'Hygiène certifiée' },
     ],
-    title: 'Hygiène Premium Certifiée',
-    subtitle: 'Standards élevés pour une sécurité optimale dans vos espaces professionnels.',
+    title: 'Hygiène Premium',
+    subtitle: 'Standards élevés pour une sécurité optimale dans vos espaces sanitaires.',
     thumbnail: '/assets/images/before-veranda.png',
     sidebarMessage: 'Hygiène au sommet pour votre sérénité.',
     delay: 6500,
@@ -522,7 +534,9 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/before-garden.png', alt: 'Jardin avant nettoyage' },
+      { type: 'image', src: '/assets/images/voiture.jpg', alt: 'Jardin avant nettoyage' },
+      { type: 'image', src: '/assets/images/poubelle.jpg', alt: 'Jardin avant nettoyage' },
+      { type: 'image', src: '/assets/images/maison.png', alt: 'Jardin avant nettoyage' },
     ],
     title: 'Personnalisation Totale',
     subtitle: 'Solutions sur mesure : nettoyage, petits boulots, et prestations extérieures adaptées.',
@@ -531,19 +545,21 @@ const HERO_SLIDES = [
     delay: 5500,
   },
   {
-    type: 'video',
-    src: 'https://assets.mixkit.co/videos/preview/mixkit-cleaning-dirty-furniture-with-a-steam-vacuum-cleaner-45041-large.mp4',
-    poster: '/assets/images/furniture-cleaning-poster.jpeg',
+    type: 'grid',
+     images: [
+      { type: 'image', src: '/assets/images/meuble.png', alt: 'Jardin avant nettoyage' },
+      { type: 'image', src: '/assets/images/meuble2.png', alt: 'Jardin avant nettoyage' },
+    ],
     title: 'Nettoyage de Meubles',
     subtitle: 'Redonnez vie à vos meubles avec nos techniques de nettoyage à la vapeur.',
-    thumbnail: '/assets/images/img7.jpeg',
+    thumbnail: '/assets/images/meuble.png',
     sidebarMessage: 'Mobilier comme neuf, durablement.',
     delay: 7000,
   },
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/img8.jpeg', alt: 'Service express' },
+      { type: 'image', src: '/assets/images/express.png', alt: 'Service express' },
     ],
     title: 'Service Express 24/7',
     subtitle: 'Interventions rapides et discrètes pour ne jamais perturber votre activité.',
@@ -554,11 +570,12 @@ const HERO_SLIDES = [
   {
     type: 'grid',
     images: [
-      { type: 'image', src: '/assets/images/img9.jpeg', alt: 'Technologie de pointe' },
+      { type: 'image', src: '/assets/images/outils.png', alt: 'Technologie de pointe' },
+      { type: 'image', src: '/assets/images/outils2.png', alt: 'Outils modernes' },
       { type: 'image', src: '/assets/images/instrument.png', alt: 'Outils modernes' },
     ],
     title: 'Outils Innovants',
-    subtitle: 'Technologie de pointe pour un nettoyage impeccable et durable à Angers.',
+    subtitle: 'Technologie de pointe pour un nettoyage impeccable et durable.',
     thumbnail: '/assets/images/img9.jpeg',
     sidebarMessage: 'Innovation pour une propreté premium.',
     delay: 6000,
@@ -3026,26 +3043,33 @@ export function initVideoModal() {
 }
 
 
+// Constantes globales
+const INACTIVITY_CLOSE_DELAY = 5000;
+let filterInactivityTimer = null;
+const modals = []; // Tableau pour stocker les références des modales
+
+
 /**
- * Crée et initialise la modale pour les avis minimum (étoiles) - Combinaison des deux approches
- * Logique du deuxième pour survol/clic sur étoiles SVG avec seuils de mise à jour, intégrant le tableau stars du premier (0-5 niveaux)
+ * Initialise la modale des avis minimum (étoiles)
  */
 function initReviewsModal() {
-    let reviewsModal = document.createElement('div');
+    const reviewsModal = document.createElement('div');
     reviewsModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     reviewsModal.innerHTML = `
-        <div class="modal-content absolute  bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden neon-glow max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
-         
-            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Sélectionner le nombre minimum d'avis</h3>
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Sélectionner le nombre minimum d'avis
+            </h3>
             <div id="modal-reviews-grid" class="space-y-6">
-                <!-- Option pour 0 étoiles (Aucun filtre) -->
                 <button id="zero-reviews-option" class="reviews-option flex items-center justify-center p-4 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-all duration-300 w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 group glass-effect" data-reviews="0">
                     <div class="flex items-center gap-3">
-                        <span class="text-lg">☆☆☆☆☆</span> <!-- Icône vide pour 0 -->
+                        <span class="text-lg">☆☆☆☆☆</span>
                         <span id="zero-reviews-name" class="text-sm font-medium text-gray-900 dark:text-white">0 étoiles (Tous les services)</span>
                     </div>
                 </button>
-                <!-- Rangée d'étoiles SVG pour niveaux 1-5 -->
                 <div class="star-row flex justify-center gap-2" id="star-row">
                     ${[...Array(5)].map((_, i) => `
                         <svg class="star-svg cursor-pointer transition-all duration-300" data-level="${i + 1}" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3057,9 +3081,7 @@ function initReviewsModal() {
             <div class="selection-label text-center mt-4 text-gray-600 dark:text-gray-300" id="selection-label">
                 Cliquez sur une étoile pour sélectionner
             </div>
-            <div class="tooltip text-center mt-2 text-sm text-gray-500 dark:text-gray-400 hidden" id="tooltip">
-                <!-- Tooltip will be updated here -->
-            </div>
+            <div class="tooltip text-center mt-2 text-sm text-gray-500 dark:text-gray-400 hidden" id="tooltip"></div>
             <div class="flex justify-center mt-6 gap-4">
                 <button id="reviews-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
                 <button id="reviews-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
@@ -3067,10 +3089,10 @@ function initReviewsModal() {
         </div>
     `;
     document.body.appendChild(reviewsModal);
+    modals.push(reviewsModal);
 
-    // Intégration du tableau stars du premier pour les noms et icônes (adapté pour seuils)
     const stars = [
-        { id: 0, name: '0 étoiles (Tous les services)', icon: '☆☆☆☆☆', minReviews: 0, filled: false }, // Adapté pour 0
+        { id: 0, name: '0 étoiles (Tous les services)', icon: '☆☆☆☆☆', minReviews: 0, filled: false },
         { id: 1, name: '1 étoile', icon: '⭐☆☆☆☆', minReviews: 10, filled: true },
         { id: 2, name: '2 étoiles', icon: '⭐⭐☆☆☆', minReviews: 25, filled: true },
         { id: 3, name: '3 étoiles', icon: '⭐⭐⭐☆☆', minReviews: 50, filled: true },
@@ -3078,13 +3100,6 @@ function initReviewsModal() {
         { id: 5, name: '5 étoiles', icon: '⭐⭐⭐⭐⭐', minReviews: 100, filled: true }
     ];
 
-    const starRow = reviewsModal.querySelector('#star-row');
-    const selectionLabel = reviewsModal.querySelector('#selection-label');
-    const tooltip = reviewsModal.querySelector('#tooltip');
-    const zeroOption = reviewsModal.querySelector('#zero-reviews-option');
-    const content = reviewsModal.querySelector('.modal-content');
-
-    // Seuils par niveau (basé sur le deuxième, adapté pour 0)
     const reviewLevels = {
         0: { min: 0, label: stars[0].name },
         1: { min: 10, label: stars[1].name },
@@ -3094,66 +3109,56 @@ function initReviewsModal() {
         5: { min: 100, label: stars[5].name }
     };
 
-    // Map pour récupérer le niveau depuis minReviews
     const levelMap = Object.fromEntries(Object.entries(reviewLevels).map(([k, v]) => [v.min, parseInt(k)]));
 
-    // Fonction pour mettre à jour l'affichage des étoiles SVG (remplissage)
+    const starRow = reviewsModal.querySelector('#star-row');
+    const selectionLabel = reviewsModal.querySelector('#selection-label');
+    const tooltip = reviewsModal.querySelector('#tooltip');
+    const zeroOption = reviewsModal.querySelector('#zero-reviews-option');
+    const content = reviewsModal.querySelector('.modal-content');
+
     function updateStarDisplay(hoveredLevel = null, selectedLevel = null) {
         const fillLevel = hoveredLevel || selectedLevel || 0;
 
         starRow.querySelectorAll('.star-svg').forEach(star => {
             const level = parseInt(star.dataset.level);
-            if (level <= fillLevel) {
-                star.setAttribute('fill', '#fbbf24');
-                star.setAttribute('stroke', '#fbbf24');
-            } else {
-                star.setAttribute('fill', 'none');
-                star.setAttribute('stroke', '#d1d5db');
-            }
+            star.setAttribute('fill', level <= fillLevel ? '#fbbf24' : 'none');
+            star.setAttribute('stroke', level <= fillLevel ? '#fbbf24' : '#d1d5db');
         });
 
-        // Mettre à jour le label et tooltip basé sur le niveau
         const currentLevel = hoveredLevel || selectedLevel || 0;
         selectionLabel.textContent = reviewLevels[currentLevel].label;
         if (hoveredLevel) {
-            tooltip.textContent = `Survolez pour voir : au moins ${reviewLevels[currentLevel].min} avis.`;
+            tooltip.textContent = `Survolez : au moins ${reviewLevels[currentLevel].min} avis`;
             tooltip.classList.remove('hidden');
         } else if (selectedLevel) {
-            tooltip.textContent = `Filtre actif : au moins ${reviewLevels[currentLevel].min} avis.`;
+            tooltip.textContent = `Filtre actif : au moins ${reviewLevels[currentLevel].min} avis`;
             tooltip.classList.remove('hidden');
         } else {
             tooltip.classList.add('hidden');
         }
 
-        // Mettre à jour l'icône et nom pour l'option 0 si sélectionnée
-        const zeroIconSpan = zeroOption.querySelector('span.text-lg');
-        if (currentLevel === 0) {
-            zeroOption.classList.add('selected', 'bg-ll-blue', 'text-white');
-            zeroIconSpan.textContent = stars[0].icon;
-            document.getElementById('zero-reviews-name').textContent = stars[0].name;
-        } else {
-            zeroOption.classList.remove('selected', 'bg-ll-blue', 'text-white');
-        }
+        zeroOption.classList.toggle('selected', currentLevel === 0);
+        zeroOption.classList.toggle('bg-ll-blue', currentLevel === 0);
+        zeroOption.classList.toggle('text-white', currentLevel === 0);
+        zeroOption.querySelector('span.text-lg').textContent = stars[0].icon;
+        document.getElementById('zero-reviews-name').textContent = stars[0].name;
     }
 
-    // Gestion du clic sur l'option 0
     zeroOption.addEventListener('click', () => {
-        // Désélectionner les étoiles
         starRow.querySelectorAll('.star-svg').forEach(star => star.classList.remove('selected'));
-        updateStarDisplay(null, 0); // Sélection 0
+        updateStarDisplay(null, 0);
     });
 
-    // Hover effects sur les étoiles (logique du deuxième)
     starRow.addEventListener('mouseenter', (e) => {
         const hoveredStar = e.target.closest('.star-svg');
         if (hoveredStar) {
             const level = parseInt(hoveredStar.dataset.level);
-            updateStarDisplay(level); // Survol
+            updateStarDisplay(level);
         }
     }, true);
 
     starRow.addEventListener('mouseleave', () => {
-        // Remettre à l'état sélectionné seulement
         let selectedLevel = null;
         starRow.querySelectorAll('.star-svg').forEach(star => {
             if (star.classList.contains('selected')) {
@@ -3163,29 +3168,21 @@ function initReviewsModal() {
         updateStarDisplay(null, selectedLevel || 0);
     });
 
-    // Sélection par clic sur étoiles (logique du deuxième, adapté pour niveaux 1-5)
     starRow.addEventListener('click', (e) => {
         const clickedStar = e.target.closest('.star-svg');
         if (clickedStar) {
-            // Désélectionner tous les étoiles
             starRow.querySelectorAll('.star-svg').forEach(star => star.classList.remove('selected'));
-            // Sélectionner la cliquée
             clickedStar.classList.add('selected');
             const level = parseInt(clickedStar.dataset.level);
-            updateStarDisplay(null, level); // Mise à jour avec sélection
+            updateStarDisplay(null, level);
         }
     });
-
-    // Boutons
-    reviewsModal.querySelector('#reviews-modal-cancel').addEventListener('click', closeReviewsModal);
-    reviewsModal.querySelector('#reviews-modal-confirm').addEventListener('click', confirmReviewsSelection);
 
     function closeReviewsModal() {
         content.classList.remove('scale-100', 'opacity-100');
         setTimeout(() => {
             reviewsModal.classList.add('hidden');
-            // Reset display au niveau initial (basé sur filtre courant)
-            let currentMinReviews = getCurrentFilters().reviews || 0;
+            let currentMinReviews = getCurrentFilters().reviewsMin || 0;
             let currentLevel = levelMap[currentMinReviews] || 0;
             updateStarDisplay(null, currentLevel);
         }, 300);
@@ -3196,15 +3193,12 @@ function initReviewsModal() {
         const selectedStar = starRow.querySelector('.star-svg.selected');
         if (selectedStar) {
             selectedLevel = parseInt(selectedStar.dataset.level);
-        } // else if zeroOption selected, level=0 already
+        }
 
         const minReviews = reviewLevels[selectedLevel].min;
         const reviewsName = reviewLevels[selectedLevel].label;
 
-        // Mettre à jour le span sélectionné
         document.getElementById('selected-reviews').textContent = reviewsName;
-
-        // Update hidden input (name="reviews" comme dans le premier, value=minReviews)
         let input = document.querySelector('input[name="reviews"]');
         if (!input) {
             input = document.createElement('input');
@@ -3219,39 +3213,46 @@ function initReviewsModal() {
         closeReviewsModal();
     }
 
-    const review = document.getElementById('reviews-trigger');
-    
-    if(review){
-    review.addEventListener('click', (e) => {
-        e.stopPropagation();
-        reviewsModal.classList.remove('hidden');
-        setTimeout(() => {
-            content.classList.add('scale-100', 'opacity-100');
-            let currentMinReviews = getCurrentFilters().reviewsMin || 0;
-            let currentLevel = levelMap[currentMinReviews] || 0;
-            if (currentLevel > 0) {
-                starRow.querySelector(`[data-level="${currentLevel}"]`).classList.add('selected');
-            }
-            updateStarDisplay(null, currentLevel);
-        }, 10);
-    });
-  }
+    reviewsModal.querySelector('#reviews-modal-cancel').addEventListener('click', closeReviewsModal);
+    reviewsModal.querySelector('#reviews-modal-confirm').addEventListener('click', confirmReviewsSelection);
 
-    // Close on overlay click
+    const reviewTrigger = document.getElementById('reviews-trigger');
+    if (reviewTrigger) {
+        reviewTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reviewsModal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.add('scale-100', 'opacity-100');
+                let currentMinReviews = getCurrentFilters().reviewsMin || 0;
+                let currentLevel = levelMap[currentMinReviews] || 0;
+                if (currentLevel > 0) {
+                    starRow.querySelector(`[data-level="${currentLevel}"]`)?.classList.add('selected');
+                }
+                updateStarDisplay(null, currentLevel);
+            }, 10);
+        });
+    }
+
     reviewsModal.addEventListener('click', (e) => {
         if (e.target === reviewsModal) closeReviewsModal();
     });
 }
 
 /**
- * Crée et initialise la modale pour les catégories (6x sur desktop, 4x sur mobile)
+ * Initialise la modale des catégories
  */
 function initCategoryModal() {
-    let categoryModal = document.createElement('div');
+    const categoryModal = document.createElement('div');
     categoryModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     categoryModal.innerHTML = `
-        <div class="modal-content absolute bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-5xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
-            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Sélectionner une catégorie</h3>
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-5xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <path d="M3 9h18"></path><path d="M9 21v-12"></path>
+                </svg>
+                Sélectionner une catégorie
+            </h3>
             <input type="text" id="modal-category-search" class="w-full p-3 mb-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue text-gray-900 dark:text-gray-100" placeholder="Rechercher une catégorie...">
             <div id="modal-category-grid" class="category-grid"></div>
             <div class="flex justify-center mt-6 gap-4">
@@ -3261,48 +3262,21 @@ function initCategoryModal() {
         </div>
     `;
     document.body.appendChild(categoryModal);
-
-    const content = categoryModal.querySelector('.modal-content');
+    modals.push(categoryModal);
 
     const categories = [
-        { id: 'bureaux', name: 'Bureaux', icon: '🏢' },
-        { id: 'residentiel', name: 'Résidentiel', icon: '🏠' },
-        { id: 'commercial', name: 'Commercial', icon: '🛍️' },
-        { id: 'industriel', name: 'Industriel', icon: '🏭' },
-        { id: 'medical', name: 'Médical', icon: '🏥' },
-        { id: 'hotelier', name: 'Hôtelier', icon: '🏨' },
-        { id: 'education', name: 'Éducation', icon: '🎓' },
-        { id: 'restaurant', name: 'Restaurant', icon: '🍽️' },
-        { id: 'sport', name: 'Sport & Fitness', icon: '💪' },
-        { id: 'evenementiel', name: 'Événementiel', icon: '🎪' }
+        { id: 'all', name: 'Toutes', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>` },
+        { id: 'bureaux', name: 'Bureaux', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg>` },
+        { id: 'residentiel', name: 'Résidentiel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V10"></path></svg>` },
+        { id: 'commercial', name: 'Commercial', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg>` },
+        { id: 'industriel', name: 'Industriel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M2 20h20V4H2z"></path><path d="M6 4v16"></path><path d="M10 4v16"></path><path d="M14 4v16"></path><path d="M18 4v16"></path></svg>` },
+        { id: 'medical', name: 'Médical', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v20"></path><path d="M4 10h16"></path><path d="M4 14h16"></path></svg>` },
+        { id: 'hotelier', name: 'Hôtelier', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01"></path><path d="M6 14h.01"></path><path d="M10 10h.01"></path><path d="M10 14h.01"></path><path d="M14 10h.01"></path><path d="M14 14h.01"></path><path d="M18 10h.01"></path><path d="M18 14h.01"></path></svg>` },
+        { id: 'education', name: 'Éducation', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>` },
+        { id: 'restaurant', name: 'Restaurant', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>` },
+        { id: 'sport', name: 'Sport & Fitness', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 7h16v10H4z"></path><path d="M8 10v4"></path><path d="M12 10v4"></path><path d="M16 10v4"></path></svg>` },
+        { id: 'evenementiel', name: 'Événementiel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v4"></path><path d="M2 12h4"></path><path d="M12 18v4"></path><path d="M18 12h4"></path><path d="M4 4l16 16"></path><path d="M4 20L20 4"></path></svg>` }
     ];
-
-    const categoryIcons = {
-  all: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>`,
-  bureaux: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg>`,
-  piscine: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M2 14h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path><path d="M2 18h2l2-2 2 4 2-2 2 4 2-2 2 4h2"></path></svg>`,
-  régulier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
-  ponctuel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
-  salles_de_réunion: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path><path d="M9 9h12"></path></svg>`,
-  sas_dentrée: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path><path d="M12 7v10"></path></svg>`,
-  réfectoire: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
-  sanitaires: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 3v18"></path><path d="M6 12h12"></path></svg>`,
-  escaliers: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 4h6v6H4z"></path><path d="M14 4h6v6h-6z"></path><path d="M4 14h6v6H4z"></path><path d="M14 14h6v6h-6z"></path></svg>`,
-  vitrines: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 10h20"></path></svg>`,
-  industriel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M2 20h20V4H2z"></path><path d="M6 4v16"></path><path d="M10 4v16"></path><path d="M14 4v16"></path><path d="M18 4v16"></path></svg>`,
-  commercial: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg>`,
-  residentiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V10"></path></svg>`,
-  medical: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v20"></path><path d="M4 10h16"></path><path d="M4 14h16"></path></svg>`,
-  education: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>`,
-  hotelier: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01"></path><path d="M6 14h.01"></path><path d="M10 10h.01"></path><path d="M10 14h.01"></path><path d="M14 10h.01"></path><path d="M14 14h.01"></path><path d="M18 10h.01"></path><path d="M18 14h.01"></path></svg>`,
-  restaurant: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>`,
-  gym: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M4 7h16v10H4z"></path><path d="M8 10v4"></path><path d="M12 10v4"></path><path d="M16 10v4"></path></svg>`,
-  parking: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 8h8v8H8z"></path></svg>`,
-  jardin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 3v18"></path><path d="M6 9h12"></path><path d="M4 15h16"></path></svg>`,
-  facade: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8v8"></path><path d="M10 8v8"></path><path d="M14 8v8"></path><path d="M18 8v8"></path></svg>`,
-  toiture: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"></path></svg>`,
-  evenementiel: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-blue hover:text-ll-dark-blue"><path d="M12 2v4"></path><path d="M2 12h4"></path><path d="M12 18v4"></path><path d="M18 12h4"></path><path d="M4 4l16 16"></path><path d="M4 20L20 4"></path></svg>`,
-};
 
     const grid = categoryModal.querySelector('#modal-category-grid');
     grid.innerHTML = categories.map(category => `
@@ -3315,7 +3289,6 @@ function initCategoryModal() {
         </button>
     `).join('');
 
-    // Recherche dans modale
     const searchInput = categoryModal.querySelector('#modal-category-search');
     searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
@@ -3325,7 +3298,6 @@ function initCategoryModal() {
         });
     });
 
-    // Sélection
     grid.addEventListener('click', (e) => {
         const option = e.target.closest('.category-option');
         if (option) {
@@ -3334,11 +3306,8 @@ function initCategoryModal() {
         }
     });
 
-    // Boutons
-    categoryModal.querySelector('#category-modal-cancel').addEventListener('click', closeCategoryModal);
-    categoryModal.querySelector('#category-modal-confirm').addEventListener('click', confirmCategorySelection);
-
     function closeCategoryModal() {
+        const content = categoryModal.querySelector('.modal-content');
         content.classList.remove('scale-100', 'opacity-100');
         setTimeout(() => categoryModal.classList.add('hidden'), 300);
     }
@@ -3349,7 +3318,6 @@ function initCategoryModal() {
             const categoryId = selected.dataset.category;
             const categoryName = selected.querySelector('span:nth-child(2)').textContent;
             document.getElementById('selected-category').textContent = categoryName;
-            // Update hidden input
             let input = document.querySelector('input[name="category"]');
             if (!input) {
                 input = document.createElement('input');
@@ -3364,252 +3332,303 @@ function initCategoryModal() {
         closeCategoryModal();
     }
 
-    // Ouvrir depuis trigger
+    categoryModal.querySelector('#category-modal-cancel').addEventListener('click', closeCategoryModal);
+    categoryModal.querySelector('#category-modal-confirm').addEventListener('click', confirmCategorySelection);
+
     const categoryTrigger = document.getElementById('category-trigger');
     if (categoryTrigger) {
         categoryTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             categoryModal.classList.remove('hidden');
-            setTimeout(() => content.classList.add('scale-100', 'opacity-100'), 10);
+            setTimeout(() => categoryModal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100'), 10);
         });
     }
 
-    // Close on overlay click
     categoryModal.addEventListener('click', (e) => {
         if (e.target === categoryModal) closeCategoryModal();
     });
 }
+
 /**
- * Crée et initialise la modale pour la fréquence
+ * Initialise la modale de fréquence
  */
 function initFrequencyModal() {
-  let frequencyModal = document.createElement('div');
-  frequencyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
-  frequencyModal.innerHTML = `
-    <div class="modal-content absolute  bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
-      <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Sélectionner une fréquence</h3>
-      <div id="modal-frequency-grid" class="space-y-3"></div>
-      <div class="flex justify-center mt-6 gap-4">
-        <button id="frequency-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
-        <button id="frequency-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(frequencyModal);
+    const frequencyModal = document.createElement('div');
+    frequencyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
+    frequencyModal.innerHTML = `
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Sélectionner une fréquence
+            </h3>
+            <div id="modal-frequency-grid" class="space-y-3"></div>
+            <div class="flex justify-center mt-6 gap-4">
+                <button id="frequency-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
+                <button id="frequency-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(frequencyModal);
+    modals.push(frequencyModal);
 
-  const content = frequencyModal.querySelector('.modal-content');
+    const frequencies = [
+        { id: 'all', name: 'Toutes', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>` },
+        { id: 'régulier', name: 'Régulier', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>` },
+        { id: 'ponctuel', name: 'Ponctuel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>` }
+    ];
 
-  // Remplir la grille
-  const frequencies = [
-    { id: 'all', name: 'Toutes', icon: '🌐' },
-    { id: 'régulier', name: 'Régulier', icon: '🔄' },
-    { id: 'ponctuel', name: 'Ponctuel', icon: '📅' }
-  ];
+    const grid = frequencyModal.querySelector('#modal-frequency-grid');
+    grid.innerHTML = frequencies.map(freq => `
+        <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${freq.id === getCurrentFilters().frequency ? 'bg-ll-blue text-white' : ''}">
+            <input type="radio" name="frequency" value="${freq.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${freq.id === getCurrentFilters().frequency ? 'checked' : ''}>
+            <div class="flex items-center gap-3 ml-3 flex-1">
+                <span class="text-2xl">${freq.icon}</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">${freq.name}</span>
+            </div>
+        </label>
+    `).join('');
 
-  const grid = frequencyModal.querySelector('#modal-frequency-grid');
-  grid.innerHTML = frequencies.map(freq => `
-    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${freq.id === getCurrentFilters().frequency ? 'bg-ll-blue text-white' : ''}">
-      <input type="radio" name="frequency" value="${freq.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${freq.id === getCurrentFilters().frequency ? 'checked' : ''}>
-      <div class="flex items-center gap-3 ml-3 flex-1">
-        <span class="text-2xl">${freq.icon}</span>
-        <span class="text-sm font-medium text-gray-900 dark:text-white">${freq.name}</span>
-      </div>
-    </label>
-  `).join('');
-
-  // Permet la sélection au clic sur toute la ligne
-  grid.querySelectorAll('label').forEach(label => {
-    label.addEventListener('click', function (e) {
-      // Empêche double déclenchement si clic sur input
-      if (e.target.tagName.toLowerCase() === 'input') return;
-      grid.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
-      this.querySelector('input[type="radio"]').checked = true;
-      grid.querySelectorAll('label').forEach(l => l.classList.remove('bg-ll-blue', 'text-white'));
-      this.classList.add('bg-ll-blue', 'text-white');
+    grid.querySelectorAll('label').forEach(label => {
+        label.addEventListener('click', function (e) {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            grid.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            this.querySelector('input[type="radio"]').checked = true;
+            grid.querySelectorAll('label').forEach(l => l.classList.remove('bg-ll-blue', 'text-white'));
+            this.classList.add('bg-ll-blue', 'text-white');
+        });
     });
-  });
 
-  // Boutons
-  frequencyModal.querySelector('#frequency-modal-cancel').addEventListener('click', closeFrequencyModal);
-  frequencyModal.querySelector('#frequency-modal-confirm').addEventListener('click', confirmFrequencySelection);
-
-  function closeFrequencyModal() {
-    content.classList.remove('scale-100', 'opacity-100');
-    setTimeout(() => frequencyModal.classList.add('hidden'), 300);
-  }
-
-  function confirmFrequencySelection() {
-    const selectedRadio = grid.querySelector('input[name="frequency"]:checked');
-    if (selectedRadio) {
-      const freqName = selectedRadio.closest('label').querySelector('span:last-child').textContent;
-      document.getElementById('selected-frequency').textContent = freqName;
-      let input = document.querySelector('input[name="frequency"]');
-      if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'frequency';
-        document.getElementById('frequency-trigger').appendChild(input);
-      }
-      input.value = selectedRadio.value;
-      updateActiveFilters();
-      updateServices();
+    function closeFrequencyModal() {
+        const content = frequencyModal.querySelector('.modal-content');
+        content.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => frequencyModal.classList.add('hidden'), 300);
     }
-    closeFrequencyModal();
-  }
 
-  
-  const frequency = document.getElementById('frequency-trigger');
-  
-  if(frequency){
-  frequency.addEventListener('click', (e) => {
-    e.stopPropagation();
-    frequencyModal.classList.remove('hidden');
-    setTimeout(() => content.classList.add('scale-100', 'opacity-100'), 10);
-  });
-}
+    function confirmFrequencySelection() {
+        const selectedRadio = grid.querySelector('input[name="frequency"]:checked');
+        if (selectedRadio) {
+            const freqName = selectedRadio.closest('label').querySelector('span:last-child').textContent;
+            document.getElementById('selected-frequency').textContent = freqName;
+            let input = document.querySelector('input[name="frequency"]');
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'frequency';
+                document.getElementById('frequency-trigger').appendChild(input);
+            }
+            input.value = selectedRadio.value;
+            updateActiveFilters();
+            updateServices();
+        }
+        closeFrequencyModal();
+    }
 
-  // Close on overlay click
-  frequencyModal.addEventListener('click', (e) => {
-    if (e.target === frequencyModal) closeFrequencyModal();
-  });
+    frequencyModal.querySelector('#frequency-modal-cancel').addEventListener('click', closeFrequencyModal);
+    frequencyModal.querySelector('#frequency-modal-confirm').addEventListener('click', confirmFrequencySelection);
+
+    const frequencyTrigger = document.getElementById('frequency-trigger');
+    if (frequencyTrigger) {
+        frequencyTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            frequencyModal.classList.remove('hidden');
+            setTimeout(() => frequencyModal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100'), 10);
+        });
+    }
+
+    frequencyModal.addEventListener('click', (e) => {
+        if (e.target === frequencyModal) closeFrequencyModal();
+    });
 }
 
 /**
- * Crée et initialise la modale pour la difficulté
+ * Initialise la modale de difficulté
  */
 function initDifficultyModal() {
-  let difficultyModal = document.createElement('div');
-  difficultyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
-  difficultyModal.innerHTML = `
-    <div class="modal-content absolute  bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
-      <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Sélectionner un niveau de difficulté</h3>
-      <div id="modal-difficulty-grid" class="space-y-3"></div>
-      <div class="flex justify-center mt-6 gap-4">
-        <button id="difficulty-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
-        <button id="difficulty-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(difficultyModal);
+    const difficultyModal = document.createElement('div');
+    difficultyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
+    difficultyModal.innerHTML = `
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+            <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Sélectionner un niveau de difficulté
+            </h3>
+            <div id="modal-difficulty-grid" class="space-y-3"></div>
+            <div class="flex justify-center mt-6 gap-4">
+                <button id="difficulty-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
+                <button id="difficulty-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(difficultyModal);
+    modals.push(difficultyModal);
 
-  const content = difficultyModal.querySelector('.modal-content');
+    const difficulties = [
+        { id: 'all', name: 'Tous', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white hover:text-ll-dark-blue"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>` },
+        { id: 'easy', name: 'Facile', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white hover:text-ll-dark-blue"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>` },
+        { id: 'medium', name: 'Moyen', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white hover:text-ll-dark-blue"><circle cx="12" cy="12" r="10"></circle><path d="M8 14h8"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>` },
+        { id: 'hard', name: 'Difficile', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5-2 4-2 4 2 4 2"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>` }
+    ];
 
-  // Remplir la grille
-  const difficulties = [
-    { id: 'all', name: 'Tous', icon: '📊' },
-    { id: 'easy', name: 'Facile', icon: '😊' },
-    { id: 'medium', name: 'Moyen', icon: '😐' },
-    { id: 'hard', name: 'Difficile', icon: '😤' }
-  ];
+    const grid = difficultyModal.querySelector('#modal-difficulty-grid');
+    grid.innerHTML = difficulties.map(diff => `
+        <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${diff.id === getCurrentFilters().difficulty ? 'bg-ll-blue text-white' : ''}">
+            <input type="radio" name="difficulty" value="${diff.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${diff.id === getCurrentFilters().difficulty ? 'checked' : ''}>
+            <div class="flex items-center gap-3 ml-3 flex-1">
+                <span class="text-2xl text-white">${diff.icon}</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">${diff.name}</span>
+            </div>
+        </label>
+    `).join('');
 
-  const grid = difficultyModal.querySelector('#modal-difficulty-grid');
-  grid.innerHTML = difficulties.map(diff => `
-    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${diff.id === getCurrentFilters().difficulty ? 'bg-ll-blue text-white' : ''}">
-      <input type="radio" name="difficulty" value="${diff.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${diff.id === getCurrentFilters().difficulty ? 'checked' : ''}>
-      <div class="flex items-center gap-3 ml-3 flex-1">
-        <span class="text-2xl">${diff.icon}</span>
-        <span class="text-sm font-medium text-gray-900 dark:text-white">${diff.name}</span>
-      </div>
-    </label>
-  `).join('');
-
-  // Permet la sélection au clic sur toute la ligne
-  grid.querySelectorAll('label').forEach(label => {
-    label.addEventListener('click', function (e) {
-      if (e.target.tagName.toLowerCase() === 'input') return;
-      grid.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
-      this.querySelector('input[type="radio"]').checked = true;
-      grid.querySelectorAll('label').forEach(l => l.classList.remove('bg-ll-blue', 'text-white'));
-      this.classList.add('bg-ll-blue', 'text-white');
+    grid.querySelectorAll('label').forEach(label => {
+        label.addEventListener('click', function (e) {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            grid.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            this.querySelector('input[type="radio"]').checked = true;
+            grid.querySelectorAll('label').forEach(l => l.classList.remove('bg-ll-blue', 'text-white'));
+            this.classList.add('bg-ll-blue', 'text-white');
+        });
     });
-  });
 
-  // Boutons
-  difficultyModal.querySelector('#difficulty-modal-cancel').addEventListener('click', closeDifficultyModal);
-  difficultyModal.querySelector('#difficulty-modal-confirm').addEventListener('click', confirmDifficultySelection);
-
-  function closeDifficultyModal() {
-    content.classList.remove('scale-100', 'opacity-100');
-    setTimeout(() => difficultyModal.classList.add('hidden'), 300);
-  }
-
-  function confirmDifficultySelection() {
-    const selectedRadio = grid.querySelector('input[name="difficulty"]:checked');
-    if (selectedRadio) {
-      const diffName = selectedRadio.closest('label').querySelector('span:last-child').textContent;
-      document.getElementById('selected-difficulty').textContent = diffName;
-      let input = document.querySelector('input[name="difficulty"]');
-      if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'difficulty';
-        document.getElementById('difficulty-trigger').appendChild(input);
-      }
-      input.value = selectedRadio.value;
-      updateActiveFilters();
-      updateServices();
+    function closeDifficultyModal() {
+        const content = difficultyModal.querySelector('.modal-content');
+        content.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => difficultyModal.classList.add('hidden'), 300);
     }
-    closeDifficultyModal();
-  }
 
-  // Ouvrir depuis trigger
-  const difficulty = document.getElementById('difficulty-trigger');
-  
-  if(difficulty){
+    function confirmDifficultySelection() {
+        const selectedRadio = grid.querySelector('input[name="difficulty"]:checked');
+        if (selectedRadio) {
+            const diffName = selectedRadio.closest('label').querySelector('span:last-child').textContent;
+            document.getElementById('selected-difficulty').textContent = diffName;
+            let input = document.querySelector('input[name="difficulty"]');
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'difficulty';
+                document.getElementById('difficulty-trigger').appendChild(input);
+            }
+            input.value = selectedRadio.value;
+            updateActiveFilters();
+            updateServices();
+        }
+        closeDifficultyModal();
+    }
 
-  difficulty.addEventListener('click', (e) => {
-    e.stopPropagation();
-    difficultyModal.classList.remove('hidden');
-    setTimeout(() => content.classList.add('scale-100', 'opacity-100'), 10);
-  });
+    difficultyModal.querySelector('#difficulty-modal-cancel').addEventListener('click', closeDifficultyModal);
+    difficultyModal.querySelector('#difficulty-modal-confirm').addEventListener('click', confirmDifficultySelection);
 
+    const difficultyTrigger = document.getElementById('difficulty-trigger');
+    if (difficultyTrigger) {
+        difficultyTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            difficultyModal.classList.remove('hidden');
+            setTimeout(() => difficultyModal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100'), 10);
+        });
+    }
+
+    difficultyModal.addEventListener('click', (e) => {
+        if (e.target === difficultyModal) closeDifficultyModal();
+    });
 }
 
-  // Close on overlay click
-  difficultyModal.addEventListener('click', (e) => {
-    if (e.target === difficultyModal) closeDifficultyModal();
-  });
-}
-
-
-
+/**
+ * Initialise le temporisateur d'inactivité du panneau de filtres
+ */
 function initFilterInactivityTimer() {
     const filterPanel = document.getElementById('filter-panel');
-    if (!filterPanel) return;
+    const openBtn = document.getElementById('open-filter-panel');
+    const servicesList = document.getElementById('services-list');
+
+    if (!filterPanel) {
+        console.warn('Filter panel element not found, skipping initFilterInactivityTimer.');
+        return;
+    }
 
     const startTimer = () => {
         clearTimeout(filterInactivityTimer);
         filterInactivityTimer = setTimeout(() => {
-            filterPanel.classList.add('hidden');
+            if (!modals.some(modal => !modal.classList.contains('hidden'))) {
+                filterPanel.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    filterPanel.classList.add('hidden');
+                    filterPanel.classList.remove('opacity-0', 'scale-95');
+                }, 300);
+            }
         }, INACTIVITY_CLOSE_DELAY);
     };
 
     const clearTimer = () => {
         clearTimeout(filterInactivityTimer);
+        console.log("recommence");
+        filterPanel.classList.remove('opacity-0', 'scale-95');
     };
 
-    // Sur entrée souris: clear le timer (ne ferme pas pendant survol)
     filterPanel.addEventListener('mouseenter', clearTimer);
-
-    // Sur sortie souris: démarrer le timer (compte l'inactivité après sortie)
     filterPanel.addEventListener('mouseleave', startTimer);
-
-    // Sur interactions internes (clic, scroll): clear pour éviter fermeture prématurée
     filterPanel.addEventListener('click', clearTimer);
     filterPanel.addEventListener('scroll', clearTimer);
+    filterPanel.addEventListener('touchstart', clearTimer);
+    filterPanel.addEventListener('touchmove', clearTimer);
 
-    const openBtn = document.getElementById('open-filter-panel');
+    if (servicesList) {
+        servicesList.addEventListener('click', clearTimer);
+        servicesList.addEventListener('scroll', clearTimer);
+        servicesList.addEventListener('touchstart', clearTimer);
+        servicesList.addEventListener('touchmove', clearTimer);
+    }
+
     if (openBtn) {
-        openBtn.addEventListener('click', () => {
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (filterPanel.classList.contains('hidden')) {
                 filterPanel.classList.remove('hidden');
-                clearTimer(); // Clear au démarrage
+                filterPanel.classList.add('opacity-0', 'scale-95');
+                filterPanel.offsetHeight;
+                filterPanel.classList.remove('opacity-0', 'scale-95');
+                clearTimer();
+                startTimer();
             } else {
-                filterPanel.classList.add('hidden');
-                clearTimer(); // Clear à la fermeture manuelle
+                filterPanel.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    filterPanel.classList.add('hidden');
+                    filterPanel.classList.remove('opacity-0', 'scale-95');
+                }, 300);
+                clearTimer();
             }
         });
     }
+
+    const filterInputs = filterPanel.querySelectorAll('input, button, select');
+    filterInputs.forEach(input => {
+        input.addEventListener('change', clearTimer);
+        input.addEventListener('click', clearTimer);
+        input.addEventListener('touchstart', clearTimer);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!filterPanel.contains(e.target) && e.target !== openBtn && !filterPanel.classList.contains('hidden') && !modals.some(modal => !modal.classList.contains('hidden'))) {
+            filterPanel.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                filterPanel.classList.add('hidden');
+                filterPanel.classList.remove('opacity-0', 'scale-95');
+            }, 300);
+            clearTimer();
+        }
+    });
+
+    modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (!modal.classList.contains('hidden')) {
+                clearTimer();
+            }
+        });
+    });
 }
 
 
@@ -3663,20 +3682,40 @@ export function initServiceInteractions() {
     initDifficultyModal();
 
     initSearch(); 
+
+    initFilterListeners();
+    initSearch();
     
     document.querySelectorAll('input[name="frequency"], input[name="difficulty"]').forEach(radio => {
         radio.addEventListener('change', updateServices);
     });
 }
 
+let isUpdating = false;
+let lastFiltersHash = '';
+
 /**
  * Met à jour l'affichage des filtres actifs - AVEC AUTO-UPDATE
  */
 function updateActiveFilters() {
+    if (isUpdating) return; // Protection contre la récursion
+    isUpdating = true;
+
     const activeFiltersContainer = document.getElementById('active-filters');
-    if (!activeFiltersContainer) return;
+    if (!activeFiltersContainer) {
+        isUpdating = false;
+        return;
+    }
 
     const filters = getCurrentFilters();
+    const filtersHash = JSON.stringify(filters);
+    if (filtersHash === lastFiltersHash) {
+        isUpdating = false;
+        return;
+    }
+    lastFiltersHash = filtersHash;
+
+    activeFiltersContainer.replaceChildren();
     const activeFilters = [];
 
     if (filters.category && filters.category !== 'all') {
@@ -3699,57 +3738,73 @@ function updateActiveFilters() {
     }
 
     if (activeFilters.length > 0) {
-        activeFiltersContainer.innerHTML = activeFilters.map(filter => `
-            <span class="inline-flex items-center gap-2 bg-${filter.color}-100/50 dark:bg-${filter.color}-900/50 text-${filter.color}-800 dark:text-${filter.color}-200 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 cursor-pointer remove-filter glass-effect neon-glow" data-type="${filter.type}">
+        const fragment = document.createDocumentFragment();
+        activeFilters.forEach(filter => {
+            const span = document.createElement('span');
+            span.className = `inline-flex items-center gap-2 bg-${filter.color}-100/50 dark:bg-${filter.color}-900/50 text-${filter.color}-800 dark:text-${filter.color}-200 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 cursor-pointer remove-filter glass-effect neon-glow`;
+            span.dataset.type = filter.type;
+            span.innerHTML = `
                 ${filter.label}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hover:scale-110 transition-transform">
                     <path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>
                 </svg>
-            </span>
-        `).join('');
-        activeFiltersContainer.classList.remove('hidden');
-        
-        // Remove listeners et add new
-        document.querySelectorAll('.remove-filter').forEach(button => {
-            button.addEventListener('click', function() {
-                const filterType = this.dataset.type;
-                removeFilter(filterType);
-            });
+            `;
+            fragment.appendChild(span);
         });
+        activeFiltersContainer.appendChild(fragment);
+        activeFiltersContainer.classList.remove('hidden');
     } else {
         activeFiltersContainer.classList.add('hidden');
     }
+
+    isUpdating = false;
 }
 
+
 /**
- * Supprime un filtre et AUTO-UPDATE
+ * Supprime un filtre et déclenche une mise à jour
  */
 function removeFilter(filterType) {
+    if (isUpdating) return;
+    isUpdating = true;
+
     switch (filterType) {
         case 'category':
-            if (document.getElementById('selected-category')) document.getElementById('selected-category').textContent = 'Toutes les catégories';
+            const categoryDisplay = document.getElementById('selected-category');
+            if (categoryDisplay) categoryDisplay.textContent = 'Toutes les catégories';
             document.querySelector('input[name="category"]')?.remove();
             break;
         case 'frequency':
-            if (document.getElementById('selected-frequency')) document.getElementById('selected-frequency').textContent = 'Toutes les fréquences';
+            const frequencyDisplay = document.getElementById('selected-frequency');
+            if (frequencyDisplay) frequencyDisplay.textContent = 'Toutes les fréquences';
             const freqAll = document.querySelector('input[name="frequency"][value="all"]');
             if (freqAll) freqAll.checked = true;
+            document.querySelector('input[name="frequency"][type="hidden"]')?.remove();
             break;
         case 'difficulty':
-            if (document.getElementById('selected-difficulty')) document.getElementById('selected-difficulty').textContent = 'Tous les niveaux';
+            const difficultyDisplay = document.getElementById('selected-difficulty');
+            if (difficultyDisplay) difficultyDisplay.textContent = 'Tous les niveaux';
             const diffAll = document.querySelector('input[name="difficulty"][value="all"]');
             if (diffAll) diffAll.checked = true;
+            document.querySelector('input[name="difficulty"][type="hidden"]')?.remove();
             break;
         case 'reviews':
             const reviewsInput = document.getElementById('reviewsMin-input');
-            if (reviewsInput) reviewsInput.value = 0;
-            const display = document.getElementById('reviews-star-display');
-            if (display) display.innerHTML = renderStarRatingForReviews(0);
+            if (reviewsInput) reviewsInput.value = '0';
+            const reviewsHidden = document.querySelector('input[name="reviews"]');
+            if (reviewsHidden) reviewsHidden.remove();
+            const reviewsDisplay = document.getElementById('selected-reviews');
+            if (reviewsDisplay) reviewsDisplay.textContent = '0 étoiles';
+            const starDisplay = document.getElementById('reviews-star-display');
+            if (starDisplay) starDisplay.innerHTML = renderStarRatingForReviews(0);
             break;
     }
+
     updateActiveFilters();
     updateServices();
+    isUpdating = false;
 }
+
 
 /**
  * Récupère les filtres actuels - ROBUSTE
@@ -3759,9 +3814,148 @@ function getCurrentFilters() {
         category: document.querySelector('input[name="category"]')?.value || 'all',
         frequency: document.querySelector('input[name="frequency"]:checked')?.value || 'all',
         difficulty: document.querySelector('input[name="difficulty"]:checked')?.value || 'all',
-        reviewsMin: parseInt(document.getElementById('reviewsMin-input')?.value || 0) || 0,
-        search: document.getElementById('service-search')?.value || ''
+        reviewsMin: parseInt(document.querySelector('input[name="reviews"]')?.value || 0) || 0,
+        search: document.getElementById('service-search')?.value.trim() || ''
     };
+}
+
+/**
+ * Réinitialise tous les filtres et déclenche une mise à jour complète
+ */
+function resetAllFilters() {
+    if (isUpdating) return; // Protection contre la récursion
+    isUpdating = true;
+
+    // Reset category
+    const categoryDisplay = document.getElementById('selected-category');
+    if (categoryDisplay) categoryDisplay.textContent = 'Toutes les catégories';
+    const categoryInput = document.querySelector('input[name="category"]');
+    if (categoryInput) categoryInput.remove();
+
+    // Reset frequency
+    const frequencyDisplay = document.getElementById('selected-frequency');
+    if (frequencyDisplay) frequencyDisplay.textContent = 'Toutes les fréquences';
+    const frequencyInputs = document.querySelectorAll('input[name="frequency"]');
+    frequencyInputs.forEach(input => input.checked = input.value === 'all');
+    const frequencyHidden = document.querySelector('input[name="frequency"][type="hidden"]');
+    if (frequencyHidden) frequencyHidden.remove();
+
+    // Reset difficulty
+    const difficultyDisplay = document.getElementById('selected-difficulty');
+    if (difficultyDisplay) difficultyDisplay.textContent = 'Tous les niveaux';
+    const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
+    difficultyInputs.forEach(input => input.checked = input.value === 'all');
+    const difficultyHidden = document.querySelector('input[name="difficulty"][type="hidden"]');
+    if (difficultyHidden) difficultyHidden.remove();
+
+    // Reset reviews
+    const reviewsInput = document.getElementById('reviewsMin-input');
+    if (reviewsInput) reviewsInput.value = '0';
+    const reviewsHidden = document.querySelector('input[name="reviews"]');
+    if (reviewsHidden) reviewsHidden.remove();
+    const reviewsDisplay = document.getElementById('selected-reviews');
+    if (reviewsDisplay) reviewsDisplay.textContent = '0 étoiles';
+    const starDisplay = document.getElementById('reviews-star-display');
+    if (starDisplay) starDisplay.innerHTML = renderStarRatingForReviews(0);
+
+    // Reset search
+    const searchInput = document.getElementById('service-search');
+    const clearBtn = document.getElementById('clear-search');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.classList.add('hidden');
+
+    // Forcer la suppression des badges
+    const activeFiltersContainer = document.getElementById('active-filters');
+    if (activeFiltersContainer) {
+        activeFiltersContainer.replaceChildren();
+        activeFiltersContainer.classList.add('hidden');
+    }
+
+    lastFiltersHash = '';
+
+    updateActiveFilters();
+    updateServices();
+    isUpdating = false;
+}
+
+
+
+/**
+ * Débounce pour limiter les appels à updateServices
+ */
+const debouncedUpdateServices = debounce(() => {
+    updateServices();
+}, 300);
+
+/**
+ * Fonction de débouncing générique
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+
+/**
+ * Initialise les écouteurs pour la mise à jour en temps réel
+ */
+function initFilterListeners() {
+    const searchInput = document.getElementById('service-search');
+    const reviewsInput = document.getElementById('reviewsMin-input');
+    const categoryInputs = document.querySelectorAll('input[name="category"]');
+    const frequencyInputs = document.querySelectorAll('input[name="frequency"]');
+    const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
+    const resetButton = document.getElementById('reset-filters');
+    const clearSearchButton = document.getElementById('clear-search');
+
+    // Écouteur pour la recherche
+    if (searchInput) {
+        searchInput.addEventListener('input', debouncedUpdateServices);
+    }
+
+    // Écouteur pour les avis minimum
+    if (reviewsInput) {
+        reviewsInput.addEventListener('change', () => {
+            const display = document.getElementById('reviews-star-display');
+            if (display) display.innerHTML = renderStarRatingForReviews(parseInt(reviewsInput.value) || 0);
+            debouncedUpdateServices();
+        });
+    }
+
+    // Écouteurs pour les inputs radio (catégorie, fréquence, difficulté)
+    [categoryInputs, frequencyInputs, difficultyInputs].forEach(inputGroup => {
+        inputGroup.forEach(input => {
+            input.addEventListener('change', debouncedUpdateServices);
+        });
+    });
+
+    // Écouteur pour réinitialiser tous les filtres
+    if (resetButton) {
+        resetButton.addEventListener('click', resetAllFilters);
+    }
+
+    // Écouteur pour effacer la recherche
+    if (clearSearchButton) {
+        clearSearchButton.addEventListener('click', () => {
+            if (searchInput) searchInput.value = '';
+            clearSearchButton.classList.add('hidden');
+            debouncedUpdateServices();
+        });
+    }
+
+    const activeFiltersContainer = document.getElementById('active-filters');
+    if (activeFiltersContainer) {
+        activeFiltersContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('.remove-filter');
+            if (button) {
+                const filterType = button.dataset.type;
+                removeFilter(filterType);
+            }
+        });
+    }
 }
 
 /**
@@ -3776,150 +3970,120 @@ function renderStarRatingForReviews(rating) {
 }
 
 /**
- * Réinitialise tous les filtres et AUTO-UPDATE
+ * Met à jour l'affichage des services - ULTRA SYNCHRO
  */
-function resetAllFilters() {
-    // Reset category
-    if (document.getElementById('selected-category')) document.getElementById('selected-category').textContent = 'Toutes les catégories';
-    document.querySelector('input[name="category"]')?.remove();
-    
-    // Reset frequency
-    if (document.getElementById('selected-frequency')) document.getElementById('selected-frequency').textContent = 'Toutes les fréquences';
-    const freqAll = document.querySelector('input[name="frequency"][value="all"]');
-    if (freqAll) freqAll.checked = true;
-    
-    // Reset difficulty
-    if (document.getElementById('selected-difficulty')) document.getElementById('selected-difficulty').textContent = 'Tous les niveaux';
-    const diffAll = document.querySelector('input[name="difficulty"][value="all"]');
-    if (diffAll) diffAll.checked = true;
-    
-    // Reset reviews
-    const reviewsInput = document.getElementById('reviewsMin-input');
-    if (reviewsInput) reviewsInput.value = 0;
-    const display = document.getElementById('reviews-star-display');
-    if (display) display.innerHTML = renderStarRatingForReviews(0);
-    
-    // Reset search
-    const searchInput = document.getElementById('service-search');
-    const clearBtn = document.getElementById('clear-search');
-    if (searchInput) searchInput.value = '';
-    if (clearBtn) clearBtn.classList.add('hidden');
-    
-    updateActiveFilters();
-    updateServices();
-}
-
-
-/**
- * Met à jour l'affichage des services - ULTRA SYNCHRO: Sidebar + Details + Pagination + Index Reset + Toggle No-Services
- * Mise à jour: Cache/Supprime message no-services IMMÉDIATEMENT si services trouvés, re-render détails.
- */
-async function updateServices() {
+export async function updateServices() {
     await toggleServicesLoading(true);
-    
+    isUpdating = true;
+
     try {
         const filters = getCurrentFilters();
-        const services = await loadServices(filters); 
-        
+        const services = await loadServices(filters);
+
         renderServicesSidebar(services);
         updateActiveFilters();
-        
-        if (services.length > 0) {
 
+        const detailContainer = document.getElementById('service-detail-container');
+        if (services.length > 0) {
             hideNoServicesMessage();
-            setServiceIndex(currentServiceIndex);
+            setServiceIndex(services.length > currentServiceIndex ? currentServiceIndex : 0);
             renderServiceDetail(services[currentServiceIndex], currentServiceIndex, services.length);
-            // S'assurer contenu visible après render
-            const existingContent = document.querySelector('#service-detail-container .service-detail-content');
-            if (existingContent) {
-                existingContent.classList.remove('hidden');
-                existingContent.style.zIndex = '0';
+
+            if (detailContainer) {
+                const existingContent = detailContainer.querySelector('.service-detail-content');
+                if (existingContent) {
+                    existingContent.classList.remove('hidden');
+                    existingContent.style.zIndex = '0';
+                }
             }
         } else {
-            // Seulement si pas déjà affiché
             showNoServicesMessage();
+            if (detailContainer) {
+                const existingContent = detailContainer.querySelector('.service-detail-content');
+                if (existingContent) {
+                    existingContent.classList.add('hidden');
+                }
+            }
         }
 
         const servicesCount = document.getElementById('services-count');
         if (servicesCount) servicesCount.textContent = services.length;
-        
-        
+
     } catch (error) {
         console.error('Erreur lors du chargement des services:', error);
         showNotification('Erreur lors du chargement des services.', 'error');
-       
         renderServicesSidebar([]);
         showNoServicesMessage();
     } finally {
-      await  toggleServicesLoading(false);
+        await toggleServicesLoading(false, allFilteredServices.length === 0); 
+        isUpdating = false;
     }
 }
 
 /**
- * Affiche message no services - ROBUSTE ET OPAQUE: Remplace le contenu services par le message
- * Mise à jour: Cache la grille entière des services via nouveau ID, affiche message en bloc simple sans overlay/shadow.
- * Ajout : Nouveau ID 'services-display-grid' requis sur la div grid des services.
+ * Affiche le message "Aucun service trouvé" - ROBUSTE ET OPAQUE
  */
 export function showNoServicesMessage() {
-  const grid = document.getElementById('services-display-grid');
-  if (!grid) return;
+    const grid = document.getElementById('services-display-grid');
+    if (!grid) {
+        console.warn('Grid element not found, skipping showNoServicesMessage.');
+        return;
+    }
 
-  // 1. Masquer la grille entière (sidebar + détails)
-  grid.classList.add('hidden');
+    grid.classList.add('hidden');
 
-  // 2. Créer ou afficher le div message simple (sans shadow, juste padding)
-  let noServicesDiv = document.getElementById('no-services-display');
-  if (!noServicesDiv) {
-    noServicesDiv = document.createElement('div');
-    noServicesDiv.id = 'no-services-display';
-    noServicesDiv.className = 'hidden col-span-full text-center py-20';
-    noServicesDiv.innerHTML = `
-      <div class="max-w-md mx-auto p-8">
-        <svg class="text-gray-400 dark:text-white mx-auto mb-6 animate-pulse" width="80" height="80" viewBox="0 0 74.34 74.34" fill="none" xmlns="http://www.w3.org/2000/svg">
+    let noServicesDiv = document.getElementById('no-services-display');
+    if (!noServicesDiv) {
+        noServicesDiv = document.createElement('div');
+        noServicesDiv.id = 'no-services-display';
+        noServicesDiv.className = 'col-span-full text-center py-20';
+        noServicesDiv.innerHTML = `
+            <div class="max-w-md mx-auto p-8">
+                <svg class="text-gray-400 dark:text-white mx-auto mb-6 animate-pulse" width="80" height="80" viewBox="0 0 74.34 74.34" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g>
             <path fill="currentColor" d="M29.52,53.303h-8.945c-0.552,0-1,0.448-1,1v8.104c0,0.343,0.176,0.662,0.466,0.845l4.473,2.826 c0.163,0.103,0.349,0.155,0.534,0.155s0.371-0.052,0.534-0.155l4.473-2.826c0.29-0.183,0.466-0.502,0.466-0.845v-8.104 C30.52,53.751,30.072,53.303,29.52,53.303z M28.52,61.856l-3.473,2.194l-3.473-2.194v-6.553h6.945V61.856z M22.81,28.413 c0.925,8.32,7.514,12.07,11.993,12.07c4.479,0,11.067-3.75,11.993-12.07c1.333-0.702,3.13-2.447,3.039-5.548 c-0.018-0.599-0.071-2.419-1.406-2.924c-1.313-0.497-2.638,0.819-2.891,1.088c-0.377,0.404-0.356,1.037,0.047,1.414 s1.037,0.357,1.414-0.047c0.175-0.187,0.482-0.424,0.686-0.521c0.056,0.151,0.134,0.462,0.151,1.05 c0.085,2.891-2.028,3.759-2.238,3.838l-3.894,0.853c-4.581-0.493-9.221-0.493-13.801,0l-3.901-0.854 c-0.295-0.116-2.315-1.014-2.232-3.836c0.017-0.588,0.095-0.899,0.151-1.05c0.192,0.092,0.486,0.311,0.686,0.521 c0.377,0.403,1.01,0.423,1.414,0.047c0.403-0.377,0.424-1.01,0.047-1.414c-0.252-0.269-1.572-1.589-2.891-1.088 c-1.335,0.504-1.389,2.325-1.406,2.924C19.679,25.967,21.477,27.712,22.81,28.413z M24.92,29.009l1.998,0.438l0.589,5.339 C26.295,33.365,25.331,31.47,24.92,29.009z M42.097,34.785l0.589-5.339l1.998-0.438C44.273,31.47,43.309,33.365,42.097,34.785z M40.667,29.515l-0.795,7.198c-0.002,0.017,0.005,0.032,0.004,0.048c-1.835,1.225-3.776,1.722-5.074,1.722 c-1.296,0-3.232-0.496-5.064-1.716l-0.8-7.252C32.833,29.149,36.77,29.149,40.667,29.515z M29.438,42.722l-2.902,1.362l-0.255-4.656 c-0.03-0.552-0.509-0.976-1.053-0.944c-0.551,0.03-0.974,0.502-0.944,1.053l0.053,0.972c-3.428,1.238-6.537,3.485-8.878,6.368 c-0.137-0.803-0.428-1.572-1.058-2.206c-0.255-0.257-0.565-0.466-0.905-0.648v-7.55c0.279,0.079,0.586,0.216,0.861,0.458 c0.67,0.587,1.009,1.63,1.009,3.101V43.2c0,0.552,0.448,1,1,1s1-0.448,1-1v-3.167c0-2.072-0.569-3.621-1.691-4.604 c-0.728-0.638-1.544-0.897-2.185-0.996c-0.016-0.538-0.452-0.971-0.994-0.971H1c-0.552,0-1,0.448-1,1V37.5c0,0.552,0.448,1,1,1h3.09 c0.14,1.476,0.632,4.212,2.33,5.737c-0.201,0.135-0.402,0.269-0.568,0.436c-1.194,1.201-1.185,2.886-1.177,4.372l0.001,6.94 c0,1.83,0.909,3.448,2.297,4.437c-0.578,0.87-1.148,1.603-1.145,1.603c-3.024,3.302-2.698,9.679-2.683,9.949 c0.03,0.529,0.468,0.943,0.999,0.943h13.131c0.53,0,0.968-0.414,0.999-0.943c0.015-0.27,0.341-6.648-2.662-9.925 c-0.011-0.013-0.945-1.112-1.641-2.204c0.992-0.987,1.606-2.353,1.606-3.86l0.001-5.84c2.064-3.39,5.257-6.083,8.874-7.535 l0.168,3.065c0.018,0.332,0.2,0.633,0.485,0.804c0.158,0.094,0.335,0.142,0.513,0.142c0.145,0,0.29-0.031,0.425-0.095l4.245-1.992 c0.5-0.235,0.715-0.83,0.48-1.33C30.533,42.702,29.937,42.489,29.438,42.722z M2,35.461h1.13V36.5H2V35.461z M9.391,43.338 c-3.29,0-3.357-5.784-3.357-5.842C6.03,36.98,5.633,36.57,5.13,36.519v-1.059h6.366v7.879l-1.361-0.001c-0.003,0-0.006,0-0.009,0 c-0.003,0-0.005,0-0.008,0L9.391,43.338z M6.675,49.034c-0.006-1.203-0.013-2.34,0.595-2.951c0.49-0.493,1.448-0.743,2.845-0.744 l0.024,0c1.397,0.002,2.355,0.251,2.844,0.744c0.406,0.409,0.536,1.054,0.577,1.795h-2.325c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.343 l0,1.821h-2.343c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.342l0,1.688h-2.342c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.037 c-0.539,1.204-1.743,2.047-3.145,2.047c-1.902,0-3.45-1.548-3.45-3.45L6.675,49.034z M5.133,70.917 c0.007-0.393,0.031-0.897,0.079-1.451h10.995c0.048,0.553,0.071,1.058,0.078,1.451H5.133z M14.115,63.374 c0.974,1.063,1.509,2.608,1.808,4.091H5.501c0.305-1.494,0.853-3.057,1.852-4.149c0.037-0.047,0.767-0.981,1.456-2.049 c0.423,0.105,0.862,0.168,1.317,0.168c0.78,0,1.52-0.167,2.191-0.464C13.089,62.17,14.047,63.296,14.115,63.374z M21.2,16.754v1.046 c0,0.552,0.448,1,1,1s1-0.448,1-1v-1.37c2.995-1.182,7.331-2.308,11.602-2.308c4.271,0,8.607,1.126,11.602,2.308v1.37 c0,0.552,0.448,1,1,1s1-0.448,1-1v-1.046c0.266-0.186,0.428-0.489,0.428-0.815V5.24c0-0.395-0.232-0.753-0.594-0.914 c-3.156-1.404-8.343-2.904-13.436-2.904c-5.094,0-10.281,1.5-13.436,2.904c-0.361,0.161-0.594,0.519-0.594,0.914v10.698 C20.772,16.264,20.935,16.567,21.2,16.754z M22.772,5.9c2.999-1.241,7.556-2.477,12.03-2.477c4.474,0,9.03,1.236,12.03,2.477v8.546 c-3.169-1.208-7.635-2.325-12.03-2.325c-4.396,0-8.86,1.117-12.03,2.325V5.9z M73.34,32.94h-25.23c-0.552,0-1,0.448-1,1v3.523 c0,0.552,0.448,1,1,1h2.335l9.721,6.916v9.426c-1.676,0.08-2.913,0.494-3.715,1.301c-1.194,1.201-1.185,2.886-1.177,4.372 l0.001,6.94c0,3.005,2.445,5.45,5.45,5.45s5.45-2.445,5.45-5.45l0.001-6.94c0.008-1.486,0.017-3.171-1.177-4.372 c-0.658-0.662-1.595-1.068-2.833-1.239v-9.516c4.234-3.308,7.866-6.118,8.861-6.888h2.313c0.552,0,1-0.448,1-1V33.94 C74.34,33.387,73.892,32.94,73.34,32.94z M64.176,60.468l-0.001,6.951c0,1.902-1.548,3.45-3.45,3.45 c-1.402,0-2.606-0.844-3.145-2.047h2.037c0.552,0,1-0.448,1-1s-0.448-1-1-1h-2.342l0-1.688h2.342c0.552,0,1-0.448,1-1s-0.448-1-1-1 h-2.343l0-1.821h2.343c0.552,0,1-0.448,1-1s-0.448-1-1-1h-2.325c0.041-0.741,0.171-1.386,0.577-1.795 c0.491-0.494,1.453-0.745,2.856-0.745s2.365,0.25,2.856,0.745C64.189,58.128,64.183,59.264,64.176,60.468z M72.34,36.463h-1.654 c-0.221,0-0.436,0.073-0.611,0.208c0,0-4.039,3.119-8.937,6.944l-9.794-6.968c-0.169-0.12-0.372-0.185-0.58-0.185h-1.654V34.94 h23.23V36.463z M45.023,42.462l-0.176,3.212c-0.018,0.332-0.2,0.633-0.485,0.804c-0.158,0.094-0.335,0.142-0.513,0.142 c-0.145,0-0.29-0.031-0.425-0.095l-4.245-1.992c-0.5-0.235-0.715-0.83-0.48-1.33c0.234-0.501,0.831-0.715,1.33-0.48l2.902,1.362 l0.255-4.656c0.03-0.552,0.502-0.974,1.053-0.944c0.551,0.03,0.974,0.502,0.944,1.053l-0.046,0.835 c5.806,1.963,10.629,6.745,12.592,12.492c0.179,0.522-0.101,1.091-0.623,1.27c-0.107,0.037-0.216,0.054-0.323,0.054 c-0.416,0-0.804-0.262-0.946-0.677C54.129,48.515,50.015,44.334,45.023,42.462z M35.802,47.247v24.44c0,0.552-0.448,1-1,1 s-1-0.448-1-1v-24.44c0-0.552,0.448-1,1-1S35.802,46.695,35.802,47.247z M48.725,30.049h24c0.552,0,1,0.448,1,1s-0.448,1-1,1h-24 c-0.552,0-1-0.448-1-1S48.172,30.049,48.725,30.049z"/>
           </g>
         </svg>
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Aucun service trouvé</h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-8">Aucun service ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
-        <button id="reset-search-filters" class="bg-gradient-to-r from-ll-blue to-blue-600 text-white py-3 px-6 rounded-xl hover:from-blue-600 hover:to-ll-dark-blue transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 neon-glow">
-          Réinitialiser les filtres
-        </button>
-      </div>
-    `;
-    grid.parentNode.insertBefore(noServicesDiv, grid.nextSibling);
-  }
-  noServicesDiv.classList.remove('hidden');
-
-  // 3. Event listener pour bouton (idempotent)
-  const resetBtn = document.getElementById('reset-search-filters');
-  if (resetBtn && !resetBtn._listenerAdded) {
-    if (typeof resetAllFilters === 'function') {
-      resetBtn.addEventListener('click', resetAllFilters);
-    } else {
-      resetBtn.addEventListener('click', () => console.log('Filtres réinitialisés.'));
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Aucun service trouvé</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-8">Aucun service ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
+                <button id="reset-search-filters" class="bg-gradient-to-r from-ll-blue to-blue-600 text-white py-3 px-6 rounded-xl hover:from-blue-600 hover:to-ll-dark-blue transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 neon-glow">
+                    Réinitialiser les filtres
+                </button>
+            </div>
+        `;
+        grid.parentNode.insertBefore(noServicesDiv, grid.nextSibling);
     }
-    resetBtn._listenerAdded = true;
-  }
+    noServicesDiv.classList.remove('hidden');
+
+    const resetBtn = document.getElementById('reset-search-filters');
+    if (resetBtn && !resetBtn._listenerAdded) {
+        if (typeof resetAllFilters === 'function') {
+            resetBtn.addEventListener('click', resetAllFilters);
+        } else {
+            resetBtn.addEventListener('click', () => {
+                console.log('Filtres réinitialisés.');
+                updateServices();
+            });
+        }
+        resetBtn._listenerAdded = true;
+    }
 }
 
 /**
- * Cache le message "Aucun service trouvé" et réaffiche les détails - IMMÉDIAT
- * Appelée quand des services sont trouvés pour toggle instantané.
+ * Cache le message "Aucun service trouvé" et réaffiche les détails
  */
 export function hideNoServicesMessage() {
-  const grid = document.getElementById('services-display-grid');
-  const noServicesDiv = document.getElementById('no-services-display');
-  if (!grid) return;
+    const grid = document.getElementById('services-display-grid');
+    const noServicesDiv = document.getElementById('no-services-display');
+    if (!grid) {
+        console.warn('Grid element not found, skipping hideNoServicesMessage.');
+        return;
+    }
 
-  // 1. Réafficher la grille
-  grid.classList.remove('hidden');
-
-  // 2. Masquer le message
-  if (noServicesDiv) {
-    noServicesDiv.classList.add('hidden');
-  }
-
+    grid.classList.remove('hidden');
+    if (noServicesDiv) {
+        noServicesDiv.classList.add('hidden');
+    }
 }
 
 

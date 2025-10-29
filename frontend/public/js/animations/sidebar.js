@@ -250,8 +250,7 @@ function updateContentLayout() {
         let paddingLeft = leftSidebarOpen ? '0px' : '6px';
         let paddingRight = rightSidebarOpen ? '0px' : '6px';
         contentMain.style.padding = `6px ${paddingRight} 6px ${paddingLeft}`;
-        
-        contentMain.classList.add('rounded-3xl');
+       
 
     }
 
