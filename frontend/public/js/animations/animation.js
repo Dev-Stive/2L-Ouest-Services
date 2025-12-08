@@ -414,14 +414,6 @@ async function loadMockData() {
 
 
 
-
-// HERO_SLIDES updated with pertinent content for L&L Ouest Services
-// Focus: Professional cleaning in Angers, France; small odd jobs (petits boulots), outside services (prestations extérieures),
-// eco-friendly, team, express, local engagement, hygiene, customization, trust, future-oriented.
-// Added 'hybrid' type for slides with both image and video: video blurred in background, symbolic image oblique as preview.
-// Sources: Real Unsplash images and Mixkit videos, curated for relevance (professional cleaning, French context where possible).
-// Variety: Offices, teams, eco products, before/after, tools, local Angers vibes, handyman for small jobs.
-// HERO_SLIDES with 15 slides (unchanged from previous response)
 const HERO_SLIDES = [
   {
     type: 'grid',
@@ -651,7 +643,7 @@ async function initHeroCarousel() {
         items: [
           { class: 'col-span-2 row-span-2 z-10', scale: '110', visible: true },
           { class: 'col-span-1 row-span-1 z-0 -ml-8', scale: '105', visible: true },
-          { class: 'col-span-1 row-span-1 z-5 -ml-8 mt-8', scale: '105', visible: true },
+          { class: 'col-span-1 row-span-1 z-5 -ml-8 mt-1Organisation d’Événements', scale: '105', visible: true },
         ],
       },
     };
@@ -904,7 +896,7 @@ function openTestimonialModal(testimonial) {
   modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 md:p-6 transition-opacity duration-500 opacity-0';
 
   modal.innerHTML = `
-<div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500">
+<div class="modal-content bg-white dark:bg-ll-black/20 rounded-2xl shadow-2xl max-w-3xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500">
       <button class="modal-close absolute top-4 right-4 z-10 bg-white dark:bg-gray-700 rounded-xl p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-md" aria-label="Fermer la modale">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -996,7 +988,7 @@ let typingInterval = null;
      * @param {string} text - Le texte complet à taper.
      * @param {number} speed - La vitesse de frappe en ms.
      */
-    function typeAnswer(element, text, speed = 30) {
+    function typeAnswer(element, text, speed = 1) {
       if (typingInterval) clearInterval(typingInterval);
       let i = 0;
       element.innerHTML = '';
@@ -1128,7 +1120,7 @@ let typingInterval = null;
 
             // Ajouter l'effet de typing uniquement à l'ouverture
             if (isExpanded) {
-              typeAnswer(textElement, answerText, 30);
+              typeAnswer(textElement, answerText, 5);
             } else {
               textElement.innerHTML = answerText;
             }
@@ -1550,12 +1542,12 @@ function initTeamSection() {
                     currentFilter = button.dataset.filter;
                     filterButtons.forEach(btn => {
                         btn.classList.remove('active', 'bg-blue-600', 'text-white');
-                        btn.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-200');
+                        btn.classList.add('bg-white', 'dark:bg-ll-black/20', 'text-gray-700', 'dark:text-gray-200');
                     });
                     button.classList.add('active', 'bg-blue-600', 'text-white');
-                    button.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-200');
+                    button.classList.remove('bg-white', 'dark:bg-ll-black/20', 'text-gray-700', 'dark:text-gray-200');
                     renderTeamCards(currentFilter);
-                    AOS.refresh();
+                   
                    
                 });
             });
@@ -1618,7 +1610,7 @@ function initPartnersSection() {
     modal.id = 'partner-modal';
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden';
     modal.innerHTML = `
-      <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500">
+      <div class="modal-content bg-white dark:bg-ll-black/20 rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500">
     
       <button id="close-modal" class="modal-close absolute top-4 right-4 z-10 bg-white dark:bg-gray-700 rounded-xl p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-md" aria-label="Fermer la modale">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1790,7 +1782,7 @@ function initBlogSection() {
   blogContainer.innerHTML = MOCK_BLOG_POSTS.map(
     (post, index) => `
       <div class="swiper-slide">
-        <div class="blog-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
+        <div class="blog-card bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
           <img src="${post.image}" data-src="${post.image}" class="w-full h-48 object-cover rounded-t-xl mb-4 lazy" alt="Image de l'article ${post.title}">
           <h4 class="text-lg font-semibold text-gray-900 dark:text-white">${post.title}</h4>
           <p class="text-gray-500 dark:text-gray-400 text-sm">${post.date}</p>
@@ -1851,8 +1843,8 @@ function openBlogModal(post) {
   modal.className =
     'fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 opacity-0 backdrop-blur-sm';
   modal.innerHTML = `
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500 relative border border-blue-500/30 shadow-neon-blue">
-      <div class="sticky top-0 bg-white dark:bg-gray-800 p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center rounded-t-2xl">
+    <div class="bg-white dark:bg-ll-black/20 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500 relative border border-blue-500/30 shadow-neon-blue">
+      <div class="sticky top-0 bg-white dark:bg-ll-black/20 p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center rounded-t-2xl">
         <h3 class="text-xl font-cinzel font-bold text-gray-900 dark:text-white shadow-neon-blue">${post.title}</h3>
         <button class="close-blog-modal text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Fermer la modale">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1879,15 +1871,15 @@ function openBlogModal(post) {
   setTimeout(() => {
     modal.classList.remove('opacity-0');
     modal.classList.add('opacity-100');
-    modal.querySelector('.bg-white, .dark\\:bg-gray-800').classList.remove('scale-95');
-    modal.querySelector('.bg-white, .dark\\:bg-gray-800').classList.add('scale-100');
+    modal.querySelector('.bg-white, .dark\\:bg-ll-black/20').classList.remove('scale-95');
+    modal.querySelector('.bg-white, .dark\\:bg-ll-black/20').classList.add('scale-100');
   }, 10);
 
   const closeModal = () => {
     modal.classList.remove('opacity-100');
     modal.classList.add('opacity-0');
-    modal.querySelector('.bg-white, .dark\\:bg-gray-800').classList.remove('scale-100');
-    modal.querySelector('.bg-white, .dark\\:bg-gray-800').classList.add('scale-95');
+    modal.querySelector('.bg-white, .dark\\:bg-ll-black/20').classList.remove('scale-100');
+    modal.querySelector('.bg-white, .dark\\:bg-ll-black/20').classList.add('scale-95');
     setTimeout(() => modal.remove(), 500);
     document.body.style.overflow = 'auto';
   };
@@ -1919,7 +1911,7 @@ function initEventsSection() {
   eventsContainer.innerHTML = MOCK_EVENTS.map(
     (event, index) => `
       <div class="swiper-slide">
-        <div class="event-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
+        <div class="event-card bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
           <h4 class="text-lg font-semibold text-gray-900 dark:text-white">${event.title}</h4>
           <p class="text-gray-500 dark:text-gray-400 text-sm">${event.date} - ${event.location}</p>
           <p class="text-gray-600 dark:text-gray-300 mt-2">${event.description}</p>
@@ -2217,7 +2209,7 @@ function initPricingSection() {
 
   pricingContainer.innerHTML = MOCK_PRICING.map(
     (plan, index) => `
-      <div class="pricing-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
+      <div class="pricing-card bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="flip-up" data-aos-delay="${index * 100}">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white">${plan.name}</h4>
         <p class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">${plan.price}€</p>
         <ul class="text-gray-600 dark:text-gray-300 mt-4 space-y-2">
@@ -2243,7 +2235,7 @@ function initContactsSection() {
 
   contactsContainer.innerHTML = MOCK_CONTACTS.map(
     (contact, index) => `
-      <div class="contact-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="fade-up" data-aos-delay="${index * 100}">
+      <div class="contact-card bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 transform transition-transform duration-300 hover:scale-105 hover:shadow-neon-blue" data-aos="fade-up" data-aos-delay="${index * 100}">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white">${contact.name}</h4>
         <p class="text-gray-600 dark:text-gray-300 mt-2"><a href="mailto:${contact.email}" class="hover:text-blue-600">${contact.email}</a></p>
         <p class="text-gray-600 dark:text-gray-300"><a href="tel:${contact.phone}" class="hover:text-blue-600">${contact.phone}</a></p>
@@ -2266,7 +2258,7 @@ function initWhyUsSection() {
   const reasons = Object.values(WHY_US_DATA);
 
   whyUsContainer.innerHTML = reasons.map((reason, index) => `
-   <div class="service-card group relative rounded-xl overflow-hidden h-80 bg-white dark:bg-gray-800 shadow-md hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="${index * 150}"> 
+   <div class="service-card group relative rounded-xl overflow-hidden h-80 bg-white dark:bg-ll-black/20 shadow-md hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="${index * 150}"> 
       <div 
         class="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-110" 
         style="background-image: url('${reason.image}');"
@@ -2567,9 +2559,12 @@ export function initVideoModal() {
                         </div>
                         
                         <button class="fullscreen-video bg-black/60 text-white p-2 sm:p-3 rounded-xl hover:bg-black/80 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 neon-glow" aria-label="Passer en plein écran">
-                            <svg id="fullscreen-open-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-6 sm:h-6">
-                                <path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
-                            </svg>
+                           <svg id="fullscreen-open-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-6 sm:h-6">
+                              <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                              <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                              <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                              <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                          </svg>
                             <svg id="fullscreen-close-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden sm:w-6 sm:h-6">
                                 <path d="M15 3h6v6"></path><path d="M18 6l-6 6"></path><path d="M9 21H3v-6"></path><path d="M6 18l6-6"></path><path d="M3 9V3h6"></path><path d="M6 6l6 6"></path><path d="M21 15v6h-6"></path><path d="M18 18l-6-6"></path>
                             </svg>
@@ -3264,19 +3259,7 @@ function initCategoryModal() {
     document.body.appendChild(categoryModal);
     modals.push(categoryModal);
 
-    const categories = [
-        { id: 'all', name: 'Toutes', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 3h18v18H3z"></path><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>` },
-        { id: 'bureaux', name: 'Bureaux', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg>` },
-        { id: 'residentiel', name: 'Résidentiel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V10"></path></svg>` },
-        { id: 'commercial', name: 'Commercial', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg>` },
-        { id: 'industriel', name: 'Industriel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M2 20h20V4H2z"></path><path d="M6 4v16"></path><path d="M10 4v16"></path><path d="M14 4v16"></path><path d="M18 4v16"></path></svg>` },
-        { id: 'medical', name: 'Médical', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v20"></path><path d="M4 10h16"></path><path d="M4 14h16"></path></svg>` },
-        { id: 'hotelier', name: 'Hôtelier', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01"></path><path d="M6 14h.01"></path><path d="M10 10h.01"></path><path d="M10 14h.01"></path><path d="M14 10h.01"></path><path d="M14 14h.01"></path><path d="M18 10h.01"></path><path d="M18 14h.01"></path></svg>` },
-        { id: 'education', name: 'Éducation', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>` },
-        { id: 'restaurant', name: 'Restaurant', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 12h16"></path><path d="M4 6h16"></path><path d="M4 18h16"></path></svg>` },
-        { id: 'sport', name: 'Sport & Fitness', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M4 7h16v10H4z"></path><path d="M8 10v4"></path><path d="M12 10v4"></path><path d="M16 10v4"></path></svg>` },
-        { id: 'evenementiel', name: 'Événementiel', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ll-white"><path d="M12 2v4"></path><path d="M2 12h4"></path><path d="M12 18v4"></path><path d="M18 12h4"></path><path d="M4 4l16 16"></path><path d="M4 20L20 4"></path></svg>` }
-    ];
+    const categories = MOCK_CATEGORIES;
 
     const grid = categoryModal.querySelector('#modal-category-grid');
     grid.innerHTML = categories.map(category => `
@@ -3365,7 +3348,7 @@ function initFrequencyModal() {
             </h3>
             <div id="modal-frequency-grid" class="space-y-3"></div>
             <div class="flex justify-center mt-6 gap-4">
-                <button id="frequency-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
+                <button id="frequency-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-ll-black/500 transition-all">Annuler</button>
                 <button id="frequency-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
             </div>
         </div>
@@ -3381,7 +3364,7 @@ function initFrequencyModal() {
 
     const grid = frequencyModal.querySelector('#modal-frequency-grid');
     grid.innerHTML = frequencies.map(freq => `
-        <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${freq.id === getCurrentFilters().frequency ? 'bg-ll-blue text-white' : ''}">
+        <label class="flex items-center cursor-pointer hover:bg-ll-black/50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${freq.id === getCurrentFilters().frequency ? 'bg-ll-blue text-white' : ''}">
             <input type="radio" name="frequency" value="${freq.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${freq.id === getCurrentFilters().frequency ? 'checked' : ''}>
             <div class="flex items-center gap-3 ml-3 flex-1">
                 <span class="text-2xl">${freq.icon}</span>
@@ -3449,7 +3432,7 @@ function initDifficultyModal() {
     const difficultyModal = document.createElement('div');
     difficultyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     difficultyModal.innerHTML = `
-        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+        <div class="modal-content bg-white dark:bg-ll-black/20 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
@@ -3458,7 +3441,7 @@ function initDifficultyModal() {
             </h3>
             <div id="modal-difficulty-grid" class="space-y-3"></div>
             <div class="flex justify-center mt-6 gap-4">
-                <button id="difficulty-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
+                <button id="difficulty-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-ll-black/500 transition-all">Annuler</button>
                 <button id="difficulty-modal-confirm" class="px-6 py-2 bg-ll-blue text-white rounded-xl hover:shadow-lg neon-glow transition-all">Confirmer</button>
             </div>
         </div>
@@ -3475,7 +3458,7 @@ function initDifficultyModal() {
 
     const grid = difficultyModal.querySelector('#modal-difficulty-grid');
     grid.innerHTML = difficulties.map(diff => `
-        <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${diff.id === getCurrentFilters().difficulty ? 'bg-ll-blue text-white' : ''}">
+        <label class="flex items-center cursor-pointer hover:bg-ll-black/50 dark:hover:bg-gray-700 p-4 rounded-xl transition-all w-full ${diff.id === getCurrentFilters().difficulty ? 'bg-ll-blue text-white' : ''}">
             <input type="radio" name="difficulty" value="${diff.id}" class="form-radio text-ll-blue focus:ring-ll-blue sr-only" ${diff.id === getCurrentFilters().difficulty ? 'checked' : ''}>
             <div class="flex items-center gap-3 ml-3 flex-1">
                 <span class="text-2xl text-white">${diff.icon}</span>
@@ -3564,7 +3547,6 @@ function initFilterInactivityTimer() {
 
     const clearTimer = () => {
         clearTimeout(filterInactivityTimer);
-        console.log("recommence");
         filterPanel.classList.remove('opacity-0', 'scale-95');
     };
 
@@ -4327,7 +4309,7 @@ function initAbout() {
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                  AOS.refresh();
+                
                     animateCanvasCounter(index, stat.value, stat.unit);
                     animateStatValue(index, stat.value, stat.unit);
                     observer.unobserve(statItem);
@@ -4670,26 +4652,40 @@ if (backToTopBtn && main) {
 
 
 
-  
-    // Animation de chargement initial
-    const loadingOverlay = document.getElementById('loading-overlay');
-    if (loadingOverlay) {
-        setTimeout(() => {
-            loadingOverlay.style.opacity = '0';
-            setTimeout(() => {
-                if (loadingOverlay.parentNode) {
-                    loadingOverlay.parentNode.removeChild(loadingOverlay);
-                }
-            }, 500);
-        }, 1000);
-    }
-
-    
-    // Optimisation des performances : nettoyer les écouteurs d'événements lors du déchargement
-    window.addEventListener('unload', () => {
-        swiperInstance?.destroy();
-    });
 });
 
+window.addEventListener("DOMContentLoaded", () => {
+    const lottie = document.querySelector("lottie-player");
+    if (!lottie) return;
 
+    
 
+    // Créer wrapper autour du lottie
+    const wrapper = document.createElement("div");
+    wrapper.className = "lottie-wrapper";
+
+    // Insérer wrapper avant Lottie
+    lottie.parentNode.insertBefore(wrapper, lottie);
+    wrapper.appendChild(lottie);
+
+    // Créer le placeholder
+    const placeholder = document.createElement("div");
+    placeholder.className = "lottie-placeholder";
+    wrapper.appendChild(placeholder);
+
+    // Fonction pour cacher le placeholder
+    const hidePlaceholder = () => {
+        placeholder.style.opacity = "0";
+        placeholder.style.transition = "opacity 0.1s";
+        setTimeout(() => placeholder.remove(), 400);
+    };
+
+    // ⚡ Événements fiables pour Lottie
+    lottie.addEventListener("ready", hidePlaceholder);
+    lottie.addEventListener("play", hidePlaceholder);
+
+    // ⚡ Si Lottie est déjà prêt → retirer immédiatement
+    setTimeout(() => {
+        if (lottie.isReady) hidePlaceholder();
+    }, 500);
+});

@@ -7,12 +7,16 @@
  * Mises à jour: Gestion loading hidden par défaut, show not found si pas trouvé, Tailwind direct, responsive full.
  * Ajout: Main dédié pour affichage loading du service (#service-loading-main), togglé explicitement ici pour cohérence.
  * Ajout: Paramètre URL 'reserve=true' pour ouvrir directement la modale de réservation après rendu.
+ *
+ * MODIFICATIONS: Refactorisation du chargement dans loadAndRenderServiceDetail pour une vérification anticipée
+ * et une gestion plus robuste de la disponibilité du service avant affichage.
  */
 
 import { loadUserData } from '../loadData.js';
 import reservation from '../modules/reservation.js';
 import { showNotification } from '../modules/utils.js';
-import { equipmentIcons, loadServices, navigateService, toggleServicesLoading, renderServicesSidebar } from './loadService.js';
+// equipmentIcons, navigateService non utilisés dans ce fichier, on ne garde que loadServices et renderServicesSidebar.
+import { loadServices, renderServicesSidebar } from './loadService.js';
 
 let allServices = [];
 let currentUser = null;
@@ -227,7 +231,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         ];
         
         galleryEl.innerHTML = images.map((img, idx) => `
-            <div class="service-image-item relative overflow-hidden rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:scale-102 bg-gray-100 dark:bg-gray-800 hover:shadow-[0_8px_30px_rgba(37,99,235,0.2)]" >
+            <div class="service-image-item relative overflow-hidden rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:scale-102 bg-gray-100 dark:bg-ll-black/20 hover:shadow-[0_8px_30px_rgba(37,99,235,0.2)]" >
                 <img src="${img.url}" alt="${img.description || service.name}" 
                      class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                      loading="${idx === 0 ? 'eager' : 'lazy'}"
@@ -257,7 +261,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
                     <h4 class="text-xl font-semibold text-ll-black dark:text-ll-white mb-4">Services Inclus</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         ${service.included_services.map(service => `
-                            <div class="flex items-center space-x-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
+                            <div class="flex items-center space-x-3 p-3 bg-white/50 dark:bg-ll-black/20/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
                                 <svg class="w-5 h-5 text-ll-dark-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
@@ -280,7 +284,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
             const heightClass = heightClasses[idx % heightClasses.length] || 'h-32';
             
             return `
-                <div class="feature-card h-30 group relative overflow-hidden bg-white dark:bg-gray-800 border border-[rgba(37,99,235,0.1)] dark:border-[rgba(37,99,235,0.2)] rounded-3xl p-6 transition-all duration-300 hover:border-ll-blue hover:shadow-[0_8px_25px_rgba(37,99,235,0.15)] hover:-translate-y-0.5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] flex items-start" 
+                <div class="feature-card h-30 group relative overflow-hidden bg-white dark:bg-ll-black/20 border border-[rgba(37,99,235,0.1)] dark:border-[rgba(37,99,235,0.2)] rounded-3xl p-6 transition-all duration-300 hover:border-ll-blue hover:shadow-[0_8px_25px_rgba(37,99,235,0.15)] hover:-translate-y-0.5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] flex items-start" 
                      data-aos="fade-up" data-aos-delay="${idx * 100}">
                     
                     <div class="flex items-start space-x-3 h-full relative z-10">
@@ -305,20 +309,14 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         const equipment = service.equipment || [];
         equipmentEl.innerHTML = equipment.map((eq, idx) => `
             <div class="equipment-item group relative perspective-[100px]" data-aos="zoom-in" data-aos-delay="${idx * 150}">
-                <div class="w-full aspect-square bg-gradient-to-br from-ll-white to-ll-light-bg dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-lg hover:shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500 hover:scale-105 [transform-style:preserve-3d] hover:rotate-y-5 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <div class="w-full aspect-square bg-gradient-to-br from-ll-white to-ll-light-bg dark:from-ll-black dark:to-l-black/50 rounded-3xl shadow-lg hover:shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500 hover:scale-105 [transform-style:preserve-3d] hover:rotate-y-5 flex flex-col items-center justify-center p-4 relative overflow-hidden">
                     <div class="text-5xl mb-3 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
                         ${eq.icon}
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ll-black/80 to-transparent p-4 text-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div class="absolute bottom-0 left-0 right-0 dark:bg-gradient-to-t from-ll-black/80 to-transparent p-4 text-center transform translate-y-0 group-hover:translate-y-full transition-transform duration-300">
                         <span class="text-ll-white text-sm font-medium block">${eq.name}</span>
                     </div>
-                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="w-6 h-6 bg-ll-blue rounded-full flex items-center justify-center">
-                            <svg class="w-3 h-3 text-ll-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         `).join('');
@@ -330,7 +328,7 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         const members = service.members || [];
         membersEl.innerHTML = members.map((member, idx) => `
             <div class="team-member-card group" data-aos="fade-up" data-aos-delay="${idx * 200 * 3}">
-                <div class="bg-ll-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-ll-blue/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
+                <div class="bg-ll-white/80 dark:bg-ll-black/20/80 backdrop-blur-sm rounded-3xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-ll-blue/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
                     <div class="flex items-start space-x-4">
                         <div class="relative">
                             <img src="${member.photo}" alt="${member.name}" 
@@ -377,14 +375,14 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         const schedule = service.availability?.schedule || [];
         scheduleEl.innerHTML = schedule.map((sch, idx) => `
             <li class="schedule-item" data-aos="fade-right" data-aos-delay="${idx * 100 *3}">
-                <div class="flex items-center justify-between p-4 bg-ll-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl border border-gray-200/50 dark:border-gray-700/50 hover:border-ll-blue/30 transition-all duration-300 group">
+                <div class="flex items-center justify-between p-4 bg-ll-white/50 dark:bg-ll-black/50 backdrop-blur-sm rounded-3xl border border-gray-200/50 dark:border-gray-700/50 hover:border-ll-blue/30 transition-all duration-300 group">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-ll-blue/10 rounded-xl flex items-center justify-center group-hover:bg-ll-blue/20 transition-colors duration-300">
                             <span class="text-ll-blue font-semibold text-sm">${idx + 1}</span>
                         </div>
                         <span class="font-semibold text-ll-text-gray dark:text-gray-300 capitalize">${sch.day}</span>
                     </div>
-                    <span class="text-ll-blue dark:text-ll-blue font-bold text-sm bg-ll-blue/10 px-3 py-1 rounded-full group-hover:bg-ll-blue/20 transition-colors duration-300">
+                    <span class="text-ll-blue dark:text-ll-white font-bold text-sm bg-ll-blue/10 px-3 py-1 rounded-full group-hover:bg-ll-blue/20 transition-colors duration-300">
                         ${Array.isArray(sch.hours) ? sch.hours.join(' - ') : sch.hours}
                     </span>
                 </div>
@@ -418,34 +416,34 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     console.log('Service detail rendered professionally:', service.name);
 }
 
+
 /**
- * Chargement async principal avec gestion d'erreur robuste
+ * Chargement async principal avec gestion d'erreur robuste, vérification du service en amont.
  */
-document.addEventListener('DOMContentLoaded', async () => {
+async function loadAndRenderServiceDetail() {
     console.log('🚀 Initialisation du détail du service...');
 
-    // Affichage loading par défaut (main loading + overlay visible)
     toggleServiceLoadingMain(true);
 
     try {
-        // Chargement des données utilisateur
+        // 1. Chargement des données utilisateur
         currentUser = await loadUserData();
         
-        // Récupération de l'ID du service et paramètre reserve
+        // 2. Récupération de l'ID du service et paramètre reserve
         const urlParams = new URLSearchParams(window.location.search);
         const serviceId = urlParams.get('service') || urlParams.get('id');
         const reserveParam = urlParams.get('reserve') === 'true';
         
-
         if (!serviceId) {
             console.warn('Aucun ID de service trouvé');
             renderContent(false);
             return;
         }
 
-        // Chargement des services
+        // 3. Chargement de TOUS les services (essentiel pour la vérification)
         allServices = await loadServices({});
 
+        // 4. Vérification et recherche stricte du service
         const serviceIndex = allServices.findIndex(s => {
             const id = s.id || s.name?.toLowerCase().replace(/\s+/g, '-');
             return id === serviceId;
@@ -453,19 +451,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (serviceIndex === -1) {
             console.error('Service non trouvé:', serviceId);
+            // On appelle renderContent(false) pour afficher la page d'erreur
             renderContent(false);
             return;
         }
 
-        renderContent(true, allServices[serviceIndex], serviceIndex, allServices.length);
+        // 5. Service trouvé : Démarrer le rendu et les actions
+        const foundService = allServices[serviceIndex];
+        
+        // Rendu du contenu principal et masquage du loading (géré dans renderContent)
+        renderContent(true, foundService, serviceIndex, allServices.length);
 
-        // Vérifier si ouverture directe de la modale de réservation
+        // 6. Gestion de l'ouverture directe de la modale de réservation
         if (reserveParam) {
-            localStorage.setItem('serviceSelected',allServices[serviceIndex]);
-            reservation.openReservationModal(allServices[serviceIndex], currentUser);
+            localStorage.setItem('serviceSelected', JSON.stringify(foundService)); // Utilisation de JSON.stringify pour stocker l'objet
+            reservation.openReservationModal(foundService, currentUser);
         }
 
-        // Initialisation du système de réservation (seulement si formulaire présent)
+        // 7. Initialisation du système de réservation (si formulaire présent)
         if (document.getElementById('reservation-form')) {
             reservation.init();
         }
@@ -475,9 +478,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('❌ Erreur critique lors du chargement:', error);
         showNotification('Erreur lors du chargement du service.', 'error');
+        // Afficher l'état non trouvé en cas d'erreur critique
         renderContent(false);
     } finally {
-
-        toggleServiceLoadingMain(false);
+        // Le `toggleServiceLoadingMain(false)` est déjà appelé dans `renderContent`.
+        // On le garde ici uniquement en cas d'erreur très précoce avant l'appel de renderContent.
+        if (document.getElementById('service-main-content').classList.contains('hidden') &&
+            document.getElementById('service-not-found-page').classList.contains('hidden')) {
+            toggleServiceLoadingMain(false);
+        }
     }
-});
+}
+
+/**
+ * Écouteur principal
+ */
+document.addEventListener('DOMContentLoaded', loadAndRenderServiceDetail);

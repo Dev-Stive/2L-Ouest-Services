@@ -91,7 +91,6 @@ const reservation = {
       frequency: formData.get('frequency') || '',
       address: formData.get('address')?.trim() || '',
       message: formData.get('message')?.trim() || '',
-      consentement: formData.get('consentement') === 'on',
       serviceId: formData.get('serviceId') || '',
       serviceName: formData.get('serviceName') || '',
       serviceCategory: formData.get('serviceCategory') || '',
@@ -120,9 +119,7 @@ const reservation = {
       form.querySelector('[name="serviceId"]').value = reservationData.serviceId || '';
       form.querySelector('[name="serviceName"]').value = reservationData.serviceName || '';
       form.querySelector('[name="serviceCategory"]').value = reservationData.serviceCategory || '';
-      if (reservationData.consentement) {
-        form.querySelector('[name="consentement"]').checked = true;
-      }
+     
     }
   },
 
@@ -188,7 +185,6 @@ const reservation = {
       frequency: formData.get('frequency') || '',
       address: formData.get('address')?.trim() || '',
       message: formData.get('message')?.trim() || '',
-      consentement: formData.get('consentement') === 'on',
       serviceId: formData.get('serviceId') || '',
       serviceName: formData.get('serviceName') || '',
       serviceCategory: formData.get('serviceCategory') || '',
@@ -224,7 +220,6 @@ const reservation = {
       frequency: formData.get('frequency') || '',
       address: formData.get('address')?.trim() || '',
       message: formData.get('message')?.trim() || '',
-      consentement: formData.get('consentement') === 'on',
       serviceId: formData.get('serviceId') || '',
       serviceName: formData.get('serviceName') || '',
       serviceCategory: formData.get('serviceCategory') || '',
@@ -234,10 +229,10 @@ const reservation = {
       const field = input.name;
       let value = input.value.trim();
       if (field === 'phone' && value) value = `+33 ${value}`;
-      if (field === 'consentement') value = input.checked;
+      
 
       const error = validateFieldInitial(field, value, false, true);
-      this.showFieldError(field, error || (value && field !== 'consentement' ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : field === 'consentement' && value ? `Consentement accepté <i class="fas fa-check-circle ml-1 text-green-500"></i>` : ''));
+      this.showFieldError(field, error);
     });
 
     this.updateSubmitButtonState(form, document.getElementById('reservation-submit'), true);
@@ -258,7 +253,6 @@ const reservation = {
       frequency: 'Fréquence',
       address: 'Adresse',
       message: 'Instructions',
-      consentement: 'Consentement',
       serviceId: 'Service ID',
       serviceName: 'Nom du Service',
       serviceCategory: 'Catégorie du Service',
@@ -293,8 +287,7 @@ const reservation = {
         const field = input.name;
         let value = input.value.trim();
         if (field === 'phone' && value) value = `+33 ${value.replace(/\s+/g, ' ').trim()}`;
-        if (field === 'consentement') value = input.checked;
-
+      
         let error = null;
         if (field === 'message' && value) {
           if (value.length > 1000) error = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
@@ -306,15 +299,13 @@ const reservation = {
         } else if (field === 'address') {
           if (!value) error = 'L\'adresse est requise.';
           else if (value.length < 5) error = 'L\'adresse doit contenir au moins 5 caractères.';
-        } else if (field === 'consentement') {
-          if (!value) error = 'Le consentement est requis.';
         } else {
           error = validateField(field, value, false, true,true);
         }
 
         this.showFieldError(
           field,
-          error || (value && field !== 'consentement' ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : field === 'consentement' && value ? `Consentement accepté <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
+          error
         );
 
         this.updateSubmitButtonState(form, submitButton);
@@ -357,7 +348,6 @@ const reservation = {
           frequency: formData.get('frequency') || '',
           address: formData.get('address')?.trim() || '',
           message: formData.get('message')?.trim() || '',
-          consentement: formData.get('consentement') === 'on',
           createdAt: new Date().toISOString(),
         };
 
@@ -444,9 +434,7 @@ const reservation = {
       errors.message = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
     }
 
-    if (!data.consentement) {
-      errors.consentement = 'Le consentement est requis.';
-    }
+
 
     if (!data.serviceId) errors.serviceId = 'ID du service requis.';
     if (!data.serviceName || data.serviceName.trim() === '') errors.serviceName = 'Nom du service requis.';
@@ -489,7 +477,7 @@ const reservation = {
   async showPreConfirmationModal(reservationData) {
     const isDark = document.documentElement.classList.contains('dark');
     const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-    const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
+    const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
     const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
     const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
     const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
@@ -598,7 +586,7 @@ const reservation = {
   async showConfirmationModal(reservationData) {
     const isDark = document.documentElement.classList.contains('dark');
     const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-    const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
+    const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
     const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
     const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
     const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';

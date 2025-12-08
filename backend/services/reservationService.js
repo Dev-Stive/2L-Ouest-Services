@@ -30,7 +30,6 @@ const path = require('path');
  * @property {string} address - Adresse d'intervention.
  * @property {string} options - Options supplémentaires (séparées par des tirets, optionnel).
  * @property {string} message - Instructions ou message spécial.
- * @property {boolean} consentement - Acceptation des conditions.
  * @property {string} createdAt - Date de création.
  * @property {string} reply - Réponse de l'admin (optionnel).
  * @property {string} repliedAt - Date de réponse (optionnel).
@@ -76,8 +75,8 @@ class ReservationService {
     let reservationCache = null;
 
     try {
-      if (!reservationData.email || !reservationData.name || !reservationData.message || !reservationData.date || !reservationData.frequency || !reservationData.address || !reservationData.serviceId || !reservationData.serviceName || !reservationData.serviceCategory || !reservationData.consentement) {
-        throw new AppError(400, 'Données de réservation incomplètes (nom, email, message, date, fréquence, adresse, service requis et consentement accepté)');
+      if (!reservationData.email || !reservationData.name || !reservationData.message || !reservationData.date || !reservationData.frequency || !reservationData.address || !reservationData.serviceId || !reservationData.serviceName || !reservationData.serviceCategory ) {
+        throw new AppError(400, 'Données de réservation incomplètes (nom, email, message, date, fréquence, adresse, service requis )');
       }
 
       const reservation = await reservationRepo.create({
@@ -175,7 +174,6 @@ class ReservationService {
           hasServiceId: !!reservationData.serviceId,
           hasServiceName: !!reservationData.serviceName,
           hasServiceCategory: !!reservationData.serviceCategory,
-          consentement: !!reservationData.consentement,
           userId: reservationData.userId,
         },
         clientTemplateProvided: !!clientHtmlTemplate,
@@ -249,7 +247,6 @@ class ReservationService {
         }) : null,
         statusLabel: this.getStatusLabel(reservation.status),
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
-        consentementAccepted: reservation.consentement === true,
         emailStatus: reservation.emailStatus || {
           clientSent: false,
           adminSent: false,
@@ -265,7 +262,6 @@ class ReservationService {
         optionsCount: enrichedReservation.optionsCount,
         messageLength: enrichedReservation.messageLength,
         phoneValid: enrichedReservation.phoneValid,
-        consentementAccepted: enrichedReservation.consentementAccepted,
       });
 
       return enrichedReservation;
@@ -328,9 +324,6 @@ class ReservationService {
         reservationData.status = 'pending';
       }
 
-      if (reservationData.consentement !== undefined) {
-        reservationData.consentement = reservationData.consentement === true || reservationData.consentement === 'on';
-      }
 
       const reservation = await reservationRepo.update(reservationId, reservationData);
       if (!reservation) {
@@ -368,7 +361,7 @@ class ReservationService {
         }) : null,
         statusLabel: this.getStatusLabel(reservation.status),
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
-        consentementAccepted: reservation.consentement === true,
+     
         emailStatus: reservation.emailStatus || {
           clientSent: false,
           adminSent: false,
@@ -444,7 +437,6 @@ class ReservationService {
         optionsCount: reservation.options ? reservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
         messagePreview: reservation.message ? (reservation.message.length > 100 ? reservation.message.substring(0, 100) + '...' : reservation.message) : '',
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
-        consentementAccepted: reservation.consentement === true,
       };
 
       if (reservation.userId) {
@@ -569,7 +561,6 @@ class ReservationService {
         daysSinceCreation: reservation.createdAt ? Math.floor((new Date() - new Date(reservation.createdAt)) / (1000 * 60 * 60 * 24)) : 0,
         daysSinceReply: reservation.repliedAt ? Math.floor((new Date() - new Date(reservation.repliedAt)) / (1000 * 60 * 60 * 24)) : null,
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
-        consentementAccepted: reservation.consentement === true,
         emailStatus: reservation.emailStatus || {
           clientSent: false,
           adminSent: false,
@@ -826,7 +817,6 @@ L&L Ouest Services`;
         replyPreview: updatedReservation.reply ? (updatedReservation.reply.length > 100 ? updatedReservation.reply.substring(0, 100) + '...' : updatedReservation.reply) : '',
         statusLabel: this.getStatusLabel(updatedReservation.status),
         phoneValid: updatedReservation.phone && updatedReservation.phone.startsWith('+33') && updatedReservation.phone.length === 12,
-        consentementAccepted: updatedReservation.consentement === true,
         hasReply: true,
         replyLength: updatedReservation.reply ? updatedReservation.reply.length : 0,
         repliedAtFormatted: updatedReservation.repliedAt ? new Date(updatedReservation.repliedAt).toLocaleDateString('fr-FR', {
@@ -911,7 +901,7 @@ L&L Ouest Services`;
         throw new AppError(404, 'Réservation non trouvée');
       }
 
-      if (!reservation.email || !reservation.name || !reservation.message || !reservation.date || !reservation.frequency || !reservation.address || !reservation.serviceId || !reservation.serviceName || !reservation.serviceCategory || reservation.consentement !== true) {
+      if (!reservation.email || !reservation.name || !reservation.message || !reservation.date || !reservation.frequency || !reservation.address || !reservation.serviceId || !reservation.serviceName || !reservation.serviceCategory) {
         throw new AppError(400, 'Données de réservation incomplètes');
       }
 

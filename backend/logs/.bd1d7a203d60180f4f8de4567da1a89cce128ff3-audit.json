@@ -6,64 +6,29 @@
     "auditLog": "logs/.bd1d7a203d60180f4f8de4567da1a89cce128ff3-audit.json",
     "files": [
         {
-            "date": 1759521424987,
-            "name": "logs/app-prod.log-audit-2025-10-03.log",
-            "hash": "87a15241aa58fec333b972d558e218ee2bb075a87c5cacaac7eba21ae30d2f1c"
+            "date": 1764712432385,
+            "name": "logs/app-prod.log-audit-2025-12-02.log",
+            "hash": "a69e7d58127a555facbb1afc990c11616cec1725b1e237f751b6ee177fb80fe4"
         },
         {
-            "date": 1759533227915,
-            "name": "logs/app-prod.log-audit-2025-10-04.log",
-            "hash": "4fca6b6418d4aad09cdeb5e3ff4598b6e3f13c5f723c4621b3af667869d8ef82"
+            "date": 1764719865849,
+            "name": "logs/app-prod.log-audit-2025-12-03.log",
+            "hash": "6bfe5cdfcfd19a73d709153d2085ee6b1aa390abf52a1a716583d01bec2d37c5"
         },
         {
-            "date": 1759620594161,
-            "name": "logs/app-prod.log-audit-2025-10-05.log",
-            "hash": "a772f4f50f911ad851f85602215b5cba152e9bf6b572e5364bc45c26e8dc8d39"
+            "date": 1764858419922,
+            "name": "logs/app-prod.log-audit-2025-12-04.log",
+            "hash": "e01d2f7162218109c6e2949b95c089eead0c262234b59376e87b57d360e11fd0"
         },
         {
-            "date": 1759705303293,
-            "name": "logs/app-prod.log-audit-2025-10-06.log",
-            "hash": "1038679efde83d75434fedb377a59fd40c51e0e977de2f1990244f937873d47f"
+            "date": 1764893503513,
+            "name": "logs/app-prod.log-audit-2025-12-05.log",
+            "hash": "478859cd138e3fba27e17f6504879a1e6c9fea14976f5d115e9830043d7e79d0"
         },
         {
-            "date": 1760091022794,
-            "name": "logs/app-prod.log-audit-2025-10-10.log",
-            "hash": "6c933329e102d5f9b47c2d2a021ac869d2f900ff3278f95f90dae5534b2ec180"
-        },
-        {
-            "date": 1760308058758,
-            "name": "logs/app-prod.log-audit-2025-10-12.log",
-            "hash": "7d8bbfa4d2ed0a1757c7c2780bdbf259292e862789179df0fd08c18ffae0f60b"
-        },
-        {
-            "date": 1760310291131,
-            "name": "logs/app-prod.log-audit-2025-10-13.log",
-            "hash": "a36f57205edb71ba6b96b60e73aef192c2534b7ed76b9f8167a0b5fd108fbc14"
-        },
-        {
-            "date": 1760422162954,
-            "name": "logs/app-prod.log-audit-2025-10-14.log",
-            "hash": "a9a62a4b2d4b175f742948e4b0a1a1deeeb82945d72cd7df5daae3ccc94aa6ec"
-        },
-        {
-            "date": 1760525100001,
-            "name": "logs/app-prod.log-audit-2025-10-15.log",
-            "hash": "1841f5e3f0ed78be02c633b8d1cf72227e285cca2a3f7adbf94664e0837cd8f2"
-        },
-        {
-            "date": 1761641947533,
-            "name": "logs/app-prod.log-audit-2025-10-28.log",
-            "hash": "036dcdaa80bae4d64e7faac1e135d60b646d7b38ebdd62dc95824d1f3eba5c0c"
-        },
-        {
-            "date": 1761695357731,
-            "name": "logs/app-prod.log-audit-2025-10-29.log",
-            "hash": "619fe4ca6b14f5c5fd11d655bbddb825540e63cf31772107ec3075c65e5f90d6"
-        },
-        {
-            "date": 1761811445650,
-            "name": "logs/app-prod.log-audit-2025-10-30.log",
-            "hash": "4132e02a5e540c04ebb988d961915e85d684a27d8e25f73be6ace956e2b5b5a2"
+            "date": 1765211221757,
+            "name": "logs/app-prod.log-audit-2025-12-08.log",
+            "hash": "c32603bfce2a2d6591435f709c98567f132e1249de3e4066016be29a7894e359"
         }
     ],
     "hashType": "sha256"

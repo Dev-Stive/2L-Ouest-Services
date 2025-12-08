@@ -399,7 +399,7 @@ export function renderServicesSidebar(services) {
 
         return `
             <button class="service-list-item flex-shrink-0 w-64 text-left p-4 rounded-xl border border-white/20 dark:border-gray-700/50 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-all duration-300 group service-card ${
-                index === currentServiceIndex ? 'border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30' : 'bg-white/50 dark:bg-gray-800/50'
+                index === currentServiceIndex ? 'border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30' : 'bg-white/50 dark:bg-ll-black/20/50'
             }" data-service-index="${index}">
                 <div class="flex flex-col gap-3 h-full">
                     <img src="${afterImage.url}" alt="${service.name}" class="w-full h-24 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300">
@@ -441,7 +441,7 @@ export function renderServicesSidebar(services) {
 
             listContainer.querySelectorAll('.service-list-item').forEach((el, i) => {
                 el.classList.toggle('border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30', i === currentServiceIndex);
-                el.classList.toggle('bg-white/50 dark:bg-gray-800/50 border-white/20 dark:border-gray-700/50', i !== currentServiceIndex);
+                el.classList.toggle('bg-white/50 dark:bg-ll-black/20/50 border-white/20 dark:border-gray-700/50', i !== currentServiceIndex);
             });
         });
     });
@@ -726,10 +726,10 @@ export function renderServiceDetail(service, index = 0, total = 1) {
 
     const availabilityEl = document.querySelector('.service-availability-text');
     const scheduleEl = document.querySelector('.service-schedule-content');
-    if (availabilityEl) {
-        availabilityEl.textContent = service.availability.isAvailable ?
-            '✅ Service disponible immédiatement' : '❌ Service temporairement indisponible';
-    }
+    //if (availabilityEl) {
+      //  availabilityEl.textContent = service.availability.isAvailable ?
+        //    '✅ Service disponible immédiatement' : '❌ Service temporairement indisponible';
+   // }
     if (scheduleEl) {
         scheduleEl.innerHTML = service.availability.schedule.map(sch => `
             <li class="flex items-center justify-between p-3 bg-white/50 dark:bg-gray-600/30 rounded-lg hover:bg-white dark:hover:bg-gray-600 transition-colors">

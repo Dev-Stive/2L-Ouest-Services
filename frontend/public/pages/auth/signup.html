@@ -37,13 +37,13 @@
 
     <!-- CSS Resources -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> -->
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link href="../../css/tailwind.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
 
     <!-- JavaScript Resources -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <!-- <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@1.5.7/dist/lottie-player.js" defer></script>
     
@@ -942,7 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="space-y-4">
                                 <div>
                                     <label id="modal-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300"></label>
-                                    <input id="modal-input" type="text" class="mt-1 w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-ll-blue transition-colors duration-300" />
+                                    <input id="modal-input" type="text" class="mt-1 w-full px-3 py-2 bg-white dark:bg-ll-black/20 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-ll-blue transition-colors duration-300" />
                                 </div>
                                 <div class="flex justify-end gap-2">
                                     <button id="modal-cancel" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">Annuler</button>
@@ -1573,7 +1573,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="level-dropdown-info" class="dropdown-content-info mt-6">
             <div class="space-y-4" id="summary-container">
-                <div class="info-card bg-ll-light-bg dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
+                <div class="info-card bg-ll-light-bg dark:bg-ll-black/20 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
                     <h4 class="text-sm font-medium text-ll-blue mb-4 flex items-center">
                         <i class="fas fa-user-circle mr-2 text-ll-blue"></i> Profil
                     </h4>
@@ -1599,7 +1599,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </div>
-                <div class="info-card bg-ll-light-bg dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
+                <div class="info-card bg-ll-light-bg dark:bg-ll-black/20 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
                     <h4 class="text-sm font-medium text-ll-blue mb-4 flex items-center">
                         <i class="fas fa-phone-alt mr-2 text-ll-blue"></i> Coordonnées
                     </h4>
@@ -1612,7 +1612,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span id="summary-country">Non renseigné</span>
                     </p>
                 </div>
-                <div class="info-card bg-ll-light-bg dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
+                <div class="info-card bg-ll-light-bg dark:bg-ll-black/20 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
                     <h4 class="text-sm font-medium text-ll-blue mb-4 flex items-center">
                         <i class="fas fa-map-marker-alt mr-2 text-ll-blue"></i> Adresse professionnelle
                     </h4>
@@ -1673,7 +1673,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <div class="relative" style="display: initial;">
                             <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg"></i>
-                            <input type="text" id="name" name="name" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Votre nom complet" aria-label="Nom complet">
+                            <input type="text" id="name" name="name" class="w-full pl-10 pr-4 py-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Votre nom complet" aria-label="Nom complet">
                             <span class="error-message text-red-500 text-xs mt-2 block"></span>
                         </div>
                     </div>
@@ -1687,7 +1687,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <div class="relative" style="display: initial;">
                             <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg"></i>
-                            <input type="email" id="email" name="email" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="example@domaine.com" aria-label="Adresse email">
+                            <input type="email" id="email" name="email" class="w-full pl-10 pr-4 py-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="example@domaine.com" aria-label="Adresse email">
                             <span class="error-message text-red-500 text-xs mt-2 block"></span>
                         </div>
                     </div>
@@ -1714,7 +1714,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </label>
                         <div class="relative" style="display: initial;">
-                            <input type="text" id="country" name="country" class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez un pays" value="🇫🇷 France (+33)" aria-label="Sélectionnez votre pays">
+                            <input type="text" id="country" name="country" class="w-full p-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez un pays" value="🇫🇷 France (+33)" aria-label="Sélectionnez votre pays">
                             <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                             <span class="error-message text-red-500 text-xs mt-2 block"></span>
                         </div>
@@ -1729,12 +1729,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <div class="flex gap-2">
                             <div class="w-1/4">
-                                <input type="text" id="dialCode" name="dialCode" class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100" readonly value="+33" aria-label="Indicatif téléphonique">
+                                <input type="text" id="dialCode" name="dialCode" class="w-full p-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100" readonly value="+33" aria-label="Indicatif téléphonique">
                             </div>
                             <div class="w-3/4">
                                 <div class="relative" style="display: initial;">
                                     <i class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg"></i>
-                                    <input type="tel" id="phone" name="phone" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="6 12 34 56 78" aria-label="Numéro de téléphone">
+                                    <input type="tel" id="phone" name="phone" class="w-full pl-10 pr-4 py-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="6 12 34 56 78" aria-label="Numéro de téléphone">
                                     <span class="error-message text-red-500 text-xs mt-2 block"></span>
                                 </div>
                             </div>
@@ -1766,7 +1766,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </label>
                         <div class="relative" style="display: initial;">
-                            <input type="text" id="city" name="city" class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez une ville" value="Angers" aria-label="Sélectionnez votre ville">
+                            <input type="text" id="city" name="city" class="w-full p-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez une ville" value="Angers" aria-label="Sélectionnez votre ville">
                             <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                             <span class="error-message text-red-500 text-xs mt-2 block"></span>
                         </div>
@@ -1780,7 +1780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </label>
                         <div class="relative" style="display: initial;">
-                            <input type="text" id="street" name="street" class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez une rue" value="Rue Bressigny" aria-label="Sélectionnez votre rue">
+                            <input type="text" id="street" name="street" class="w-full p-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 cursor-pointer" readonly placeholder="Sélectionnez une rue" value="Rue Bressigny" aria-label="Sélectionnez votre rue">
                             <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                             <span class="error-message text-red-500 text-xs mt-2 block"></span>
                         </div>
@@ -1793,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="tooltiptext">Le code postal permet une géolocalisation précise.</span>
                             </span>
                         </label>
-                        <input type="text" id="postalCode" name="postalCode" class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Ex: 49000" value="49000" aria-label="Code postal">
+                        <input type="text" id="postalCode" name="postalCode" class="w-full p-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Ex: 49000" value="49000" aria-label="Code postal">
                         <span class="error-message text-red-500 text-xs mt-1 block"></span>
                     </div>
                 </div>
@@ -1823,7 +1823,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <div class="relative" style="display: initial;">
                             <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg"></i>
-                            <input type="password" id="password" name="password" class="w-full pl-10 pr-12 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Votre mot de passe" aria-label="Mot de passe">
+                            <input type="password" id="password" name="password" class="w-full pl-10 pr-12 py-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Votre mot de passe" aria-label="Mot de passe">
                             <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -1841,7 +1841,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </label>
                         <div class="relative" style="display: initial;">
                             <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-lg"></i>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="w-full pl-10 pr-12 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Confirmez votre mot de passe" aria-label="Confirmation du mot de passe">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="w-full pl-10 pr-12 py-2.5 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" required placeholder="Confirmez votre mot de passe" aria-label="Confirmation du mot de passe">
                             <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -1968,14 +1968,14 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="mb-4">
             <div class="relative">
                 <input type="text" id="svg-search" placeholder="Rechercher une icône..." 
-                       class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors">
+                       class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-ll-black/20 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors">
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </div>
         </div>
 
-        <div id="svg-icons-list" class="grid lg:grid-cols-3 grid-cols-2 gap-4 p-2 max-h-96 overflow-y-auto custom-scrollbar bg-gray-100 dark:bg-gray-800 rounded-lg mb-4">
+        <div id="svg-icons-list" class="grid lg:grid-cols-3 grid-cols-2 gap-4 p-2 max-h-96 overflow-y-auto custom-scrollbar bg-gray-100 dark:bg-ll-black/20 rounded-lg mb-4">
             <!-- Les icônes SVG seront chargées ici -->
         </div>
 
@@ -2005,7 +2005,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Modal for Country Selection -->
     <div id="country-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden" data-aos="fade-in" data-aos-duration="300">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+        <div class="bg-white dark:bg-ll-black/20 p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Sélectionnez un pays</h3>
                 <button id="close-country-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -2014,7 +2014,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="relative mb-4">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="country-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher un pays...">
+                <input type="text" id="country-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher un pays...">
             </div>
             <div id="country-grid" class="country-grid"></div>
         </div>
@@ -2022,7 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Modal for City Selection -->
     <div id="city-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden" data-aos="fade-in" data-aos-duration="300">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+        <div class="bg-white dark:bg-ll-black/20 p-6 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Sélectionnez une ville</h3>
                 <button id="close-city-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -2031,7 +2031,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="relative mb-4">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="city-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher une ville...">
+                <input type="text" id="city-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher une ville...">
             </div>
             <div id="city-list" class="space-y-2"></div>
         </div>
@@ -2039,7 +2039,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Modal for Street Selection -->
     <div id="street-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden" data-aos="fade-in" data-aos-duration="300">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+        <div class="bg-white dark:bg-ll-black/20 p-6 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Sélectionnez une rue</h3>
                 <button id="close-street-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -2048,7 +2048,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="relative mb-4">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="street-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher une rue...">
+                <input type="text" id="street-search" class="w-full pl-10 pr-4 py-2.5 form-input bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Rechercher une rue...">
             </div>
             <div id="street-list" class="space-y-2"></div>
         </div>

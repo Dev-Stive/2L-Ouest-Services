@@ -16,7 +16,7 @@ const contactSchema = Joi.object({
   name: Joi.string().min(2).max(100).required().description('Nom de la personne'),
   email: Joi.string().email().required().max(255).description('Email de contact'),
   phone: Joi.string().pattern(/^\+33[\s\-]?[1-9](?:[\s\-]?\d{2}){4}$/).allow(null, '').optional().description('Numéro de téléphone international'),
-  message: Joi.string().min(10).max(1000).required().description('Message envoyé'),
+  message: Joi.string().min(1).max(10000).required().description('Message envoyé'),
   subjects: Joi.string().min(3).max(100).optional().description('Objet du message'),
   createdAt: Joi.string().isoDate().default(() => new Date().toISOString()).description('Date de création'),
 }).label('ContactSchema');
@@ -64,8 +64,7 @@ const reservationSchema = Joi.object({
   frequency: Joi.string().valid('ponctuelle', 'hebdomadaire', 'bi-mensuelle', 'mensuelle').required().description('Fréquence de la réservation'),
   address: Joi.string().min(5).max(200).required().description('Adresse d\'intervention'),
   options: Joi.string().min(3).max(500).optional().allow('').description('Options supplémentaires, séparées par des tirets'),
-  message: Joi.string().min(10).max(1000).required().description('Instructions ou message spécial'),
-  consentement: Joi.boolean().truthy('on', 'yes', 1).falsy('off', 'no', 0).required().description('Acceptation des conditions et politique de confidentialité'),
+  message: Joi.string().min(1).max(10000).required().description('Instructions ou message spécial'),
   createdAt: Joi.string().isoDate().default(() => new Date().toISOString()).description('Date de création'),
 }).label('ReservationSchema');
 

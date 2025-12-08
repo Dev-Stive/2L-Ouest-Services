@@ -172,7 +172,7 @@ const document = {
     if (listContainer) {
       api.document.getUserInvoices(this.currentPage, this.limit).then((data) => {
         listContainer.innerHTML = data.invoices.map((invoice) => `
-          <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+          <div class="p-4 bg-ll-black/50 dark:bg-gray-700 rounded-md">
             <p><strong>Facture #${invoice.id}</strong></p>
             <p>Montant: ${invoice.amount}€</p>
             <p>Date d'échéance: ${new Date(invoice.dueDate).toLocaleDateString()}</p>

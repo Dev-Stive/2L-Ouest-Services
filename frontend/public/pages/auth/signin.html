@@ -40,13 +40,13 @@
 
     <!-- CSS Resources -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> -->
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link href="../../css/tailwind.css" rel="stylesheet">
     <link href="../../css/styles.css" rel="stylesheet">
    
     <!-- JavaScript Resources -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <!-- <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@1.5.7/dist/lottie-player.js" defer></script>
     
@@ -742,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="space-y-4">
                                 <div>
                                     <label id="modal-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300"></label>
-                                    <input id="modal-input" type="text" class="mt-1 w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-ll-blue transition-colors duration-300" />
+                                    <input id="modal-input" type="text" class="mt-1 w-full px-3 py-2 bg-white dark:bg-ll-black/20 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-ll-blue transition-colors duration-300" />
                                 </div>
                                 <div class="flex justify-end gap-2">
                                     <button id="modal-cancel" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">Annuler</button>
@@ -1370,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label for="email" class="block text-sm font-medium text-ll-black dark:text-ll-light-gray mb-2">Email <span class="text-red-500">*</span></label>
                     <div class="relative" style="display: initial;">
                         <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-ll-text-gray-500 text-lg"></i>
-                        <input type="email" id="email" name="email" class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200" required placeholder="example@domaine.com" aria-label="Adresse email">
+                        <input type="email" id="email" name="email" class="w-full pl-12 pr-4 py-3 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200" required placeholder="example@domaine.com" aria-label="Adresse email">
                         <span id="error-email" class="error-message text-red-500 text-xs mt-2 block"></span>
                     </div>
                 </div>
@@ -1379,7 +1379,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="password" class="block text-sm font-medium text-ll-black dark:text-ll-light-gray mb-2">Mot de passe <span class="text-red-500">*</span></label>
                         <div class="relative" style="display: initial;">
                             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-ll-light-gray-500 text-lg"></i>
-                            <input type="password" id="password" name="password" class="w-full pl-12 pr-14 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200" required placeholder="Votre mot de passe" aria-label="Mot de passe">
+                            <input type="password" id="password" name="password" class="w-full pl-12 pr-14 py-3 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200" required placeholder="Votre mot de passe" aria-label="Mot de passe">
                             <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>

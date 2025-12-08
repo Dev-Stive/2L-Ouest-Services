@@ -179,7 +179,7 @@ const review = {
       if (serviceId) {
         api.review.getServiceReviews(serviceId, this.currentPage, this.limit).then((data) => {
           listContainer.innerHTML = data.reviews.map((review) => `
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+            <div class="p-4 bg-ll-black/50 dark:bg-gray-700 rounded-md">
               <p><strong>Avis #${review.id}</strong></p>
               <p>Note: ${review.rating}/5</p>
               <p>Commentaire: ${review.comment}</p>
@@ -224,7 +224,7 @@ const review = {
       const userId = listContainer.dataset.userId || 'current';
       api.review.getUserReviews(userId, this.currentPage, this.limit).then((data) => {
         listContainer.innerHTML = data.reviews.map((review) => `
-          <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+          <div class="p-4 bg-ll-black/50 dark:bg-gray-700 rounded-md">
             <p><strong>Avis #${review.id}</strong></p>
             <p>Note: ${review.rating}/5</p>
             <p>Commentaire: ${review.comment}</p>

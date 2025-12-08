@@ -84,11 +84,7 @@ class ThemeManager {
 
     this.updateToggleIcons();
 
-    if (!isInitial) {
-      setTimeout(() => {
-        this.html.classList.remove('theme-transition-disabled');
-      }, 50);
-    }
+   
   }
 
   /**

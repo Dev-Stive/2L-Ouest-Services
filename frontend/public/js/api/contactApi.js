@@ -40,12 +40,13 @@ function validateContactData(contactData) {
     name: { type: 'string', required: true, minLength: 2, maxLength: 100, pattern: /^[a-zA-Z\s-]{2,100}$/ },
     phone: { type: 'string', required: false, pattern: /^\+33\s?\d{1,2}(\s?\d{2}){4}$/ },
     email: { type: 'string', required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, maxLength: 255 },
-    message: { type: 'string', required: true, minLength: 10, maxLength: 1000 },
+    message: { type: 'string', required: true, minLength: 1, maxLength: 10000 },
     subjects: { type: 'string', required: false, minLength: 3, maxLength: 500 },
     createdAt: { type: 'string', required: true, pattern: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.*Z$/ },
   };
 
   const { error } = validateInput(contactData, schema);
+
   if (error) {
     showNotification(`Données de contact invalides : ${error.details.map(d => d.message).join(', ')}`, 'error', false, { showConfirmButton: true, confirmButtonText: 'Okay' });
     throw new Error(`Données de contact invalides : ${error.details.map(d => d.message).join(', ')}`);

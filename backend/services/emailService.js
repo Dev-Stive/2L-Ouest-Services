@@ -37,7 +37,7 @@ class EmailService {
       config.mailersend.apiKey,
       'https://api.mailersend.com/v1'
     );
-    this.fromEmail = 'noreply@test-86org8e71m1gew13.mlsender.net';
+    this.fromEmail = 'll-ouest-services.fr';
     this.fromName = 'L&L Ouest Services';
     this.replyToEmail = 'contact@llouestservices.com';
     this.replyToName = 'L&L Ouest Services';
@@ -61,104 +61,132 @@ class EmailService {
     }
   }
 
-  async sendEmail(options) {
-    try {
-      if (!this.isMailersendReady) {
-        throw new AppError(503, 'Service MailerSend temporairement indisponible', 'MailerSend not ready');
-      }
-
-      if (!options.to || typeof options.to !== 'string') {
-        throw new AppError(400, 'Destinataire email requis et doit être une chaîne');
-      }
-      if (!options.subject || typeof options.subject !== 'string') {
-        throw new AppError(400, 'Sujet de l\'email requis');
-      }
-      if (!options.html || typeof options.html !== 'string') {
-        throw new AppError(400, 'Contenu HTML requis');
-      }
-
-      const cleanTo = options.to.trim().toLowerCase();
-
-      // Préparer attachments
-      const attachments = options.attachments ? options.attachments.map(att => {
-        if (typeof att.path === 'string' && fs.existsSync(att.path)) {
-          const buffer = fs.readFileSync(att.path);
-          return new Attachment({
-            filename: att.filename,
-            content: buffer.toString('base64'),
-            contentType: att.contentType || 'application/octet-stream',
-            ...(att.description && { description: att.description })
-          });
-        }
-        return null;
-      }).filter(Boolean) : [];
-
-      const params = new EmailParams();
-      params.setFrom(new Sender(this.fromEmail, this.fromName));
-      params.setReplyTo(new Recipient(this.replyToEmail, this.replyToName));
-      params.setTo([new Recipient(cleanTo)]);
-      if (options.cc) {
-        params.setCc(options.cc.trim().split(',').map(email => new Recipient(email.trim().toLowerCase())));
-      }
-      if (options.bcc) {
-        params.setBcc(options.bcc.trim().split(',').map(email => new Recipient(email.trim().toLowerCase())));
-      }
-      params.setSubject(options.subject);
-      if (options.text) {
-        params.setText(options.text);
-      }
-      params.setHtml(options.html);
-      if (attachments.length > 0) {
-        params.setAttachments(attachments);
-      }
-      // Note: customHeaders not directly supported in EmailParams; omit for now or handle via API if possible
-      // params.setTags(options.tags || []); // if needed
-
-      const result = await this.emailModule.send(params);
-
-      logInfo('Email envoyé avec succès via MailerSend', {
-        messageId: result.body.id,
-        to: cleanTo,
-        subject: options.subject,
-        replyTo: this.replyToEmail,
-        attachmentsCount: attachments.length,
-        response: {
-          id: result.body.id,
-          status: result.status
-        },
-      });
-
-      return {
-        messageId: result.body.id,
-        response: result,
-        accepted: [cleanTo],
-        rejected: [],
-      };
-    } catch (error) {
-      const errorDetails = {
-        message: error.message,
-        code: error.code,
-        name: error.name,
-        stack: error.stack,
-        statusCode: error.status || 'unknown',
-        to: options?.to,
-        subject: options?.subject,
-        payloadKeys: Object.keys({ ...options, html: '[truncated]' }),
-        attachmentsCount: options?.attachments?.length || 0,
-      };
-      logError('Erreur lors de l\'envoi de l\'email via MailerSend', errorDetails);
-      
-      if (error.message.includes('timeout') || error.code === 'ETIMEDOUT' || error.status === 408) {
-        this.isMailersendReady = false;
-        logWarn('Service MailerSend marqué comme indisponible suite à timeout', { to: options?.to });
-      }
-      
-      if (error.status >= 400 && error.status < 500) {
-        throw new AppError(error.status || 400, 'Erreur client lors de l\'envoi de l\'email', error.message);
-      }
-      throw new AppError(500, 'Erreur serveur lors de l\'envoi de l\'email', error.message);
+ async sendEmail(options) {
+  try {
+    if (!this.isMailersendReady) {
+      throw new AppError(503, 'Service MailerSend temporairement indisponible', 'MailerSend not ready');
     }
+
+    if (!options.to || typeof options.to !== 'string') {
+      throw new AppError(400, 'Destinataire email requis et doit être une chaîne');
+    }
+    if (!options.subject || typeof options.subject !== 'string') {
+      throw new AppError(400, 'Sujet de l\'email requis');
+    }
+    if (!options.html || typeof options.html !== 'string') {
+      throw new AppError(400, 'Contenu HTML requis');
+    }
+
+    const cleanTo = options.to.trim().toLowerCase();
+
+    // Préparer attachments
+    const attachments = options.attachments ? options.attachments.map(att => {
+      if (typeof att.path === 'string' && fs.existsSync(att.path)) {
+        const buffer = fs.readFileSync(att.path);
+        return new Attachment({
+          filename: att.filename,
+          content: buffer.toString('base64'),
+          contentType: att.contentType || 'application/octet-stream',
+          ...(att.description && { description: att.description })
+        });
+      }
+      return null;
+    }).filter(Boolean) : [];
+
+    const params = new EmailParams();
+    params.setFrom(new Sender(this.fromEmail, this.fromName));
+    params.setReplyTo(new Recipient(this.replyToEmail, this.replyToName));
+    params.setTo([new Recipient(cleanTo)]);
+    if (options.cc) {
+      params.setCc(options.cc.trim().split(',').map(email => new Recipient(email.trim().toLowerCase())));
+    }
+    if (options.bcc) {
+      params.setBcc(options.bcc.trim().split(',').map(email => new Recipient(email.trim().toLowerCase())));
+    }
+    params.setSubject(options.subject);
+    if (options.text) {
+      params.setText(options.text);
+    }
+    params.setHtml(options.html);
+    if (attachments.length > 0) {
+      params.setAttachments(attachments);
+    }
+
+    const result = await this.emailModule.send(params);
+
+    logInfo('Email envoyé avec succès via MailerSend', {
+      messageId: result.body.id,
+      to: cleanTo,
+      subject: options.subject,
+    });
+
+    return {
+      messageId: result.body.id,
+      response: result,
+      accepted: [cleanTo],
+      rejected: [],
+    };
+  } catch (error) {
+    // Gestion robuste de l'objet d'erreur de MailerSend
+    let errorMessage = 'Erreur inconnue lors de l\'envoi de l\'email';
+    
+    if (error && typeof error === 'object') {
+      // Essayer d'extraire le message d'erreur de différentes propriétés possibles
+      if (error.message && typeof error.message === 'string') {
+        errorMessage = error.message;
+      } else if (error.error && typeof error.error === 'string') {
+        errorMessage = error.error;
+      } else if (error.body && error.body.message && typeof error.body.message === 'string') {
+        errorMessage = error.body.message;
+      } else if (error.response && error.response.body && error.response.body.message && typeof error.response.body.message === 'string') {
+        errorMessage = error.response.body.message;
+      } else {
+        // Si aucune propriété de message claire n'est trouvée, créer une représentation de l'objet
+        errorMessage = JSON.stringify(error, null, 2);
+      }
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    }
+
+    const errorDetails = {
+      errorMessage: errorMessage,
+      rawError: error,
+      to: options?.to,
+      subject: options?.subject,
+      attachmentsCount: options?.attachments?.length || 0,
+    };
+
+    logError('Erreur lors de l\'envoi de l\'email via MailerSend', errorDetails);
+
+    // Détecter les erreurs de timeout ou de service indisponible
+    const isTimeoutOrServiceError = errorMessage.includes('timeout') || 
+                                  errorMessage.includes('ETIMEDOUT') || 
+                                  errorMessage.includes('service temporarily unavailable') ||
+                                  errorMessage.includes('request timeout');
+
+    if (isTimeoutOrServiceError) {
+      this.isMailersendReady = false;
+      logWarn('Service MailerSend marqué comme indisponible suite à une erreur de timeout ou de service', { 
+        to: options?.to, 
+        errorMessage 
+      });
+    }
+
+    // Déterminer si c'est une erreur client (4xx) ou serveur (5xx)
+    let statusCode = 500;
+    if (error.status && typeof error.status === 'number') {
+      statusCode = error.status;
+    } else if (error.response && error.response.status && typeof error.response.status === 'number') {
+      statusCode = error.response.status;
+    }
+
+    if (statusCode >= 400 && statusCode < 500) {
+      throw new AppError(statusCode, 'Erreur lors de l\'envoi de l\'email', errorMessage);
+    }
+
+    throw new AppError(500, 'Erreur serveur lors de l\'envoi de l\'email', errorMessage);
   }
+}
 
   async sendContactEmail(contactId, recipient, htmlTemplate, emailSubject, templateData = {}) {
     try {

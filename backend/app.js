@@ -525,7 +525,6 @@ async function startServer() {
         logError('Erreur update URL Firestore', { error: err.message });
       }
 
-      // Démarrer l'écoute réseau constante
       monitorNetwork();
       logInfo('Startup complet !'); 
     });

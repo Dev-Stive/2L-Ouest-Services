@@ -173,13 +173,16 @@ const contact = {
  * @function showFieldError
  * @param {string} field - Nom du champ.
  * @param {string|null} message - Message d'erreur, de validation ou de suggestion, ou null pour effacer.
+ * @param {('success'|'info'|'warning'|'error'|'loading')} [type='error'] - Type de message pour définir la couleur et l'icône (par défaut : 'error').
  */
-showFieldError(field, message) {
+showFieldError(field, message, type = 'error') {
   const input = document.querySelector(field === 'subjects' ? '#subject-display' : `[name="${field}"]`);
   if (!input) {
     console.warn(`Champ ${field} non trouvé`);
     return;
   }
+console.log(message);
+
 
   const errorElement = input.parentElement.querySelector('.error-message') || input.parentElement.parentElement.querySelector('.error-message');
   if (!errorElement) {
@@ -187,7 +190,7 @@ showFieldError(field, message) {
     return;
   }
 
-  // Réinitialiser les classes de bordure
+  // --- Réinitialisation des classes de bordure ---
   input.classList.remove(
     'border-red-500', 'focus:border-red-500', 'focus:ring-red-500/50',
     'border-green-500', 'focus:border-green-500', 'focus:ring-green-500/50',
@@ -196,39 +199,67 @@ showFieldError(field, message) {
     'border-gray-300', 'dark:border-gray-600'
   );
 
+  // --- Gestion du message ---
   if (message) {
-    if (message.includes('fa-check-circle')) {
-      // Validation réussie (vert)
-      errorElement.innerHTML = `<span class="text-green-500">${message}</span>`;
-      errorElement.classList.remove('text-red-500', 'text-yellow-500', 'text-blue-500', 'hidden');
-      errorElement.classList.add('text-green-500', 'block');
-      input.classList.add('border-green-500', 'focus:border-green-500', 'focus:ring-green-500/50');
+    // Rétrocompatibilité : Déterminer le type basé sur le contenu du message si le type n'est pas explicitement fourni ou s'il est 'error' par défaut
+    if (message.includes('fa-check-circle') || message.toLowerCase().includes(' valide')) {
+        type = 'success';
     } else if (message.includes('fa-spinner') || message.toLowerCase().includes('vérification')) {
-
-      errorElement.innerHTML = `<span class="text-blue-500"><i class="fas ${message.includes('fa-spinner') ? 'fa-spinner fa-spin' : 'fa-info-circle'} mr-1"></i>${message}</span>`;
-      errorElement.classList.remove('text-red-500', 'text-green-500', 'text-yellow-500', 'hidden');
-      errorElement.classList.add('text-blue-500', 'block');
-      input.classList.add('border-blue-500', 'focus:border-blue-500', 'focus:ring-blue-500/50');
-
-    } else if (message.includes('fa-exclamation')) {
-
-      errorElement.innerHTML = `<span class="dark:text-white text-blue-500"><i class="fas fa-exclamation-circle mr-1"></i>${message}</span>`;
-      errorElement.classList.remove('text-red-500', 'text-green-500', 'text-yellow-500', 'hidden');
-      errorElement.classList.add('text-blue-500', 'block');
-      input.classList.add('border-blue-500', 'focus:border-blue-500', 'focus:ring-blue-500/50');
-
-    } else {
-      // Erreur (rouge)
-      errorElement.innerHTML = `<span class="text-red-500"><i class="fas fa-times-circle mr-1"></i>${message}</span>`;
-      errorElement.classList.remove('text-green-500', 'text-yellow-500', 'text-blue-500', 'hidden');
-      errorElement.classList.add('text-red-500', 'block');
-      input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500/50');
+        type = 'loading';
+    } else if (message.includes('fa-exclamation') || message.includes('fa-info-circle')) {
+        type = 'info';
+    } else if (type === 'error' && !message.includes('fa-times-circle')) {
+        message = `<i class="fas fa-times-circle mr-1"></i>${message}`;
     }
+
+    let colorClass, iconClass, messageContent;
+
+    switch (type) {
+      case 'success':
+        colorClass = 'text-green-500';
+        messageContent = message; 
+        input.classList.add('border-green-500', 'focus:border-green-500', 'focus:ring-green-500/50');
+        break;
+
+      case 'loading':
+        colorClass = 'text-blue-500';
+        messageContent = message; // Le message contient déjà le spinner 'fa-spinner'
+        input.classList.add('border-blue-500', 'focus:border-blue-500', 'focus:ring-blue-500/50');
+        break;
+
+      case 'info':
+        colorClass = 'text-blue-500';
+        iconClass = 'fa-info-circle';
+        // Si l'icône est déjà présente (ex: fa-exclamation), on garde le message tel quel, sinon on ajoute l'icône.
+        messageContent = message.includes('fa-exclamation') ? message : `<i class="fas ${iconClass} mr-1"></i>${message}`;
+        input.classList.add('border-blue-500', 'focus:border-blue-500', 'focus:ring-blue-500/50');
+        break;
+        
+      case 'warning':
+        colorClass = 'text-yellow-500';
+        iconClass = 'fa-exclamation-triangle';
+        messageContent = `<i class="fas ${iconClass} mr-1"></i>${message}`;
+        input.classList.add('border-yellow-500', 'focus:border-yellow-500', 'focus:ring-yellow-500/50');
+        break;
+
+      case 'error':
+      default:
+        colorClass = 'text-red-500';
+        messageContent = message; 
+        input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500/50');
+        break;
+    }
+
+    // Appliquer les classes et le contenu
+    errorElement.innerHTML = `<span class="${colorClass}">${messageContent}</span>`;
+    errorElement.classList.remove('text-red-500', 'text-green-500', 'text-yellow-500', 'text-blue-500', 'hidden');
+    errorElement.classList.add(colorClass, 'block');
+    
   } else {
-    // Effacer le message
     errorElement.innerHTML = '';
     errorElement.classList.add('hidden');
     errorElement.classList.remove('text-red-500', 'text-green-500', 'text-yellow-500', 'text-blue-500');
+
     input.classList.add('border-gray-300', 'dark:border-gray-600', 'focus:border-blue-500', 'focus:ring-blue-500/50');
   }
 },
@@ -348,6 +379,8 @@ updateSubmitButtonState(form, submitButton , isInitialL = false) {
     }
   },
 
+
+
   /**
    * Effectue la validation initiale du formulaire au chargement.
    * @async
@@ -366,42 +399,67 @@ updateSubmitButtonState(form, submitButton , isInitialL = false) {
       message: formData.get('message')?.trim() || '',
     };
 
-  
+    let formValid = true; // Indicateur de validité globale
 
     form.querySelectorAll('input:not([type="hidden"]), textarea, #subject-display').forEach(input => {
       const field = input.name || (input.id === 'subject-display' ? 'subjects' : input.name);
       let value = input.value.trim();
       if (field === 'phone' && value) value = `+33 ${value}`;
-      if (field === 'subjects') value = value ? value.split(',').filter(s => s) : [];
+      
+      // Cas spécial pour les sujets (stockés dans l'input hidden)
+      if (field === 'subjects') {
+          // Utiliser la valeur du champ caché
+          value = form.querySelector('[name="subjects"]').value.trim();
+          const subjectsArray = value ? value.split(',').filter(s => s.trim() !== '') : [];
+          
+          if (subjectsArray.length === 0) {
+              // PAS D'ERREUR ROUGE, mais un message indicatif bleu
+              this.showFieldError(
+                  'subjects', 
+                  'Veuillez sélectionner au moins un sujet.', 
+                  'info'
+              );
+              const subjectDisplay = document.getElementById('subject-display');
+              if (subjectDisplay) subjectDisplay.value = '';
+              formValid = false;
+          } else {
+              this.showFieldError('subjects', `Sujet(s) valide(s) <i class="fas fa-check-circle ml-1 text-green-500"></i>`);
+          }
+      } else {
+          // Validation initiale pour les autres champs
+          let error = validateFieldInitial(field, value, false, true);
 
-      let error = null;
+          this.showFieldError(
+            field, 
+            error || (value ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
+          );
 
-        error = validateFieldInitial(field, value, false, true);
-
- 
-  
-
-      this.showFieldError(field, error || (value && field !== 'subjects' ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : field === 'subjects' && value.length > 0 ? `Sujet(s) valide(s) <i class="fas fa-check-circle ml-1 text-green-500"></i>` : ''));
-
-       const subjectsValue = form.querySelector('[name="subjects"]').value.trim() || '';
-  const subjectDisplay = document.getElementById('subject-display');
-  if (!subjectsValue && subjectDisplay) {
-    this.showFieldError('subjects', 'Sélectionnez un sujet'); 
-    subjectDisplay.value = 'Sélectionnez un sujet';
-  }
+          if (error) {
+              formValid = false;
+          }
+      }
     });
 
+    // Gestion spéciale de l'email pour la vérification de disponibilité
     if (contactData.email) {
       const emailSyntaxError = validateFieldInitial('email', contactData.email, false, true);
       if (!emailSyntaxError) {
         await this.checkEmailAndUpdateButton(contactData.email, true, form, submitButton, emailInput);
+      } else {
+        formValid = false;
       }
+    } else {
+      // Si l'email est vide (et requis), le formulaire n'est pas valide
+       const emailError = validateFieldInitial('email', contactData.email, false, true);
+       if(emailError) {
+          formValid = false;
+       }
     }
 
-    if (!contactData.email) {
-      this.updateSubmitButtonState(form, submitButton , true);
-    }
+    this.updateSubmitButtonState(form, submitButton, formValid); 
   },
+
+
 
   /**
    * Retourne le nom du champ en français pour l'affichage.
@@ -481,16 +539,28 @@ bindContactForm() {
         await this.checkEmailAndUpdateButton(value, false, form, submitButton, emailInput);
       } else if (field === 'message') {
         if (!value) error = 'Le message est requis.';
-        else if (value.length < 10) error = 'Le message doit contenir au moins 10 caractères.';
+        else if (value.length < 1) error = 'Le message doit contenir au moins 10 caractères.';
         else if (value.length > 1000) error = 'Le message ne peut pas dépasser 1000 caractères.';
       } else {
         error = validateField(field, value, false, true);
       }
 
+     if (field === 'subjects') {
+      const subjectsInput = form.querySelector('[name="subjects"]');
+      const subjectsArray = subjectsInput.value.trim().split(',').filter(s => s.trim() !== '');
+
+      if (subjectsArray.length === 0) {
+          this.showFieldError('subjects', 'Veuillez sélectionner au moins un sujet.', 'info');
+      } else {
+          // Afficher le succès si un ou plusieurs sujets sont sélectionnés
+          this.showFieldError('subjects', `Sujet(s) valide(s) <i class="fas fa-check-circle ml-1 text-green-500"></i>`);
+      }
+  } else {
       this.showFieldError(
-        field,
-        error || (value && field !== 'subjects' ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : field === 'subjects' && value.length > 0 ? `Sujet(s) valide(s) <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
+          field,
+          error || (value ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
       );
+  }
 
       this.updateSubmitButtonState(form, submitButton);
       this.saveFormData();
@@ -703,7 +773,7 @@ openSubjectsModal() {
   modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 md:p-6 transition-opacity duration-500 opacity-0';
 
   const isDark = document.documentElement.classList.contains('dark');
-  const bgClass = isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900';
+  const bgClass = isDark ? 'bg-ll-black/20 text-white' : 'bg-white text-gray-900';
   const borderClass = isDark ? 'border-gray-600' : 'border-gray-200';
 
   modal.innerHTML = `
@@ -716,11 +786,11 @@ openSubjectsModal() {
       <div class="p-6 md:p-8">
         <h3 class="text-2xl font-sans font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-ll-dark-green to-ll-dark-blue bg-[length:200%_100%] animate-gradient-scroll">Sélectionnez les sujets</h3>
         <div class="relative mb-4">
-          <input type="text" id="subject-search" class="w-full pl-4 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue focus:border-ll-blue text-gray-900 dark:text-gray-100 transition-all duration-300" placeholder="Rechercher un sujet..." />
+          <input type="text" id="subject-search" class="w-full pl-4 pr-4 py-3 bg-ll-white/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue focus:border-ll-blue text-gray-900 dark:text-gray-100 transition-all duration-300" placeholder="Rechercher un sujet..." />
         </div>
         <div id="subjects-list" class="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[30rem] overflow-y-auto"></div>
         <div class="mt-6 flex justify-end space-x-4">
-          <button class="modal-cancel px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">Annuler</button>
+          <button class="modal-cancel px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-ll-black/500 transition-colors">Annuler</button>
           <button class="modal-confirm px-4 py-2 bg-ll-blue text-white rounded-lg hover:bg-ll-dark-blue focus:ring-2 focus:ring-ll-blue/50 transition-all">Confirmer</button>
         </div>
       </div>
@@ -745,7 +815,7 @@ openSubjectsModal() {
     subjectsListEl.innerHTML = this.subjectsList
       .filter(subject => subject.name.toLowerCase().includes(filter.toLowerCase()))
       .map(subject => `
-        <div class="subject-card aspect-square p-4 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg ${selectedSubjects.has(subject.name) ? 'bg-ll-blue/30 border-ll-blue border-2' : ''}" data-name="${subject.name}" title="${subject.description}">
+        <div class="subject-card aspect-square p-4 bg-ll-whit/50 dark:bg-ll-black rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg ${selectedSubjects.has(subject.name) ? 'bg-ll-blue/30 border-ll-blue border-2' : ''}" data-name="${subject.name}" title="${subject.description}">
           <div class="flex flex-col items-center justify-center h-full space-y-2">
             <input type="checkbox" value="${subject.name}" class="sr-only" aria-label="${subject.name}">
             <svg class="w-8 h-8 text-ll-text-gray dark:text-ll-medium-gray flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">${subject.icon}</svg>
@@ -1068,7 +1138,7 @@ openSubjectsModal() {
     try {
       const contact = await api.contact.getContact(contactId);
       const isDark = document.documentElement.classList.contains('dark');
-      const bgClass = isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900';
+      const bgClass = isDark ? 'bg-ll-black/20 text-white' : 'bg-white text-gray-900';
       const borderClass = isDark ? 'border-gray-600' : 'border-gray-200';
 
       await Swal.fire({
@@ -1111,7 +1181,7 @@ openSubjectsModal() {
     try {
       const contact = await api.contact.getContact(contactId);
       const isDark = document.documentElement.classList.contains('dark');
-      const bgClass = isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900';
+      const bgClass = isDark ? 'bg-ll-black/20 text-white' : 'bg-white text-gray-900';
       const borderClass = isDark ? 'border-gray-600' : 'border-gray-200';
 
       const { value: replyMessage } = await Swal.fire({
@@ -1176,7 +1246,7 @@ openSubjectsModal() {
     try {
       const contact = await api.contact.getContact(contactId);
       const isDark = document.documentElement.classList.contains('dark');
-      const bgClass = isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900';
+      const bgClass = isDark ? 'bg-ll-black/20 text-white' : 'bg-white text-gray-900';
       const borderClass = isDark ? 'border-gray-600' : 'border-gray-200';
 
       const { value: formValues } = await Swal.fire({
@@ -1195,8 +1265,8 @@ openSubjectsModal() {
               <div>
                 <label for="swal-phone" class="block text-sm font-medium">Téléphone</label>
                 <div class="relative flex items-center">
-                  <span class="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-50 dark:bg-gray-700 px-2 text-ll-text-gray dark:text-ll-medium-gray z-10 select-none pointer-events-none">+33</span>
-                  <input id="swal-phone" class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg" value="${contact.phone ? contact.phone.replace('+33 ', '') : ''}" />
+                  <span class="absolute left-0 top-1/2 -translate-y-1/2 bg-ll-black/50 dark:bg-gray-700 px-2 text-ll-text-gray dark:text-ll-medium-gray z-10 select-none pointer-events-none">+33</span>
+                  <input id="swal-phone" class="w-full pl-12 pr-4 py-3 bg-ll-black/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg" value="${contact.phone ? contact.phone.replace('+33 ', '') : ''}" />
                 </div>
               </div>
               <div>
@@ -1402,9 +1472,9 @@ openSubjectsModal() {
     // Validation explicite du message
     if (!data.message || data.message.trim() === '') {
       errors.message = 'Le message est requis.';
-    } else if (data.message.length < 10) {
+    } else if (data.message.length < 1) {
       errors.message = 'Le message doit contenir au moins 10 caractères.';
-    } else if (data.message.length > 1000) {
+    } else if (data.message.length > 10000) {
       errors.message = 'Le message ne peut pas dépasser 1000 caractères.';
     }
 
@@ -1449,8 +1519,8 @@ async showPreConfirmationModal(contactData) {
   const isDark = document.documentElement.classList.contains('dark');
   
   // Couleurs principales
-  const bgMain = isDark ? '#1F2937' : '#FFFFFF'; // Un gris plus doux pour le fond
-  const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50'; // Arrière-plan des cartes internes
+  const bgMain = isDark ? '#1F2937' : '#FFFFFF'; 
+  const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
   const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
   const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
   const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
@@ -1465,12 +1535,7 @@ async showPreConfirmationModal(contactData) {
     subjectsDisplay = contactData.subjects.replace(/-/g, ' - ');
   }
 
-  // SVG stylisé pour l'icône de question/vérification
-  const confirmationSvg = `
-    <svg class="w-10 h-10 text-ll-blue dark:text-ll-light-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-    </svg>
-  `;
+ 
 
   const { isConfirmed } = await Swal.fire({
     title: `<span class="text-xl sm:text-2xl font-extrabold ${textTitle}">Confirmation de votre demande</span>`,
@@ -1487,9 +1552,6 @@ async showPreConfirmationModal(contactData) {
           </div>
         </div>
         
-        <div class="flex justify-center mb-6">
-            ${confirmationSvg}
-        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           
@@ -1577,7 +1639,7 @@ async showConfirmationModal(contactData) {
   
   // Couleurs principales alignées avec showPreConfirmationModal
   const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-  const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
+  const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
   const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
   const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
   const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';

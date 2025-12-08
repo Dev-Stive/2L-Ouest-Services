@@ -552,9 +552,27 @@ export function stopMonitoring() {
     clearInterval(monitoringInterval);
     monitoringInterval = null;
   }
+  
   isMonitoring = false;
   networkStatusCache = null;
+  
+  const checkBackend = async () => {
+    try {
+      const response = await apiFetch('/health', 'GET',{
+        cache: 'no-store'
+      });
+      
+      if (response.ok) {
+        window.location.reload();
+      }
+    } catch (error) {
+      setTimeout(checkBackend, 5000);
+    }
+  };
+  
+  setTimeout(checkBackend, 5000);
 }
+
 
 if (!AbortController.timeout) {
   AbortController.timeout = (ms) => {
@@ -1044,11 +1062,11 @@ export function validateField(field, value, signIn = false, contact = false, res
     // ===== NOM =====
     case 'name':
     case 'nom':
-      if (!cleanedValue) return 'Le nom complet est requis.';
-      if (cleanedValue.length < 2) return 'Le nom complet doit contenir au moins 2 caractères.';
-      if (cleanedValue.length > 50) return 'Le nom complet ne peut pas dépasser 50 caractères.';
+      if (!cleanedValue) return 'Le nom est requis.';
+      if (cleanedValue.length < 2) return 'Le nom  doit contenir au moins 2 caractères.';
+      if (cleanedValue.length > 50) return 'Le nom ne peut pas dépasser 50 caractères.';
       if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(cleanedValue)) {
-        return 'Le nom complet ne peut contenir que des lettres, espaces, apostrophes et tirets.';
+        return 'Le nom ne peut contenir que des lettres, espaces, apostrophes et tirets.';
       }
       return null;
 
@@ -1103,13 +1121,7 @@ export function validateField(field, value, signIn = false, contact = false, res
       }
       return null;
 
-    // ===== CONSENTEMENT =====
-    case 'consentement':
-      if (value !== true && value !== 'on' && value !== 1) {
-        return 'Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.';
-      }
-      return null;
-
+   
     // ===== CODE DE VÉRIFICATION =====
     case 'code':
       if (!cleanedValue) return 'Le code de vérification est requis.';
@@ -1155,8 +1167,8 @@ export function validateField(field, value, signIn = false, contact = false, res
     case 'message':
       if(reservation) return '';
       if (!cleanedValue) return 'Le message est requis.';
-      if (cleanedValue.length < 10 && !reservation) return 'Le message doit contenir au moins 10 caractères.';
-      if (cleanedValue.length > 1000) return 'Le message ne peut pas dépasser 1000 caractères.';
+      if (cleanedValue.length < 1 && !reservation) return 'Le message doit contenir au moins 10 caractères.';
+      if (cleanedValue.length > 10000) return 'Le message ne peut pas dépasser 1000 caractères.';
       return null;
 
     // ===== SUJETS =====
@@ -1347,10 +1359,10 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
     case 'name':
     case 'nom':
       if (!cleanedValue) return '';
-      if (cleanedValue.length < 2) return 'Le nom complet doit contenir au moins 2 caractères.';
-      if (cleanedValue.length > 50) return 'Le nom complet ne peut pas dépasser 50 caractères.';
+      if (cleanedValue.length < 2) return 'Le nom doit contenir au moins 2 caractères.';
+      if (cleanedValue.length > 50) return 'Le nom ne peut pas dépasser 50 caractères.';
       if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(cleanedValue)) {
-        return 'Le nom complet ne peut contenir que des lettres, espaces, apostrophes et tirets.';
+        return 'Le nom ne peut contenir que des lettres, espaces, apostrophes et tirets.';
       }
       return null;
 
@@ -1400,13 +1412,7 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
       }
       return null;
 
-    // ===== CONSENTEMENT =====
-    case 'consentement':
-    
-      if (value !== true && value !== 'on' && value !== 1) {
-        return 'Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.';
-      }
-      return null;
+   
 
 
     // ===== CODE DE VÉRIFICATION =====
@@ -1453,8 +1459,8 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
     // ===== MESSAGE =====
     case 'message':
       if (!cleanedValue) return '';
-      if (cleanedValue.length < 10) return 'Le message doit contenir au moins 10 caractères.';
-      if (cleanedValue.length > 1000) return 'Le message ne peut pas dépasser 1000 caractères.';
+      if (cleanedValue.length < 1) return 'Le message doit contenir au moins 10 caractères.';
+      if (cleanedValue.length > 10000) return 'Le message ne peut pas dépasser 1000 caractères.';
       return null;
 
     // ===== SUJETS =====
@@ -1468,7 +1474,6 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
       return null;
     case 'date':
     case 'frequency':
-    case 'consentement':
 
     default:
       console.warn(`❌ Champ de validation inconnu: ${field}`);

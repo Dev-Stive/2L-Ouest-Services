@@ -37,7 +37,7 @@ SMTP_SECURE=false
 SMTP_USER=nanatchoffojunior@gmail.com
 SMTP_PASS=uztj uaab eagg bvve 
 
-MAILERSEND_API_KEY=mlsn.3943072ad0afbb722b6983e0f4028dccd64bf992a0bb6fcde434498903eb362c
+MAILERSEND_API_KEY=mlsn.d0f5c4e978cb660036ab5431e1ef8e512ac0342b25bce97c307692a08a69e70b
 # Google Maps
 GOOGLE_MAPS_API_KEY=votre_prod_google_maps_api_key
 
