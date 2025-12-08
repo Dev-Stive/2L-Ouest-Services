@@ -13,8 +13,11 @@ const { logger, logInfo } = require('../services/loggerService');
 let allowedOrigins = [
   // Gère array ou string pour config.frontendUrl
   ...(Array.isArray(config.frontendUrl) ? config.frontendUrl : [config.frontendUrl || '']),
-  'https://ll-ouest-service.netlify.app',  // Frontend Netlify (prod)
-  'http://ll-ouest-service.netlify.app',   // Variante sans HTTPS pour tests
+  'https://ll-ouest-service.netlify.app',
+  'http://ll-ouest-service.netlify.app',
+  'https://ll-ouest-services.fr/',
+  
+  // Variante sans HTTPS pour tests
   // Optionnel : Autoriser sous-domaines Netlify (ex. preview.*.netlify.app)
   'https://*.netlify.app',
   'http://localhost:3000', // Développement local
