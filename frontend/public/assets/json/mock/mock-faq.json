@@ -1,254 +1,254 @@
 [
   {
-    "question": "Quels sont vos tarifs pour un nettoyage à Angers ?",
-    "answer": "Nos tarifs sont calculés sur mesure selon la surface, la fréquence et les prestations souhaitées. Un devis gratuit et détaillé vous est envoyé sous 24h maximum.",
+    "question": "Quel est le tarif pour un nettoyage à Angers ?",
+    "answer": "Nos tarifs sont personnalisés selon la surface à nettoyer, la fréquence de nettoyage et les services demandés. Nous vous envoyons un devis gratuit et détaillé sous 24 heures maximum.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-currency-euro text-blue-600 text-2xl\"></i>"
+    "icon": "bi-currency-euro"
   },
   {
-    "question": "Le devis est-il gratuit et sans engagement ?",
-    "answer": "Oui, 100 % gratuit et sans aucun engagement, que ce soit pour une maison, un bureau ou un local commercial à Angers et alentours.",
+    "question": "Le devis est-il vraiment gratuit ?",
+    "answer": "Oui, notre devis est 100% gratuit et sans engagement, que ce soit pour une maison, un appartement, un bureau ou un local commercial à Angers et dans ses environs.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-file-check text-green-600 text-2xl\"></i>"
+    "icon": "bi-file-check"
   },
   {
-    "question": "Acceptez-vous les CESU pour le ménage à domicile ?",
-    "answer": "Oui, nous sommes agréés CESU. Vous bénéficiez du crédit d’impôt de 50 % immédiatement.",
+    "question": "Proposez-vous le paiement par CESU ?",
+    "answer": "Oui, nous sommes agréés CESU pour le ménage à domicile. Vous bénéficiez d'une réduction d'impôt de 50% sur le montant de nos prestations.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-credit-card text-indigo-600 text-2xl\"></i>"
+    "icon": "bi-credit-card"
   },
   {
-    "question": "Quel est le délai pour commencer un contrat régulier ?",
-    "answer": "Nous pouvons démarrer votre contrat de nettoyage régulier sous 7 jours ouvrés après acceptation du devis.",
+    "question": "Quand pouvez-vous commencer le nettoyage régulier ?",
+    "answer": "Nous pouvons démarrer votre nettoyage régulier dans les 7 jours ouvrés après l'acceptation de votre devis.",
     "category": "planning",
-    "icon": "<i class=\"bi bi-calendar-check text-purple-600 text-2xl\"></i>"
+    "icon": "bi-calendar-check"
   },
   {
-    "question": "Pouvez-vous intervenir tôt le matin ou en soirée ?",
-    "answer": "Oui, c’est notre spécialité : 6h du matin, 20h-22h ou week-end pour ne jamais perturber votre activité.",
+    "question": "Proposez-vous des créneaux tôt le matin ou tard le soir ?",
+    "answer": "Oui, nous intervenons dès 6h du matin, jusqu'à 22h le soir, et même le week-end, pour nous adapter à vos horaires de travail.",
     "category": "planning",
-    "icon": "<i class=\"bi bi-clock-history text-orange-600 text-2xl\"></i>"
+    "icon": "bi-clock-history"
   },
   {
-    "question": "Quel est le délai d’intervention en urgence (dégât des eaux) ?",
-    "answer": "Sous 2 heures sur Angers centre et sous 4 heures dans tout le Maine-et-Loire.",
+    "question": "Que faire en cas d'urgence comme un dégât des eaux ?",
+    "answer": "Nous intervenons en moins de 2 heures dans le centre d'Angers et sous 4 heures dans tout le département du Maine-et-Loire pour les situations urgentes.",
     "category": "urgences",
-    "icon": "<i class=\"bi bi-lightning-charge text-red-600 text-2xl\"></i>"
+    "icon": "bi-lightning-charge"
   },
   {
-    "question": "Dans quelles villes intervenez-vous autour d’Angers ?",
-    "answer": "Angers, Avrillé, Beaucouzé, Les Ponts-de-Cé, Trélazé, Saint-Barthélemy-d’Anjou, Bouchemaine, Écouflant, Cholet, Saumur et jusqu’à 40 km.",
+    "question": "Dans quelles villes intervenez-vous ?",
+    "answer": "Nous couvrons Angers et toutes les communes alentours jusqu'à 40 km : Avrillé, Les Ponts-de-Cé, Trélazé, Cholet, Saumur, et bien d'autres.",
     "category": "zones",
-    "icon": "<i class=\"bi bi-geo-alt-fill text-teal-600 text-2xl\"></i>"
+    "icon": "bi-geo-alt-fill"
   },
   {
-    "question": "Faites-vous les vitres en hauteur ?",
-    "answer": "Oui, jusqu’à 18 mètres avec perche à eau osmosée ou nacelle. Agents habilités CACES.",
+    "question": "Nettoyez-vous les vitres difficiles d'accès ?",
+    "answer": "Oui, nous nettoyons les vitres jusqu'à 18 mètres de hauteur avec du matériel professionnel adapté et en toute sécurité.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-building-up text-sky-600 text-2xl\"></i>"
+    "icon": "bi-building-up"
   },
   {
     "question": "Utilisez-vous des produits écologiques ?",
-    "answer": "Oui, nous proposons par défaut des produits certifiés Ecolabel et Ecocert, sans surcoût.",
+    "answer": "Oui, nous utilisons principalement des produits écologiques certifiés, sans supplément de prix.",
     "category": "ecologie",
-    "icon": "<i class=\"bi bi-leaf text-green-600 text-2xl\"></i>"
+    "icon": "bi-leaf"
   },
   {
-    "question": "Vos produits sont-ils sans danger pour les enfants et animaux ?",
-    "answer": "Oui, tous hypoallergéniques, sans COV ni substances toxiques.",
+    "question": "Vos produits sont-ils sans danger ?",
+    "answer": "Oui, tous nos produits sont hypoallergéniques et sans substances toxiques, donc sans danger pour les enfants et les animaux.",
     "category": "ecologie",
-    "icon": "<i class=\"bi bi-shield-check text-emerald-600 text-2xl\"></i>"
+    "icon": "bi-shield-check"
   },
   {
-    "question": "Nettoyez-vous les écrans, claviers et téléphones ?",
-    "answer": "Oui, avec produits anti-statiques et microfibres spéciales. Aucun risque pour le matériel.",
+    "question": "Nettoyez-vous les appareils électroniques ?",
+    "answer": "Oui, nous nettoyons écrans, claviers et téléphones avec des produits adaptés qui ne les abîment pas.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-laptop text-indigo-600 text-2xl\"></i>"
+    "icon": "bi-laptop"
   },
   {
-    "question": "Proposez-vous le nettoyage après chantier ?",
-    "answer": "Oui, spécialité fin de chantier : poussières fines, traces de plâtre, étiquettes, vitres, sols.",
+    "question": "Proposez-vous le nettoyage après travaux ?",
+    "answer": "Oui, nous sommes spécialisés dans le nettoyage après chantier : poussières, traces sur les sols, nettoyage des vitres...",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-tools text-amber-600 text-2xl\"></i>"
+    "icon": "bi-tools"
   },
   {
-    "question": "Le logement est-il habitable tout de suite après ?",
-    "answer": "Oui, nous garantissons un logement ou local prêt à habiter ou louer immédiatement.",
+    "question": "Peut-on habiter le logement tout de suite après nettoyage ?",
+    "answer": "Oui, nous garantissons que votre logement ou local sera prêt à être habité ou utilisé immédiatement après notre passage.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-house-check text-blue-600 text-2xl\"></i>"
+    "icon": "bi-house-check"
   },
   {
-    "question": "Vos agents sont-ils déclarés et assurés ?",
-    "answer": "Oui, 100 % en CDI, formés, déclarés et couverts par notre RC Pro et décennale.",
+    "question": "Vos employés sont-ils bien formés et assurés ?",
+    "answer": "Oui, tous nos agents sont en contrat permanent, formés, déclarés et couverts par nos assurances professionnelles.",
     "category": "securite",
-    "icon": "<i class=\"bi bi-person-badge text-gray-700 text-2xl\"></i>"
+    "icon": "bi-person-badge"
   },
   {
-    "question": "Travaillez-vous avec les assurances en cas de sinistre ?",
-    "answer": "Oui, agréés par la plupart des assurances. Rapport détaillé fourni pour remboursement rapide.",
+    "question": "Travaillez-vous avec les assurances ?",
+    "answer": "Oui, nous sommes agréés par la plupart des assurances pour les sinistres et fournissons les documents nécessaires.",
     "category": "urgences",
-    "icon": "<i class=\"bi bi-file-earmark-text text-red-600 text-2xl\"></i>"
+    "icon": "bi-file-earmark-text"
   },
   {
-    "question": "Comment réserver un service ?",
-    "answer": "Par téléphone 02 41 23 45 67, via le formulaire en ligne ou par mail contact@propre-angers.fr",
+    "question": "Comment prendre rendez-vous ?",
+    "answer": "Vous pouvez nous appeler au 02 41 23 45 67, remplir notre formulaire en ligne ou nous écrire à contact@propre-angers.fr",
     "category": "contact",
-    "icon": "<i class=\"bi bi-telephone-plus text-green-600 text-2xl\"></i>"
+    "icon": "bi-telephone-plus"
   },
   {
-    "question": "Y a-t-il des frais d’annulation ?",
-    "answer": "Aucun frais si prévenu 48h avant. 50 % si annulation la veille.",
+    "question": "Y a-t-il des frais d'annulation ?",
+    "answer": "Aucun frais si vous annulez 48 heures à l'avance. Une annulation la veille entraîne des frais de 50%.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-x-circle text-red-600 text-2xl\"></i>"
+    "icon": "bi-x-circle"
   },
   {
-    "question": "Proposez-vous des contrats annuels avec remise ?",
-    "answer": "Oui, jusqu’à 15 % de remise + priorité absolue en cas d’urgence.",
+    "question": "Proposez-vous des remises pour un contrat annuel ?",
+    "answer": "Oui, les contrats annuels bénéficient de remises allant jusqu'à 15% et d'une priorité pour les interventions urgentes.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-percent text-purple-600 text-2xl\"></i>"
+    "icon": "bi-percent"
   },
   {
-    "question": "Nettoyez-vous frigo, four, placards et micro-ondes ?",
-    "answer": "Oui, sur demande avec supplément raisonnable. Nettoyage en profondeur garanti.",
+    "question": "Nettoyez-vous l'intérieur des appareils électroménagers ?",
+    "answer": "Oui, nous nettoyons réfrigérateur, four, micro-ondes et placards en profondeur sur demande.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-cup-straw text-pink-600 text-2xl\"></i>"
+    "icon": "bi-cup-straw"
   },
   {
-    "question": "Faites-vous le repassage à domicile ?",
-    "answer": "Oui, à 18 €/h après crédit d’impôt (soit 9 €/h réel).",
+    "question": "Proposez-vous le repassage ?",
+    "answer": "Oui, nous proposons un service de repassage à domicile. Après crédit d'impôt, cela revient à environ 9€ de l'heure.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-thermometer-snow text-cyan-600 text-2xl\"></i>"
+    "icon": "bi-thermometer-snow"
   },
   {
-    "question": "Proposez-vous une désinfection virucide renforcée ?",
-    "answer": "Oui, produit norme EN 14476 (COVID, grippe, gastro) + fiche de traçabilité.",
+    "question": "Proposez-vous une désinfection spéciale ?",
+    "answer": "Oui, nous proposons une désinfection renforcée contre les virus et bactéries, avec un produit certifié.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-virus text-red-700 text-2xl\"></i>"
+    "icon": "bi-virus"
   },
   {
-    "question": "Puis-je modifier mes jours et horaires de passage ?",
-    "answer": "Oui, avec 48h de préavis, nous adaptons votre planning gratuitement.",
+    "question": "Puis-je changer mes jours de nettoyage ?",
+    "answer": "Oui, vous pouvez modifier vos jours et horaires de passage en nous prévenant 48 heures à l'avance.",
     "category": "planning",
-    "icon": "<i class=\"bi bi-calendar-event text-indigo-600 text-2xl\"></i>"
+    "icon": "bi-calendar-event"
   },
   {
-    "question": "Et si je ne suis pas satisfait du nettoyage ?",
-    "answer": "Nous revenons gratuitement sous 48h pour corriger. Votre satisfaction est garantie à 100 %.",
+    "question": "Que faire si je ne suis pas satisfait ?",
+    "answer": "Nous revenons gratuitement dans les 48 heures pour corriger tout problème. Votre satisfaction est notre priorité.",
     "category": "securite",
-    "icon": "<i class=\"bi bi-emoji-smile text-yellow-600 text-2xl\"></i>"
+    "icon": "bi-emoji-smile"
   },
   {
-    "question": "Fournissez-vous tout le matériel et les produits ?",
-    "answer": "Oui, tout est inclus : aspirateur pro, produits, chiffons microfibres, escabeaux, etc.",
+    "question": "Faut-il fournir le matériel de nettoyage ?",
+    "answer": "Non, nous apportons tout le matériel professionnel nécessaire : aspirateurs, produits, chiffons, etc.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-basket text-teal-600 text-2xl\"></i>"
+    "icon": "bi-basket"
   },
   {
-    "question": "Comment payer la prestation ?",
-    "answer": "Virement, CB, prélèvement SEPA, CESU ou espèces. Facture envoyée le jour même.",
+    "question": "Comment régler la prestation ?",
+    "answer": "Plusieurs moyens de paiement : carte bancaire, virement, prélèvement, CESU ou espèces. La facture est envoyée le jour même.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-wallet2 text-green-700 text-2xl\"></i>"
+    "icon": "bi-wallet2"
   },
   {
     "question": "Nettoyez-vous les moquettes et tapis ?",
-    "answer": "Oui, par injection-extraction ou shampoing professionnel selon le type de textile.",
+    "answer": "Oui, nous nettoyons les moquettes et tapis avec des méthodes professionnelles adaptées à chaque type de textile.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-droplet text-blue-600 text-2xl\"></i>"
+    "icon": "bi-droplet"
   },
   {
-    "question": "Faites-vous les stores et rideaux ?",
-    "answer": "Oui, dépoussiérage, lavage à la main ou en pressing selon le tissu.",
+    "question": "Nettoyez-vous les rideaux et stores ?",
+    "answer": "Oui, nous dépoussiérons, lavons à la main ou faisons nettoyer en pressing vos rideaux et stores selon leur tissu.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-window text-gray-600 text-2xl\"></i>"
+    "icon": "bi-window"
   },
   {
-    "question": "Nettoyez-vous les parkings et garages ?",
-    "answer": "Oui, balayage mécanique, haute pression, enlèvement des huiles et graisses.",
+    "question": "Nettoyez-vous les garages et parkings ?",
+    "answer": "Oui, nous nettoyons les parkings et garages : balayage, nettoyage haute pression, enlèvement des taches d'huile...",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-car-front text-slate-600 text-2xl\"></i>"
+    "icon": "bi-car-front"
   },
   {
-    "question": "Proposez-vous le nettoyage de façades ?",
-    "answer": "Oui, nettoyage haute pression ou produits spécifiques selon le matériau.",
+    "question": "Proposez-vous le nettoyage des façades ?",
+    "answer": "Oui, nous nettoyons les façades des bâtiments avec des techniques adaptées à chaque matériau.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-building text-orange-600 text-2xl\"></i>"
+    "icon": "bi-building"
   },
   {
-    "question": "Nettoyez-vous les commerces et boutiques ?",
-    "answer": "Oui, tous les jours ou en nocturne, vitrines incluses.",
+    "question": "Nettoyez-vous les magasins et boutiques ?",
+    "answer": "Oui, nous nettoyons tous types de commerces, tous les jours si besoin, vitrines incluses.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-shop text-pink-600 text-2xl\"></i>"
+    "icon": "bi-shop"
   },
   {
-    "question": "Pouvez-vous intervenir le dimanche ou jours fériés ?",
-    "answer": "Oui, avec supplément de 50 % pour les dimanches et fériés.",
+    "question": "Pouvez-vous intervenir le dimanche ?",
+    "answer": "Oui, nous intervenons le dimanche et jours fériés avec un supplément de 50% sur le tarif habituel.",
     "category": "planning",
-    "icon": "<i class=\"bi bi-calendar-x text-red-600 text-2xl\"></i>"
+    "icon": "bi-calendar-x"
   },
   {
-    "question": "Faites-vous le ménage dans les écoles et crèches ?",
-    "answer": "Oui, avec produits non toxiques et désinfection renforcée.",
+    "question": "Nettoyez-vous les écoles et crèches ?",
+    "answer": "Oui, nous nettoyons les établissements scolaires avec des produits adaptés et une désinfection renforcée.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-book text-purple-600 text-2xl\"></i>"
+    "icon": "bi-book"
   },
   {
     "question": "Nettoyez-vous les cabinets médicaux ?",
-    "answer": "Oui, avec protocole médical strict et produits bactéricides/fongicides.",
+    "answer": "Oui, nous nettoyons les cabinets médicaux avec des protocoles spécifiques et des produits désinfectants puissants.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-hospital text-red-700 text-2xl\"></i>"
+    "icon": "bi-hospital"
   },
   {
-    "question": "Proposez-vous un responsable dédié pour les gros contrats ?",
-    "answer": "Oui, un superviseur attitré pour tous les contrats supérieurs à 500 €/mois.",
+    "question": "Avez-vous un responsable pour les gros contrats ?",
+    "answer": "Oui, pour les contrats importants, un superviseur dédié assure le suivi et la qualité du service.",
     "category": "securite",
-    "icon": "<i class=\"bi bi-person-gear text-indigo-600 text-2xl\"></i>"
+    "icon": "bi-person-gear"
   },
   {
-    "question": "Faites-vous le tri sélectif des déchets ?",
-    "answer": "Oui, systématiquement : poubelles jaunes, verre, cartons, déchets dangereux.",
+    "question": "Faites-vous le tri des déchets ?",
+    "answer": "Oui, nous trions systématiquement tous les déchets : emballages, verre, carton, etc.",
     "category": "ecologie",
-    "icon": "<i class=\"bi bi-recycle text-green-700 text-2xl\"></i>"
+    "icon": "bi-recycle"
   },
   {
-    "question": "Puis-je avoir une facture pour mon entreprise ?",
-    "answer": "Oui, facture avec TVA détaillée envoyée par mail le jour même.",
+    "question": "Peut-on avoir une facture pour entreprise ?",
+    "answer": "Oui, nous fournissons une facture détaillée avec TVA dès le jour du nettoyage.",
     "category": "tarifs",
-    "icon": "<i class=\"bi bi-receipt text-blue-700 text-2xl\"></i>"
+    "icon": "bi-receipt"
   },
   {
-    "question": "Nettoyez-vous les escaliers d’immeuble ?",
-    "answer": "Oui, contrat mensuel ou hebdomadaire, avec ou sans parties communes.",
+    "question": "Nettoyez-vous les escaliers d'immeuble ?",
+    "answer": "Oui, nous nettoyons les escaliers et parties communes d'immeuble, régulièrement ou ponctuellement.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-building-fill-up text-gray-700 text-2xl\"></i>"
+    "icon": "bi-building-fill-up"
   },
   {
-    "question": "Pouvez-vous nettoyer avant une état des lieux ?",
-    "answer": "Oui, prestation spéciale état des lieux sortie avec checklist complète.",
+    "question": "Pouvez-vous nettoyer avant un état des lieux ?",
+    "answer": "Oui, nous proposons une prestation spéciale 'état des lieux' pour une remise des clés impeccable.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-clipboard-check text-green-600 text-2xl\"></i>"
+    "icon": "bi-clipboard-check"
   },
   {
-    "question": "Faites-vous le nettoyage de toitures et gouttières ?",
-    "answer": "Oui, démoussage, nettoyage haute pression et vidange des gouttières.",
+    "question": "Nettoyez-vous les toitures et gouttières ?",
+    "answer": "Oui, nous effectuons le démoussage des toitures et le nettoyage des gouttières.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-house-roof text-amber-700 text-2xl\"></i>"
+    "icon": "bi-house-roof"
   },
   {
-    "question": "Proposez-vous un service de gardiennage avec ménage ?",
-    "answer": "Oui, nous pouvons ouvrir/fermer vos locaux + ménage quotidien.",
+    "question": "Proposez-vous un service de gardiennage ?",
+    "answer": "Oui, nous pouvons assurer l'ouverture et la fermeture de vos locaux en plus du nettoyage.",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-key text-yellow-700 text-2xl\"></i>"
+    "icon": "bi-key"
   },
   {
-    "question": "Avez-vous des références clients à Angers ?",
-    "answer": "Oui, plus de 320 clients satisfaits : mairies, entreprises, cabinets médicaux, particuliers.",
+    "question": "Avez-vous des clients satisfaits à Angers ?",
+    "answer": "Oui, nous comptons plus de 300 clients satisfaits à Angers : particuliers, entreprises, collectivités...",
     "category": "securite",
-    "icon": "<i class=\"bi bi-star-fill text-yellow-500 text-2xl\"></i>"
+    "icon": "bi-star-fill"
   },
   {
-    "question": "Puis-je programmer un nettoyage ponctuel unique ?",
-    "answer": "Oui, grand ménage de printemps, avant/après déménagement, etc.",
+    "question": "Proposez-vous des nettoyages ponctuels ?",
+    "answer": "Oui, nous réalisons des nettoyages ponctuels : grand ménage de printemps, avant/après déménagement...",
     "category": "prestations",
-    "icon": "<i class=\"bi bi-calendar-plus text-teal-600 text-2xl\"></i>"
+    "icon": "bi-calendar-plus"
   }
 ]

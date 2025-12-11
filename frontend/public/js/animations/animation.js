@@ -1010,171 +1010,229 @@ let typingInterval = null;
       }, speed);
     }
 
-    /**
-     * Initialise la section FAQ avec accordéon animé, filtres par catégorie, pagination, icônes SVG,
-     * fermeture automatique des autres accordéons, effet de typing, et bouton de contact
-     */
-    function initFAQSection() {
-      const faqContainer = document.getElementById('faq-list');
-      const paginationContainer = document.querySelector('.faq-pagination');
-      if (!faqContainer || !paginationContainer) {
-       // console.warn('Conteneur FAQ ou pagination non trouvé');
-        return;
-      }
+/*
 
-      
-
-
-      // Paramètres de pagination
-      const ITEMS_PER_PAGE = 5;
-      let currentPage = 1;
-      let currentFilter = 'all';
-
-      // Fonction pour rendre les items FAQ
-      function renderFAQItems(page = 1, filter = 'all') {
-        const filteredFAQ = filter === 'all' ? MOCK_FAQ : MOCK_FAQ.filter(faq => faq.category === filter);
-        const startIndex = (page - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-        const paginatedFAQ = filteredFAQ.slice(startIndex, endIndex);
-
-        faqContainer.innerHTML = paginatedFAQ.map((faq, index) => `
-          <div class="faq-item rounded-2xl mb-6 overflow-hidden" data-category="${faq.category}" data-aos="fade-up" data-aos-delay="${index * 100}">
-            <button class="faq-toggle w-full text-left p-6 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-green-500 rounded-t-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" aria-expanded="false" aria-controls="faq-content-${startIndex + index}">
-              <div class="flex items-center gap-4">
-                ${faq.icon || ''}
-                <span class="text-xl font-semibold text-gray-900 dark:text-white">${faq.question}</span>
-              </div>
-              <span class="faq-icon ml-auto text-gray-500 dark:text-gray-400">${expandIcon}</span>
-            </button>
-            <div id="faq-content-${startIndex + index}" class="faq-content hidden p-6 text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-200 dark:border-gray-600 transition-all duration-300">
-              <p class="mb-6"></p>
-              <div class="flex justify-between gap-6">
-                <a href="#contact" class="text-white bg-green-500 dark:bg-transparent border-xl border p-2 rounded-xl border-green-500  font-medium text-sm flex items-center gap-2 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                  En savoir plus
-                </a>
-                <a href="#related" class="text-white bg-blue-500 dark:bg-transparent border-xl border p-2 rounded-xl border-blue-500  font-medium text-sm flex items-center gap-2 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V9l-7-7z"></path>
-                    <path d="M13 3v6h6"></path>
-                  </svg>
-                  Demandez votre devis
-                </a>
-              </div>
-            </div>
-          </div>
-        `).join('');
-
-        const totalPages = Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE);
-        paginationContainer.innerHTML = `
-          <button class="faq-prev-page px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 18l-6-6 6-6"></path>
-            </svg>
-          </button>
-          ${Array.from({ length: totalPages }, (_, i) => `
-            <button class="faq-page-btn px-4 py-2 rounded-full ${i + 1 === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'} font-medium hover:bg-green-500 hover:text-white transition-colors" data-page="${i + 1}">
-              ${i + 1}
-            </button>
-          `).join('')}
-          <button class="faq-next-page px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${currentPage === totalPages ? 'disabled' : ''}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 18l6-6-6-6"></path>
-            </svg>
-          </button>
-        `;
-
-        // Gestion des toggles avec effet de typing
-        const toggles = faqContainer.querySelectorAll('.faq-toggle');
-        toggles.forEach(button => {
-          button.addEventListener('click', () => {
-            const content = button.nextElementSibling;
-            const icon = button.querySelector('.faq-icon');
-            const isExpanded = content.classList.contains('hidden');
-            const parent = button.closest('#faq-list');
-            const textElement = content.querySelector('p');
-            const faqIndex = parseInt(content.id.replace('faq-content-', '')) % MOCK_FAQ.length;
-            const answerText = filteredFAQ[faqIndex].answer;
-
-            // Fermer tous les autres
-            parent.querySelectorAll('.faq-content').forEach(otherContent => {
-              if (otherContent !== content && !otherContent.classList.contains('hidden')) {
-                otherContent.classList.add('hidden');
-                const otherButton = otherContent.previousElementSibling;
-                otherButton.querySelector('.faq-icon').innerHTML = expandIcon;
-                otherButton.setAttribute('aria-expanded', 'false');
-                if (otherContent.querySelector('p')) {
-                  otherContent.querySelector('p').innerHTML = '';
-                }
-              }
-            });
-
-            // Toggle actuel
-            content.classList.toggle('hidden');
-            icon.innerHTML = isExpanded ? collapseIcon : expandIcon;
-            button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-
-            // Ajouter l'effet de typing uniquement à l'ouverture
-            if (isExpanded) {
-              typeAnswer(textElement, answerText, 5);
-            } else {
-              textElement.innerHTML = answerText;
-            }
-          });
-        });
-
-        // Gestion de la pagination
-        paginationContainer.querySelectorAll('.faq-page-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            currentPage = parseInt(btn.dataset.page);
-            renderFAQItems(currentPage, currentFilter);
-           
-          });
-        });
-
-        paginationContainer.querySelector('.faq-prev-page').addEventListener('click', () => {
-          if (currentPage > 1) {
-            currentPage--;
-            renderFAQItems(currentPage, currentFilter);
-      
-          }
-        });
-
-        paginationContainer.querySelector('.faq-next-page').addEventListener('click', () => {
-          if (currentPage < Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE)) {
-            currentPage++;
-            renderFAQItems(currentPage, currentFilter);
-           
-          }
-        });
-
-      }
-
-      // Gestion des filtres
-      const filterButtons = document.querySelectorAll('.faq-filter-btn');
-      filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          currentFilter = button.dataset.filter;
-          currentPage = 1;
-
-          filterButtons.forEach(btn => btn.classList.remove('active', 'bg-green-500', 'text-white'));
-          button.classList.add('active', 'bg-green-500', 'text-white');
-
-          renderFAQItems(currentPage, currentFilter);
-        });
-      });
-
-      // Initialisation
-      renderFAQItems(currentPage, currentFilter);
+function typeAnswer(element, text, speed = 10) {
+  if (!element) return;
+  
+  element.innerHTML = '';
+  let i = 0;
+  
+  function typeWriter() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typeWriter, speed);
     }
-
+  }
+  
+  typeWriter();
+}
     
 
   
+*/
+   /**
+ * Initialise la section FAQ avec accordéon animé, filtres par catégorie, pagination, icônes SVG,
+ * fermeture automatique des autres accordéons, effet de typing, et bouton de contact
+ */
+function initFAQSection() {
+  const faqContainer = document.getElementById('faq-list');
+  const paginationContainer = document.querySelector('.faq-pagination');
+  if (!faqContainer || !paginationContainer) {
+    // console.warn('Conteneur FAQ ou pagination non trouvé');
+    return;
+  }
+
+  // Paramètres de pagination
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+  let currentFilter = 'all';
+
+  // Icones
+  const expandIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400">
+    <path d="M6 9l6 6 6-6"/>
+  </svg>`;
+  
+  const collapseIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400">
+    <path d="M6 15l6-6 6 6"/>
+  </svg>`;
+
+  // Fonction pour rendre les items FAQ
+  function renderFAQItems(page = 1, filter = 'all') {
+    const filteredFAQ = filter === 'all' ? MOCK_FAQ : MOCK_FAQ.filter(faq => faq.category === filter);
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedFAQ = filteredFAQ.slice(startIndex, endIndex);
+
+    faqContainer.innerHTML = paginatedFAQ.map((faq, index) => `
+      <div class="faq-item bg-gradient-to-br from-gray-50/50 to-white/50 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-sm rounded-2xl mb-6 overflow-hidden border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1" data-category="${faq.category}" data-aos="fade-up" data-aos-delay="${index * 100}">
+        <button class="faq-toggle w-full text-left p-6 flex justify-between items-center focus:outline-none focus:ring-0 rounded-t-2xl transition-all duration-300 group" aria-expanded="false" aria-controls="faq-content-${startIndex + index}">
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <i class="bi ${faq.icon} text-green-600 dark:text-green-400 text-xl"></i>
+            </div>
+            <div class="text-left">
+              <span class="text-lg font-semibold text-gray-900 dark:text-white block group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">${faq.question}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 inline-block px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800">
+                ${faq.category}
+              </span>
+            </div>
+          </div>
+          <span class="faq-icon ml-4 flex-shrink-0 group-hover:scale-125 transition-transform duration-300">${expandIcon}</span>
+        </button>
+        <div id="faq-content-${startIndex + index}" class="faq-content hidden px-6 pb-6">
+          <div class="pl-16 border-l-2 border-green-200 dark:border-green-800/50 ml-4">
+            <div class="relative">
+              <div class="absolute -left-8 top-0 w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
+                <div class="w-2 h-2 rounded-full bg-green-500 dark:bg-green-400"></div>
+              </div>
+              <p class="faq-answer-text text-gray-700 dark:text-gray-300 leading-relaxed text-base pl-4 mb-6 min-h-[60px]"></p>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-4 pl-4">
+              <a href="#contact" class="flex items-center gap-2 py-2.5 bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Besoin de précisions ?
+              </a>
+              <a href="#contact" class="inline-flex shadow-xl items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M13 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V9l-7-7z"></path>
+                  <path d="M13 3v6h6"></path>
+                </svg>
+                Demander un devis
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const totalPages = Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE);
+    paginationContainer.innerHTML = `
+      <div class="flex items-center gap-2">
+        <button class="faq-prev-page no-border w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === 1 ? 'disabled' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
+        <div class="flex items-center gap-2">
+          ${Array.from({ length: totalPages }, (_, i) => `
+            <button class="faq-page-btn no-border w-10 h-10 rounded-xl flex items-center justify-center font-medium transition-all duration-300 hover:scale-105 ${
+              i + 1 === currentPage 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25' 
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }" data-page="${i + 1}">
+              ${i + 1}
+            </button>
+          `).join('')}
+        </div>
+        <button class="faq-next-page no-border w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === totalPages ? 'disabled' : ''}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"></path>
+          </svg>
+        </button>
+      </div>
+    `;
+
+    // Gestion des toggles avec effet de typing
+    const toggles = faqContainer.querySelectorAll('.faq-toggle');
+    toggles.forEach(button => {
+      button.addEventListener('click', () => {
+        const content = button.nextElementSibling;
+        const icon = button.querySelector('.faq-icon');
+        const isExpanded = content.classList.contains('hidden');
+        const parent = button.closest('#faq-list');
+        const textElement = content.querySelector('.faq-answer-text');
+        const faqIndex = parseInt(content.id.replace('faq-content-', '')) % MOCK_FAQ.length;
+        const answerText = filteredFAQ[faqIndex].answer;
+
+        // Fermer tous les autres
+        parent.querySelectorAll('.faq-content').forEach(otherContent => {
+          if (otherContent !== content && !otherContent.classList.contains('hidden')) {
+            otherContent.classList.add('hidden');
+            const otherButton = otherContent.previousElementSibling;
+            otherButton.querySelector('.faq-icon').innerHTML = expandIcon;
+            otherButton.setAttribute('aria-expanded', 'false');
+            if (otherContent.querySelector('.faq-answer-text')) {
+              otherContent.querySelector('.faq-answer-text').innerHTML = '';
+            }
+          }
+        });
+
+        // Toggle actuel
+        content.classList.toggle('hidden');
+        icon.innerHTML = isExpanded ? collapseIcon : expandIcon;
+        button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+
+        // Animation d'ouverture
+        if (isExpanded) {
+          content.style.maxHeight = '0';
+          content.style.overflow = 'hidden';
+          setTimeout(() => {
+            content.style.maxHeight = '500px';
+            setTimeout(() => {
+              content.style.maxHeight = 'none';
+            }, 500);
+          }, 10);
+          
+          // Effet de typing
+          typeAnswer(textElement, answerText, 5);
+        } else {
+          textElement.innerHTML = answerText;
+        }
+      });
+    });
+
+    // Gestion de la pagination
+    paginationContainer.querySelectorAll('.faq-page-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentPage = parseInt(btn.dataset.page);
+        renderFAQItems(currentPage, currentFilter);
+      });
+    });
+
+    paginationContainer.querySelector('.faq-prev-page')?.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderFAQItems(currentPage, currentFilter);
+      }
+    });
+
+    paginationContainer.querySelector('.faq-next-page')?.addEventListener('click', () => {
+      if (currentPage < Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE)) {
+        currentPage++;
+        renderFAQItems(currentPage, currentFilter);
+      }
+    });
+  }
+
+  // Gestion des filtres
+  const filterButtons = document.querySelectorAll('.faq-filter-btn');
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      currentFilter = button.dataset.filter;
+      currentPage = 1;
+
+      filterButtons.forEach(btn => {
+        btn.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-emerald-600', 'text-white', 'shadow-lg', 'shadow-green-500/25');
+        btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+      });
+      
+      button.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+      button.classList.add('bg-gradient-to-r', 'from-green-500', 'to-emerald-600', 'text-white', 'shadow-lg', 'shadow-green-500/25');
+
+      renderFAQItems(currentPage, currentFilter);
+    });
+  });
+
+  // Initialisation
+  renderFAQItems(currentPage, currentFilter);
+}
+
 
 /**
 * Initializes the team section with a carousel, filters, and modal functionality.

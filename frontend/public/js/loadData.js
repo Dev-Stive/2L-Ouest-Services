@@ -4,7 +4,7 @@
  * Intègre la vérification de l'état d'authentification Firebase pour une synchronisation robuste.
  */
 
-import { getStoredToken, showNotification, setStoredToken, clearStoredToken, waitForAuthState } from './modules/utils.js';
+import { getStoredToken, showNotification, setStoredToken, clearStoredToken, waitForAuthState, getFirebaseConfig } from './modules/utils.js';
 import api from './api.js';
 import auth from './modules/auth.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
@@ -24,7 +24,7 @@ export async function loadUserData() {
     if (loadingSpinner) loadingSpinner.classList.remove('hidden');
 
     // Vérifier l'état d'authentification Firebase
-    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const app = getApps().length ? getApp() : initializeApp(getFirebaseConfig);
     const firebaseAuth = getAuth(app);
 
     const user = await waitForAuthState(firebaseAuth);
