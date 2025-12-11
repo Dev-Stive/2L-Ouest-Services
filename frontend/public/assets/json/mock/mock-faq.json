@@ -1,44 +1,254 @@
 [
   {
-    "question": "Quels sont vos tarifs ?",
-    "answer": "Nos <span class='highlight text-blue-600 font-semibold'>tarifs</span> sont établis sur mesure, en fonction de la <span class='highlight text-blue-600 font-semibold'>surface à nettoyer</span>, de la fréquence des interventions et des services spécifiques souhaités. Contactez-nous pour un <span class='highlight text-blue-600 font-semibold'>devis gratuit</span> à Angers ou dans l’Ouest de la France !",
+    "question": "Quels sont vos tarifs pour un nettoyage à Angers ?",
+    "answer": "Nos tarifs sont calculés sur mesure selon la surface, la fréquence et les prestations souhaitées. Un devis gratuit et détaillé vous est envoyé sous 24h maximum.",
     "category": "tarifs",
-    "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-blue-600'><line x1='12' y1='1' x2='12' y2='23'></line><path d='M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'></path></svg>"
+    "icon": "<i class=\"bi bi-currency-euro text-blue-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Le devis est-il gratuit et sans engagement ?",
+    "answer": "Oui, 100 % gratuit et sans aucun engagement, que ce soit pour une maison, un bureau ou un local commercial à Angers et alentours.",
+    "category": "tarifs",
+    "icon": "<i class=\"bi bi-file-check text-green-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Acceptez-vous les CESU pour le ménage à domicile ?",
+    "answer": "Oui, nous sommes agréés CESU. Vous bénéficiez du crédit d’impôt de 50 % immédiatement.",
+    "category": "tarifs",
+    "icon": "<i class=\"bi bi-credit-card text-indigo-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Quel est le délai pour commencer un contrat régulier ?",
+    "answer": "Nous pouvons démarrer votre contrat de nettoyage régulier sous 7 jours ouvrés après acceptation du devis.",
+    "category": "planning",
+    "icon": "<i class=\"bi bi-calendar-check text-purple-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Pouvez-vous intervenir tôt le matin ou en soirée ?",
+    "answer": "Oui, c’est notre spécialité : 6h du matin, 20h-22h ou week-end pour ne jamais perturber votre activité.",
+    "category": "planning",
+    "icon": "<i class=\"bi bi-clock-history text-orange-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Quel est le délai d’intervention en urgence (dégât des eaux) ?",
+    "answer": "Sous 2 heures sur Angers centre et sous 4 heures dans tout le Maine-et-Loire.",
+    "category": "urgences",
+    "icon": "<i class=\"bi bi-lightning-charge text-red-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Dans quelles villes intervenez-vous autour d’Angers ?",
+    "answer": "Angers, Avrillé, Beaucouzé, Les Ponts-de-Cé, Trélazé, Saint-Barthélemy-d’Anjou, Bouchemaine, Écouflant, Cholet, Saumur et jusqu’à 40 km.",
+    "category": "zones",
+    "icon": "<i class=\"bi bi-geo-alt-fill text-teal-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous les vitres en hauteur ?",
+    "answer": "Oui, jusqu’à 18 mètres avec perche à eau osmosée ou nacelle. Agents habilités CACES.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-building-up text-sky-600 text-2xl\"></i>"
   },
   {
     "question": "Utilisez-vous des produits écologiques ?",
-    "answer": "Oui, nous utilisons des <span class='highlight text-green-600 font-semibold'>produits écologiques</span> certifiés biodégradables et hypoallergéniques, parfaits pour les foyers à Angers et respectueux de l’environnement.",
+    "answer": "Oui, nous proposons par défaut des produits certifiés Ecolabel et Ecocert, sans surcoût.",
     "category": "ecologie",
-    "icon": "<i class=\"fas fa-leaf text-green-600\"></i>"
+    "icon": "<i class=\"bi bi-leaf text-green-600 text-2xl\"></i>"
   },
   {
-    "question": "Dans quelles régions intervenez-vous ?",
-    "answer": "Nous opérons à <span class='highlight text-purple-600 font-semibold'>Angers</span>, dans l’ensemble de l’<span class='highlight text-purple-600 font-semibold'>Ouest de la France</span>, incluant la Bretagne, les Pays de la Loire, et certaines parties de la Normandie et Nouvelle-Aquitaine. Contactez-nous pour vérifier la disponibilité.",
-    "category": "regions",
-    "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-purple-600'><circle cx='12' cy='10' r='3'></circle><path d='M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z'></path></svg>"
+    "question": "Vos produits sont-ils sans danger pour les enfants et animaux ?",
+    "answer": "Oui, tous hypoallergéniques, sans COV ni substances toxiques.",
+    "category": "ecologie",
+    "icon": "<i class=\"bi bi-shield-check text-emerald-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous les écrans, claviers et téléphones ?",
+    "answer": "Oui, avec produits anti-statiques et microfibres spéciales. Aucun risque pour le matériel.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-laptop text-indigo-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous le nettoyage après chantier ?",
+    "answer": "Oui, spécialité fin de chantier : poussières fines, traces de plâtre, étiquettes, vitres, sols.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-tools text-amber-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Le logement est-il habitable tout de suite après ?",
+    "answer": "Oui, nous garantissons un logement ou local prêt à habiter ou louer immédiatement.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-house-check text-blue-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Vos agents sont-ils déclarés et assurés ?",
+    "answer": "Oui, 100 % en CDI, formés, déclarés et couverts par notre RC Pro et décennale.",
+    "category": "securite",
+    "icon": "<i class=\"bi bi-person-badge text-gray-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Travaillez-vous avec les assurances en cas de sinistre ?",
+    "answer": "Oui, agréés par la plupart des assurances. Rapport détaillé fourni pour remboursement rapide.",
+    "category": "urgences",
+    "icon": "<i class=\"bi bi-file-earmark-text text-red-600 text-2xl\"></i>"
   },
   {
     "question": "Comment réserver un service ?",
-    "answer": "Réservez facilement via notre <span class='highlight text-blue-600 font-semibold'>formulaire en ligne</span> sur notre site ou appelez-nous au <span class='highlight text-blue-600 font-semibold'>+33 2 41 23 45 67</span> pour un service à Angers ou ailleurs.",
-    "category": "tarifs",
-    "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-blue-600'><path d='M20 6 9 17l-5-5'></path></svg>"
+    "answer": "Par téléphone 02 41 23 45 67, via le formulaire en ligne ou par mail contact@propre-angers.fr",
+    "category": "contact",
+    "icon": "<i class=\"bi bi-telephone-plus text-green-600 text-2xl\"></i>"
   },
   {
-    "question": "Vos produits sont-ils sans danger pour les animaux ?",
-    "answer": "Oui, nos <span class='highlight text-green-600 font-semibold'>produits</span> sont hypoallergéniques et sans danger pour les <span class='highlight text-green-600 font-semibold'>animaux domestiques</span> et les enfants, idéaux pour les foyers à Angers.",
+    "question": "Y a-t-il des frais d’annulation ?",
+    "answer": "Aucun frais si prévenu 48h avant. 50 % si annulation la veille.",
+    "category": "tarifs",
+    "icon": "<i class=\"bi bi-x-circle text-red-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous des contrats annuels avec remise ?",
+    "answer": "Oui, jusqu’à 15 % de remise + priorité absolue en cas d’urgence.",
+    "category": "tarifs",
+    "icon": "<i class=\"bi bi-percent text-purple-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous frigo, four, placards et micro-ondes ?",
+    "answer": "Oui, sur demande avec supplément raisonnable. Nettoyage en profondeur garanti.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-cup-straw text-pink-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous le repassage à domicile ?",
+    "answer": "Oui, à 18 €/h après crédit d’impôt (soit 9 €/h réel).",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-thermometer-snow text-cyan-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous une désinfection virucide renforcée ?",
+    "answer": "Oui, produit norme EN 14476 (COVID, grippe, gastro) + fiche de traçabilité.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-virus text-red-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Puis-je modifier mes jours et horaires de passage ?",
+    "answer": "Oui, avec 48h de préavis, nous adaptons votre planning gratuitement.",
+    "category": "planning",
+    "icon": "<i class=\"bi bi-calendar-event text-indigo-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Et si je ne suis pas satisfait du nettoyage ?",
+    "answer": "Nous revenons gratuitement sous 48h pour corriger. Votre satisfaction est garantie à 100 %.",
+    "category": "securite",
+    "icon": "<i class=\"bi bi-emoji-smile text-yellow-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Fournissez-vous tout le matériel et les produits ?",
+    "answer": "Oui, tout est inclus : aspirateur pro, produits, chiffons microfibres, escabeaux, etc.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-basket text-teal-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Comment payer la prestation ?",
+    "answer": "Virement, CB, prélèvement SEPA, CESU ou espèces. Facture envoyée le jour même.",
+    "category": "tarifs",
+    "icon": "<i class=\"bi bi-wallet2 text-green-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous les moquettes et tapis ?",
+    "answer": "Oui, par injection-extraction ou shampoing professionnel selon le type de textile.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-droplet text-blue-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous les stores et rideaux ?",
+    "answer": "Oui, dépoussiérage, lavage à la main ou en pressing selon le tissu.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-window text-gray-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous les parkings et garages ?",
+    "answer": "Oui, balayage mécanique, haute pression, enlèvement des huiles et graisses.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-car-front text-slate-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous le nettoyage de façades ?",
+    "answer": "Oui, nettoyage haute pression ou produits spécifiques selon le matériau.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-building text-orange-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous les commerces et boutiques ?",
+    "answer": "Oui, tous les jours ou en nocturne, vitrines incluses.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-shop text-pink-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Pouvez-vous intervenir le dimanche ou jours fériés ?",
+    "answer": "Oui, avec supplément de 50 % pour les dimanches et fériés.",
+    "category": "planning",
+    "icon": "<i class=\"bi bi-calendar-x text-red-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous le ménage dans les écoles et crèches ?",
+    "answer": "Oui, avec produits non toxiques et désinfection renforcée.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-book text-purple-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Nettoyez-vous les cabinets médicaux ?",
+    "answer": "Oui, avec protocole médical strict et produits bactéricides/fongicides.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-hospital text-red-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous un responsable dédié pour les gros contrats ?",
+    "answer": "Oui, un superviseur attitré pour tous les contrats supérieurs à 500 €/mois.",
+    "category": "securite",
+    "icon": "<i class=\"bi bi-person-gear text-indigo-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous le tri sélectif des déchets ?",
+    "answer": "Oui, systématiquement : poubelles jaunes, verre, cartons, déchets dangereux.",
     "category": "ecologie",
-    "icon": "<i class=\"fas fa-leaf text-green-600 \"></i>"
+    "icon": "<i class=\"bi bi-recycle text-green-700 text-2xl\"></i>"
   },
   {
-    "question": "Quelle est la politique de remboursement ?",
-    "answer": "Nous offrons un <span class='highlight text-blue-600 font-semibold'>remboursement complet</span> sous 30 jours si vous n’êtes pas satisfait de nos services de nettoyage à Angers ou ailleurs.",
+    "question": "Puis-je avoir une facture pour mon entreprise ?",
+    "answer": "Oui, facture avec TVA détaillée envoyée par mail le jour même.",
     "category": "tarifs",
-    "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-blue-600'><path d='M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'></path><line x1='4' y1='22' x2='4' y2='15'></line></svg>"
+    "icon": "<i class=\"bi bi-receipt text-blue-700 text-2xl\"></i>"
   },
   {
-    "question": "Comment contacter le support ?",
-    "answer": "Contactez notre équipe à Angers par <span class='highlight text-purple-600 font-semibold'>email</span> (support@llouests.com) ou par <span class='highlight text-purple-600 font-semibold'>téléphone</span> (+33 2 41 23 45 67).",
-    "category": "regions",
-    "icon": "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-purple-600'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'></path></svg>"
+    "question": "Nettoyez-vous les escaliers d’immeuble ?",
+    "answer": "Oui, contrat mensuel ou hebdomadaire, avec ou sans parties communes.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-building-fill-up text-gray-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Pouvez-vous nettoyer avant une état des lieux ?",
+    "answer": "Oui, prestation spéciale état des lieux sortie avec checklist complète.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-clipboard-check text-green-600 text-2xl\"></i>"
+  },
+  {
+    "question": "Faites-vous le nettoyage de toitures et gouttières ?",
+    "answer": "Oui, démoussage, nettoyage haute pression et vidange des gouttières.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-house-roof text-amber-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Proposez-vous un service de gardiennage avec ménage ?",
+    "answer": "Oui, nous pouvons ouvrir/fermer vos locaux + ménage quotidien.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-key text-yellow-700 text-2xl\"></i>"
+  },
+  {
+    "question": "Avez-vous des références clients à Angers ?",
+    "answer": "Oui, plus de 320 clients satisfaits : mairies, entreprises, cabinets médicaux, particuliers.",
+    "category": "securite",
+    "icon": "<i class=\"bi bi-star-fill text-yellow-500 text-2xl\"></i>"
+  },
+  {
+    "question": "Puis-je programmer un nettoyage ponctuel unique ?",
+    "answer": "Oui, grand ménage de printemps, avant/après déménagement, etc.",
+    "category": "prestations",
+    "icon": "<i class=\"bi bi-calendar-plus text-teal-600 text-2xl\"></i>"
   }
 ]

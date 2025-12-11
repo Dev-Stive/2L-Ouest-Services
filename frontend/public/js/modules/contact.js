@@ -181,7 +181,6 @@ showFieldError(field, message, type = 'error') {
     console.warn(`Champ ${field} non trouvé`);
     return;
   }
-console.log(message);
 
 
   const errorElement = input.parentElement.querySelector('.error-message') || input.parentElement.parentElement.querySelector('.error-message');
@@ -399,7 +398,7 @@ updateSubmitButtonState(form, submitButton , isInitialL = false) {
       message: formData.get('message')?.trim() || '',
     };
 
-    let formValid = true; // Indicateur de validité globale
+    let formValid = true;8
 
     form.querySelectorAll('input:not([type="hidden"]), textarea, #subject-display').forEach(input => {
       const field = input.name || (input.id === 'subject-display' ? 'subjects' : input.name);
@@ -413,7 +412,6 @@ updateSubmitButtonState(form, submitButton , isInitialL = false) {
           const subjectsArray = value ? value.split(',').filter(s => s.trim() !== '') : [];
           
           if (subjectsArray.length === 0) {
-              // PAS D'ERREUR ROUGE, mais un message indicatif bleu
               this.showFieldError(
                   'subjects', 
                   'Veuillez sélectionner au moins un sujet.', 

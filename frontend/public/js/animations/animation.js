@@ -3051,7 +3051,7 @@ function initReviewsModal() {
     const reviewsModal = document.createElement('div');
     reviewsModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     reviewsModal.innerHTML = `
-        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+        <div class="modal-content  bg-white/50 dark:bg-ll-black  p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -3240,7 +3240,7 @@ function initCategoryModal() {
     const categoryModal = document.createElement('div');
     categoryModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     categoryModal.innerHTML = `
-        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-5xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+        <div class="modal-content  bg-white/50 dark:bg-ll-black  p-6 md:p-8 rounded-2xl shadow-2xl max-w-5xl w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -3339,7 +3339,7 @@ function initFrequencyModal() {
     const frequencyModal = document.createElement('div');
     frequencyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     frequencyModal.innerHTML = `
-        <div class="modal-content bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+        <div class="modal-content  bg-white/50 dark:bg-ll-black  p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
@@ -3432,7 +3432,7 @@ function initDifficultyModal() {
     const difficultyModal = document.createElement('div');
     difficultyModal.className = 'fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4';
     difficultyModal.innerHTML = `
-        <div class="modal-content bg-white dark:bg-ll-black/20 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
+        <div class="modal-content  bg-white/50 dark:bg-ll-black  p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95 opacity-0">
             <h3 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
@@ -3680,7 +3680,7 @@ let lastFiltersHash = '';
  * Met à jour l'affichage des filtres actifs - AVEC AUTO-UPDATE
  */
 function updateActiveFilters() {
-    if (isUpdating) return; // Protection contre la récursion
+    if (isUpdating) return;
     isUpdating = true;
 
     const activeFiltersContainer = document.getElementById('active-filters');
@@ -4242,7 +4242,6 @@ function initAbout() {
         </div>
     `).join('');
 
-    // Reste de l'initialisation (Typing Text, Lottie Carousel)
     const typingContainer = document.getElementById('typing-text');
     if (typingContainer) {
         const paragraphs = typingContainer.querySelectorAll('p');
@@ -4258,15 +4257,15 @@ function initAbout() {
                 if (currentChar < currentText.length) {
                     paragraphs[currentPara].textContent += currentText[currentChar];
                     currentChar++;
-                    setTimeout(type, 30);
+                    type();
                 } else {
                     currentChar = 0;
                     currentPara++;
-                    setTimeout(type, 500);
+                   type();
                 }
             }
         }
-        setTimeout(type, 1000);
+        setTimeout(type, 30);
     }
 
     const lottieSlides = document.querySelectorAll('.lottie-slide');
@@ -4451,7 +4450,7 @@ function initAbout() {
 /**
  * Initialisation globale
  */
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async() => {
   await loadMockData();
 
 

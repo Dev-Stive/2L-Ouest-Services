@@ -15,7 +15,7 @@ let allowedOrigins = [
   ...(Array.isArray(config.frontendUrl) ? config.frontendUrl : [config.frontendUrl || '']),
   'https://ll-ouest-service.netlify.app',
   'http://ll-ouest-service.netlify.app',
-  'https://ll-ouest-services.fr/',
+  'https://ll-ouest-services.fr',
   
   // Variante sans HTTPS pour tests
   // Optionnel : Autoriser sous-domaines Netlify (ex. preview.*.netlify.app)

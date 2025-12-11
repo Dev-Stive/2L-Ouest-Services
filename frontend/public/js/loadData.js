@@ -8,9 +8,10 @@ import { getStoredToken, showNotification, setStoredToken, clearStoredToken, wai
 import api from './api.js';
 import auth from './modules/auth.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+import { getApps, getApp, initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
 
 const USER_CACHE_KEY = 'userDataCache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000;
 
 /**
  * Charge les données utilisateur et met à jour l'interface.
@@ -23,7 +24,9 @@ export async function loadUserData() {
     if (loadingSpinner) loadingSpinner.classList.remove('hidden');
 
     // Vérifier l'état d'authentification Firebase
-    const firebaseAuth = getAuth();
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const firebaseAuth = getAuth(app);
+
     const user = await waitForAuthState(firebaseAuth);
     let token = getStoredToken();
 

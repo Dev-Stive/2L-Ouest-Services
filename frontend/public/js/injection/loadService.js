@@ -398,13 +398,13 @@ export function renderServicesSidebar(services) {
         const categoryLabel = service.category ? `<span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full">${service.category}</span>` : '';
 
         return `
-            <button class="service-list-item flex-shrink-0 w-64 text-left p-4 rounded-xl border border-white/20 dark:border-gray-700/50 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-all duration-300 group service-card ${
-                index === currentServiceIndex ? 'border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30' : 'bg-white/50 dark:bg-ll-black/20/50'
+            <button class="service-list-item flex-shrink-0 w-64 text-left p-2 my-4 rounded-xl border border-white/20 dark:border-gray-600/50 backdrop-blur-sm  transition-all duration-300 group service-card ${
+                index === currentServiceIndex ? 'border-white/50 bg-white/50 dark:bg-gray-600/30 shadow-xl ring-1 ring-white/30' : 'bg-white/50 dark:bg-gray-600/30'
             }" data-service-index="${index}">
                 <div class="flex flex-col gap-3 h-full">
                     <img src="${afterImage.url}" alt="${service.name}" class="w-full h-24 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300">
                     <div class="flex-1 min-h-0">
-                        <h4 class="font-semibold text-gray-900 dark:text-white text-base truncate group-hover:text-ll-blue transition-colors">${service.name}</h4>
+                        <h4 class="font-semibold text-gray-900 dark:text-white text-base truncate transition-colors">${service.name}</h4>
                         <div class="flex items-center gap-2 mt-1">
                             <div class="flex text-yellow-400 text-xs">
                                 ${renderStarRating(service.rating)}
@@ -426,25 +426,75 @@ export function renderServicesSidebar(services) {
         `;
     }).join('');
 
-    listContainer.querySelectorAll('.service-list-item').forEach((item, index) => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+listContainer.querySelectorAll('.service-list-item').forEach((item, index) => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-            const direction = index > currentServiceIndex ? 'next' : index < currentServiceIndex ? 'prev' : null;
-            const delta = Math.abs(index - currentServiceIndex);
-            if (direction) {
-                navigateService(direction, delta);
-            } else {
-                renderServiceDetail(services[index], index, services.length);
-            }
+        const direction = index > currentServiceIndex ? 'next' : index < currentServiceIndex ? 'prev' : null;
+        const delta = Math.abs(index - currentServiceIndex);
+        if (direction) {
+            navigateService(direction, delta);
+        } else {
+            renderServiceDetail(services[index], index, services.length);
+        }
 
-            listContainer.querySelectorAll('.service-list-item').forEach((el, i) => {
-                el.classList.toggle('border-white/50 bg-white/90 dark:bg-gray-700/90 shadow-xl ring-1 ring-white/30', i === currentServiceIndex);
-                el.classList.toggle('bg-white/50 dark:bg-ll-black/20/50 border-white/20 dark:border-gray-700/50', i !== currentServiceIndex);
-            });
-        });
+        listContainer.querySelectorAll('.service-list-item').forEach((el, i) => {
+    if (i === currentServiceIndex) {
+        // ÉLÉMENT ACTIF (sélectionné)
+        el.classList.remove(
+            'bg-white/50', 
+            'dark:bg-ll-black/20', 
+            'border-gray-200', 
+            'dark:border-gray-700/50',
+            'shadow-md'
+        );
+        el.classList.add(
+            'bg-white/50', 
+            'dark:bg-gray-600/30',
+            'border-2',
+            'border-blue-500',        
+            'dark:border-blue-400',
+            'shadow-xl',
+            'ring-4',
+            'ring-blue-500/20',
+            'dark:ring-blue-400/30',
+            'z-10',
+            'scale-105',
+            'transition-all',
+            'duration-300'
+        );
+    } else {
+        // ÉLÉMENTS INACTIFS
+        el.classList.remove(
+            'bg-white/50', 
+            'dark:bg-gray-600/30',
+            'border-2',
+            'border-blue-500',
+            'dark:border-blue-400',
+            'shadow-xl',
+            'ring-4',
+            'ring-blue-500/20',
+            'scale-105'
+        );
+        el.classList.add(
+        'bg-white/50', 
+            'dark:bg-gray-600/30',
+            'border',
+            'border-gray-300',       
+            'dark:border-gray-700/60',
+            'shadow-md',
+            'hover:border-gray-400',
+            'dark:hover:border-gray-600',
+            'hover:bg-white/90',
+            'dark:hover:bg-gray-800/70',
+            'transition-all',
+            'duration-300'
+        );
+    }
+});
     });
+});
 
     updateMobileServiceSelector(services);
     renderServicePagination(services.length);
@@ -695,8 +745,8 @@ export function renderServiceDetail(service, index = 0, total = 1) {
     const equipmentEl = document.querySelector('.service-equipment-content');
     if (equipmentEl) {
         equipmentEl.innerHTML = service.equipment.map(eq => `
-            <div class="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
-                <div class="bg-white dark:bg-gray-700 rounded-xl p-4 shadow-lg hover:shadow-xl border-2 border-transparent hover:border-ll-blue">
+            <div class="text-center group cursor-pointer transform transition-all duration-300">
+                <div class="bg-white dark:bg-gray-600/30 rounded-xl p-4 shadow-lg hover:shadow-xl ">
                     <span class="text-3xl block mb-2 flex justify-center">${eq.icon}</span>
                     <span class="text-xs text-gray-600 dark:text-gray-400 font-medium capitalize">${eq.name}</span>
                 </div>
