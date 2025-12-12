@@ -233,9 +233,9 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         galleryEl.innerHTML = images.map((img, idx) => `
             <div class="service-image-item relative overflow-hidden rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-1 hover:scale-102 bg-gray-100 dark:bg-ll-black/20 hover:shadow-[0_8px_30px_rgba(37,99,235,0.2)]" >
                 <img src="${img.url}" alt="${img.description || service.name}" 
-                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                     class="w-full h-full no-lightbox object-cover transition-transform duration-500 hover:scale-105"
                      loading="${idx === 0 ? 'eager' : 'lazy'}"
-                     onerror="this.src='/assets/images/services/default-service.jpg'">
+                     onerror="this.src='/assets/images/logo.png'">
                 <div class="service-image-overlay absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white p-4 transform translate-y-full transition-transform duration-300">
                     <p class="font-semibold">${img.description}</p>
                     <div class="flex items-center mt-1">
@@ -459,12 +459,14 @@ async function loadAndRenderServiceDetail() {
         // 5. Service trouvé : Démarrer le rendu et les actions
         const foundService = allServices[serviceIndex];
         
+        await updatePageTitle(foundService);
+        
         // Rendu du contenu principal et masquage du loading (géré dans renderContent)
         renderContent(true, foundService, serviceIndex, allServices.length);
 
         // 6. Gestion de l'ouverture directe de la modale de réservation
         if (reserveParam) {
-            localStorage.setItem('serviceSelected', JSON.stringify(foundService)); // Utilisation de JSON.stringify pour stocker l'objet
+            localStorage.setItem('serviceSelected', JSON.stringify(foundService));
             reservation.openReservationModal(foundService, currentUser);
         }
 
@@ -489,6 +491,28 @@ async function loadAndRenderServiceDetail() {
         }
     }
 }
+
+/**
+ * Met à jour le titre de la page avec le nom du service
+ */
+async function updatePageTitle(service) {
+    try {
+        const serviceName = service.name || 'Détail du service';
+        
+        const baseTitle = document.title.split('|')[0].trim();
+        
+        const newTitle = `${serviceName} | ${baseTitle}`;
+        
+        document.title = newTitle;
+        
+        
+        console.log(`📝 Titre de la page mis à jour: "${newTitle}"`);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du titre:', error);
+    }
+}
+
+
 
 /**
  * Écouteur principal

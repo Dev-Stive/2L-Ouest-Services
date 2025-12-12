@@ -49,6 +49,7 @@ const contact = {
     this.bindFilterForm();
     this.loadSelectedSubjects();
     this.loadFormData();
+  this.watchFormChangesForMessageUpdate();
   },
 
   /**
@@ -784,7 +785,7 @@ openSubjectsModal() {
       <div class="p-6 md:p-8">
         <h3 class="text-2xl font-sans font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-ll-dark-green to-ll-dark-blue bg-[length:200%_100%] animate-gradient-scroll">Sélectionnez les sujets</h3>
         <div class="relative mb-4">
-          <input type="text" id="subject-search" class="w-full pl-4 pr-4 py-3 bg-ll-white/50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue focus:border-ll-blue text-gray-900 dark:text-gray-100 transition-all duration-300" placeholder="Rechercher un sujet..." />
+          <input type="text" id="subject-search" class="w-full pl-4 pr-4 py-3 bg-ll-white/50 dark:bg-ll-black/20 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue focus:border-ll-blue text-gray-900 dark:text-gray-100 transition-all duration-300" placeholder="Rechercher un sujet..." />
         </div>
         <div id="subjects-list" class="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[30rem] overflow-y-auto"></div>
         <div class="mt-6 flex justify-end space-x-4">
@@ -853,39 +854,50 @@ openSubjectsModal() {
   modal.querySelector('.modal-close').addEventListener('click', closeModal);
   modal.querySelector('.modal-cancel').addEventListener('click', closeModal);
   modal.querySelector('.modal-confirm').addEventListener('click', () => {
-    const selected = Array.from(selectedSubjects);
-    const selectedSubjectsEl = document.getElementById('selected-subjects');
-    selectedSubjectsEl.innerHTML = selected.map(sub => `
-      <span class="service-feature inline-flex items-center bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-sm text-gray-900 dark:text-gray-100">
-        ${sub}
-        <button type="button" class="ml-2 text-red-500 hover:text-red-700" data-remove="${sub}">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </span>
-    `).join('');
+  const selected = Array.from(selectedSubjects);
+  const selectedSubjectsEl = document.getElementById('selected-subjects');
+  selectedSubjectsEl.innerHTML = selected.map(sub => `
+    <span class="service-feature inline-flex items-center bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-sm text-gray-900 dark:text-gray-100">
+      ${sub}
+      <button type="button" class="ml-2 text-red-500 hover:text-red-700" data-remove="${sub}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </span>
+  `).join('');
 
-    subjectsInput.value = selected.join(',');
-    document.getElementById('subject-display').value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : '';
-    document.getElementById('subject-display').dispatchEvent(new Event('input'));
+  subjectsInput.value = selected.join(',');
+  document.getElementById('subject-display').value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : '';
+  document.getElementById('subject-display').dispatchEvent(new Event('input'));
 
-    selectedSubjectsEl.querySelectorAll('[data-remove]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const toRemove = btn.dataset.remove;
-        selectedSubjects.delete(toRemove);
-        subjectsInput.value = Array.from(selectedSubjects).join(',');
-        btn.parentElement.remove();
-        document.getElementById('subject-display').value = selectedSubjects.size > 0 ? `${selectedSubjects.size} sujet(s) sélectionné(s)` : '';
-        document.getElementById('subject-display').dispatchEvent(new Event('input'));
-        this.saveSelectedSubjects();
-      });
+  // ← AJOUTEZ CES LIGNES : Mise à jour automatique du message
+  if (selected.length > 0) {
+    this.updateMessageBasedOnInfo(selected);
+  }
+
+  selectedSubjectsEl.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const toRemove = btn.dataset.remove;
+      selectedSubjects.delete(toRemove);
+      subjectsInput.value = Array.from(selectedSubjects).join(',');
+      btn.parentElement.remove();
+      document.getElementById('subject-display').value = selectedSubjects.size > 0 ? `${selectedSubjects.size} sujet(s) sélectionné(s)` : '';
+      document.getElementById('subject-display').dispatchEvent(new Event('input'));
+      this.saveSelectedSubjects();
+      
+      // ← Mettre à jour le message si sujet supprimé
+      if (selectedSubjects.size > 0) {
+        this.updateMessageBasedOnInfo(Array.from(selectedSubjects));
+      }
     });
-
-    this.saveSelectedSubjects();
-    this.saveFormData();
-    closeModal();
   });
+
+  this.saveSelectedSubjects();
+  this.saveFormData();
+  closeModal();
+});
+
 
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
@@ -931,53 +943,229 @@ openSubjectsModal() {
    * Charge les sujets sélectionnés depuis localStorage.
    * @function loadSelectedSubjects
    */
-  loadSelectedSubjects() {
-    const subjectsInput = document.getElementById('subjects');
-    const selectedSubjectsEl = document.getElementById('selected-subjects');
-    const subjectDisplay = document.getElementById('subject-display');
+loadSelectedSubjects() {
+  const subjectsInput = document.getElementById('subjects');
+  const selectedSubjectsEl = document.getElementById('selected-subjects');
+  const subjectDisplay = document.getElementById('subject-display');
 
-    if (!subjectsInput || !selectedSubjectsEl || !subjectDisplay) return;
+  if (!subjectsInput || !selectedSubjectsEl || !subjectDisplay) return;
 
-    const saved = subjectsInput.value ? subjectsInput.value : localStorage.getItem('selectedSubjects');
-    if (saved) {
-      subjectsInput.value = saved;
-      const selected = saved.split(',').filter(s => s);
-      const selectedSubjectsSet = new Set(selected);
+  const saved = subjectsInput.value ? subjectsInput.value : localStorage.getItem('selectedSubjects');
+  if (saved) {
+    subjectsInput.value = saved;
+    const selected = saved.split(',').filter(s => s);
+    const selectedSubjectsSet = new Set(selected);
 
-      selectedSubjectsEl.innerHTML = selected.map(sub => `
-        <span class="service-feature inline-flex items-center bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-sm text-gray-900 dark:text-gray-100">
-          ${sub}
-          <button type="button" class="ml-2 text-red-500 hover:text-red-700" data-remove="${sub}">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </span>
-      `).join('');
+    selectedSubjectsEl.innerHTML = selected.map(sub => `
+      <span class="service-feature inline-flex items-center bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-sm text-gray-900 dark:text-gray-100">
+        ${sub}
+        <button type="button" class="ml-2 text-red-500 hover:text-red-700" data-remove="${sub}">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </span>
+    `).join('');
 
-      subjectDisplay.value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : '';
+    subjectDisplay.value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : '';
 
-      selectedSubjectsEl.querySelectorAll('[data-remove]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const toRemove = btn.dataset.remove;
-          selectedSubjectsSet.delete(toRemove);
-          subjectsInput.value = Array.from(selectedSubjectsSet).join(',');
-          btn.parentElement.remove();
-          subjectDisplay.value = selectedSubjectsSet.size > 0 ? `${selectedSubjectsSet.size} sujet(s) sélectionné(s)` : '';
-          subjectDisplay.dispatchEvent(new Event('input'));
-          this.saveSelectedSubjects();
-        });
+    // ← AJOUTEZ CES LIGNES : Mettre à jour le message au chargement
+    if (selected.length > 0) {
+      setTimeout(() => {
+        this.updateMessageBasedOnInfo(selected);
+      }, 100);
+    }
+
+    selectedSubjectsEl.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const toRemove = btn.dataset.remove;
+        selectedSubjectsSet.delete(toRemove);
+        subjectsInput.value = Array.from(selectedSubjectsSet).join(',');
+        btn.parentElement.remove();
+        subjectDisplay.value = selectedSubjectsSet.size > 0 ? `${selectedSubjectsSet.size} sujet(s) sélectionné(s)` : '';
+        subjectDisplay.dispatchEvent(new Event('input'));
+        this.saveSelectedSubjects();
+        
+        // ← Mettre à jour le message si sujet supprimé
+        if (selectedSubjectsSet.size > 0) {
+          this.updateMessageBasedOnInfo(Array.from(selectedSubjectsSet));
+        }
       });
+    });
 
-      subjectDisplay.value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : 'Sélectionnez un sujet';
-      subjectDisplay.dispatchEvent(new Event('input'));
-    } else {
-      subjectsInput.value = '';
+    subjectDisplay.value = selected.length > 0 ? `${selected.length} sujet(s) sélectionné(s)` : 'Sélectionnez un sujet';
+    subjectDisplay.dispatchEvent(new Event('input'));
+  } else {
+    subjectsInput.value = '';
     selectedSubjectsEl.innerHTML = '';
     subjectDisplay.value = 'Sélectionnez un sujet';
     subjectDisplay.dispatchEvent(new Event('input'));
+  }
+},
+
+
+
+
+  // Ajoutez ces fonctions dans l'objet contact, avant la fonction init() :
+
+/**
+ * Génère un message personnalisé basé sur le sujet sélectionné et les informations de l'utilisateur.
+ * @function generatePersonalizedMessage
+ * @param {string} subject - Nom du sujet sélectionné.
+ * @param {Object} userData - Données de l'utilisateur (nom, etc.)
+ * @returns {string} Message personnalisé.
+ */
+generatePersonalizedMessage(subject, userData = {}) {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 18 ? 'Bonjour' : 'Bonsoir';
+  
+  const userName = userData.name || '';
+  const userPhone = userData.phone ? userData.phone.replace('+33 ', '') : '';
+  
+  const subjectMessages = {
+    'Demande de devis': `${greeting} L&L Ouest Services,\n\nJe souhaiterais obtenir un devis personnalisé pour vos services de nettoyage.\n\nPourriez-vous me fournir une estimation détaillée incluant :\n- Les tarifs\n- La fréquence recommandée\n- Les produits utilisés\n- La durée estimée\n\nMerci de me recontacter pour discuter de mes besoins spécifiques.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Service client': `${greeting} L&L Ouest Services,\n\nJ'ai une question concernant vos services.\n\nPourriez-vous m'apporter des précisions sur :\n- Les disponibilités\n- Les zones d'intervention\n- Les méthodes de travail\n\nJe reste à votre disposition pour tout complément d'information.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Partenariat': `${greeting} L&L Ouest Services,\n\nJe vous contacte pour discuter d'un éventuel partenariat avec votre entreprise.\n\nNotre structure pourrait bénéficier de vos services dans le cadre de :\n- Contrats réguliers\n- Événements spécifiques\n- Collaborations à long terme\n\nSerait-il possible de programmer un rendez-vous pour en discuter ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage résidentiel': `${greeting} L&L Ouest Services,\n\nJe suis intéressé(e) par vos services de nettoyage résidentiel.\n\nMa situation :\n- Type de logement : [Appartement/Maison]\n- Superficie : [XX m²]\n- Fréquence souhaitée : [Hebdomadaire/Bimensuel/Mensuel]\n- Services spécifiques : [Vitres, Sols, Salles de bain, etc.]\n\nPourriez-vous me proposer un devis adapté ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage commercial': `${greeting} L&L Ouest Services,\n\nNous recherchons un service de nettoyage pour notre espace commercial.\n\nInformations sur notre local :\n- Type : [Bureau/Magasin/Restaurant]\n- Superficie : [XX m²]\n- Horaires d'intervention : [Jour/Nuit]\n- Fréquence : [Quotidien/Hebdomadaire]\n\nNous aimerions recevoir une proposition commerciale.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage en profondeur': `${greeting} L&L Ouest Services,\n\nJ'aurais besoin d'un nettoyage en profondeur pour :\n\n- [Raison : déménagement, après travaux, printemps, etc.]\n- Superficie : [XX m²]\n- Zones prioritaires : [Cuisine, Salles de bain, Sols]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous me communiquer vos disponibilités et tarifs ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage de vitres': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer les vitres de mon logement/établissement.\n\nDétails :\n- Nombre de fenêtres : [XX]\n- Étage(s) : [Rez-de-chaussée/Étage]\n- Accès : [Facile/Échelle nécessaire]\n- Fréquence : [Ponctuel/Régulier]\n\nPourriez-vous me transmettre un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage de tapis et moquettes': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer les tapis et moquettes de mon logement/établissement.\n\nDétails :\n- Surface approximative : [XX m²]\n- Type de tapis/moquette : [Profond/Léger]\n- Taches spécifiques : [Vin, Graisse, etc.]\n- Fréquence souhaitée : [Ponctuel/Annuel]\n\nPouvez-vous me proposer un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Désinfection': `${greeting} L&L Ouest Services,\n\nJe recherche un service de désinfection professionnelle.\n\nContexte :\n- Type de lieu : [Domicile/Bureau/Commerce]\n- Surface totale : [XX m²]\n- Raison : [Prévention/Traitement spécifique]\n- Produits souhaités : [Écologiques/Standard]\n\nQuelles sont vos disponibilités et tarifs ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage après travaux': `${greeting} L&L Ouest Services,\n\nNous venons de terminer des travaux et avons besoin d'un nettoyage complet.\n\nType de travaux : [Rénovation/Construction]\n- Superficie : [XX m²]\n- Débris à enlever : [Poussière, Déchets de chantier]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous intervenir rapidement ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage écologique': `${greeting} L&L Ouest Services,\n\nJe recherche un service de nettoyage utilisant des produits écologiques.\n\nMes attentes :\n- Engagement écoresponsable\n- Produits naturels et biodégradables\n- Certification écologique si possible\n- Surface : [XX m²]\n\nAvez-vous des forfaits adaptés à ces critères ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage de fin de bail': `${greeting} L&L Ouest Services,\n\nJe dois réaliser un nettoyage de fin de bail pour mon logement.\n\nDétails :\n- Date de l'état des lieux : [JJ/MM/AAAA]\n- Type de logement : [Appartement/Maison]\n- Superficie : [XX m²]\n- État actuel : [Normale/Nécessite attention particulière]\n\nProposez-vous des forfaits spécifiques pour cette situation ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage après événement': `${greeting} L&L Ouest Services,\n\nNous venons d'organiser un événement et avons besoin d'un nettoyage complet.\n\nType d'événement : [Mariage, Fête, Réunion]\n- Nombre de participants : [XX]\n- Superficie : [XX m²]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous intervenir rapidement ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Maintenance régulière': `${greeting} L&L Ouest Services,\n\nJe recherche un contrat de maintenance régulière pour mon logement/établissement.\n\nDétails :\n- Type de local : [Résidentiel/Commercial]\n- Superficie : [XX m²]\n- Fréquence souhaitée : [Hebdomadaire/Bimensuel/Mensuel]\n- Services inclus : [Nettoyage complet, Vitres, Sols]\n\nPouvez-vous me faire une proposition ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Nettoyage de véhicules': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer mon véhicule/véhicule de société.\n\nDétails :\n- Type de véhicule : [Voiture, Camionnette, Utilitaire]\n- Nettoyage : [Intérieur/Extérieur/Complet]\n- Nombre de véhicules : [1/Flotte]\n- Fréquence souhaitée : [Ponctuel/Régulier]\n\nPouvez-vous me proposer un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    
+    'Autre': `${greeting} L&L Ouest Services,\n\nJe vous contacte concernant : [Précisez votre demande]\n\n[Votre message détaillé ici]\n\nMes coordonnées :\n- Téléphone : ${userPhone || '[À préciser]'}\n- Email : ${userData.email || '[À préciser]'}\n\nMerci de me recontacter pour discuter de ma demande.\n\nCordialement${userName ? `,\n${userName}` : ''}`
+  };
+
+  return subjectMessages[subject] || 
+    `${greeting} L&L Ouest Services,\n\nJe vous contacte concernant "${subject}".\n\n[Votre message détaillé ici]\n\nCordialement${userName ? `,\n${userName}` : ''}`;
+},
+
+/**
+ * Met à jour le message dans le textarea en fonction des informations actuelles.
+ * @function updateMessageBasedOnInfo
+ * @param {Array} selectedSubjects - Liste des sujets sélectionnés.
+ */
+updateMessageBasedOnInfo(selectedSubjects = []) {
+  const textarea = document.getElementById('message');
+  if (!textarea) return;
+  
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+  
+  // Récupérer les informations actuelles du formulaire
+  const formData = new FormData(form);
+  const userData = {
+    name: formData.get('name')?.trim() || '',
+    email: formData.get('email')?.trim() || '',
+    phone: formData.get('phone')?.trim() || '',
+  };
+  
+  // Si aucun sujet n'est sélectionné, ne rien faire
+  if (selectedSubjects.length === 0) {
+    return;
+  }
+  
+  // Prendre le premier sujet comme base pour le message
+  const primarySubject = selectedSubjects[0];
+  
+  // Générer le message personnalisé
+  const personalizedMessage = this.generatePersonalizedMessage(primarySubject, userData);
+  
+  // Mettre à jour le textarea seulement s'il est vide ou contient le message par défaut
+  const currentValue = textarea.value.trim();
+  const defaultMessages = Object.values(this.generatePersonalizedMessage('', {})).map(msg => msg.split('\n')[0]);
+  
+  const shouldUpdate = 
+    currentValue === '' || 
+    defaultMessages.some(msg => currentValue.includes(msg)) ||
+    currentValue.includes('Bonjour') ||
+    currentValue.includes('Bonsoir') ||
+    currentValue.length < 50; // Si le message est très court
+  
+  if (shouldUpdate) {
+    textarea.value = personalizedMessage;
+    // Déclencher l'événement input pour la validation
+    textarea.dispatchEvent(new Event('input'));
+    this.saveFormData();
+  }
+},
+
+/**
+ * Écoute les changements sur les champs du formulaire pour mettre à jour le message.
+ * @function watchFormChangesForMessageUpdate
+ */
+watchFormChangesForMessageUpdate() {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+  
+  const watchedFields = ['name', 'email', 'phone'];
+  const textarea = document.getElementById('message');
+  
+  const updateMessageIfNeeded = () => {
+    const subjectsInput = form.querySelector('[name="subjects"]');
+    if (subjectsInput && subjectsInput.value) {
+      const selectedSubjects = subjectsInput.value.split(',').filter(s => s.trim());
+      if (selectedSubjects.length > 0) {
+        this.updateMessageBasedOnInfo(selectedSubjects);
+      }
     }
-  },
+  };
+  
+  // Écouter les changements sur les champs
+  watchedFields.forEach(fieldName => {
+    const field = form.querySelector(`[name="${fieldName}"]`);
+    if (field) {
+      field.addEventListener('input', updateMessageIfNeeded);
+      field.addEventListener('blur', updateMessageIfNeeded);
+    }
+  });
+  
+  // Écouter également les changements sur les sujets
+  const subjectsInput = form.querySelector('[name="subjects"]');
+  if (subjectsInput) {
+    const observer = new MutationObserver(updateMessageIfNeeded);
+    observer.observe(subjectsInput, { attributes: true, attributeFilter: ['value'] });
+  }
+  
+  // Écouter la saisie dans le textarea pour éviter de réécraser un message personnalisé
+  if (textarea) {
+    let userHasEdited = false;
+    
+    textarea.addEventListener('input', () => {
+      if (textarea.value.trim().length > 0) {
+        userHasEdited = true;
+      }
+    });
+    
+    textarea.addEventListener('blur', () => {
+      userHasEdited = textarea.value.trim().length > 50;
+    });
+  }
+},
+
+
+
 
   /**
    * Lie les événements pour la liste des contacts.

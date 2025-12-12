@@ -690,9 +690,8 @@ async function initHeroCarousel() {
         <div class="relative z-10 flex flex-col justify-center md:justify-end items-center text-center text-white pb-4 md:pb-12 px-4 sm:px-6 lg:px-8 w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out group-[.swiper-slide-active]:translate-y-0 group-[.swiper-slide-active]:opacity-100 translate-y-10 opacity-0">
           <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-cinzel font-bold mb-2 sm:mb-3 tracking-tight text-shadow-lg">${slide.title}</h1>
           <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed font-light line-clamp-2">${slide.subtitle}</p>
-          <a href="#contact" class="btn-container text-white hover:text-white py-2 sm:py-3 px-6 sm:px-8 rounded-xl font-semibold shadow-lg bg-transparent border border-white/60 hover:border-transparent font-medium text-sm sm:text-base shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 transform hover:scale-105 flex items-center justify-center min-h-[40px] sm:min-h-[48px] hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-800">
-            <div class="progress-fill bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="btn-content shine-effect relative z-10 flex items-center">
+          <a href="#contact" class="btn-container flex items-center gap-2 py-2.5 bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-50  transition-colors duration-200 flex items-center justify-center">
+           <div class="btn-content shine-effect relative z-10 flex items-center">
               <div class="icon-wrapper text-white mr-2 sm:mr-3 flex-shrink-0">
                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
@@ -2049,7 +2048,7 @@ function initStatsSection() {
 
   // Génère les cartes à partir des données
   statsContainer.innerHTML = MOCK_STATS.map((stat, index) => `
-    <div class="stat-card bg-white gap-4 dark:bg-ll-black rounded-2xl border border-ll-black/20 dark:border-white/50 shadow-lg p-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/20" data-aos="fade-up" data-aos-delay="${index * 100}">
+    <div class="stat-card bg-white gap-4 dark:bg-ll-black rounded-2xl border border-ll-black/20 dark:border-gray-600/50 shadow-lg p-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/20" data-aos="fade-up" data-aos-delay="${index * 100}">
       
       <div class="relative w-[140px] h-[140px] mb-2">
                 <canvas id="stats-canvas-${index}" class="w-full h-full absolute inset-0"></canvas>
@@ -3306,7 +3305,7 @@ function initCategoryModal() {
                 </svg>
                 Sélectionner une catégorie
             </h3>
-            <input type="text" id="modal-category-search" class="w-full p-3 mb-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ll-blue text-gray-900 dark:text-gray-100" placeholder="Rechercher une catégorie...">
+            <input type="text" id="modal-category-search" class="w-full p-3 mb-4 pl-12 pr-28 py-3 bg-ll-white/50 dark:bg-ll-black/20 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200" placeholder="Rechercher une catégorie...">
             <div id="modal-category-grid" class="category-grid"></div>
             <div class="flex justify-center mt-6 gap-4">
                 <button id="category-modal-cancel" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-all">Annuler</button>
@@ -3321,7 +3320,7 @@ function initCategoryModal() {
 
     const grid = categoryModal.querySelector('#modal-category-grid');
     grid.innerHTML = categories.map(category => `
-        <button class="category-option flex items-center gap-3 p-4 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-all duration-300 w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 group glass-effect ${category.id === getCurrentFilters().category ? 'selected bg-ll-blue text-white' : ''}" data-category="${category.id}">
+        <button class="category-option no-border flex items-center gap-3 p-4 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-all duration-300 w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 group glass-effect ${category.id === getCurrentFilters().category ? 'selected bg-ll-blue text-white' : ''}" data-category="${category.id}">
             <span class="text-2xl transform group-hover:scale-110 transition-transform">${category.icon}</span>
             <span class="text-sm font-medium text-gray-900 dark:text-white flex-1">${category.name}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">

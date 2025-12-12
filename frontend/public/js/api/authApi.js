@@ -56,6 +56,7 @@ import {
   invalidateEmailCache,
   showSuccessSignUp,
   showSuccessDialog,
+  getCachedUserData,
 } from '../modules/utils.js';
 import { loadUserData, updateUIWithUserData } from '../loadData.js';
 import api from '../api.js';
