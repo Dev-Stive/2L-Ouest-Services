@@ -1,5 +1,5 @@
 /**
- * @file reservationHandler.js
+ * @file reservation.js
  * @description Module de gestion du formulaire de réservation pour L&L Ouest Services.
  * Gère la validation en temps réel, la soumission, et la persistance des données.
  * Simplifié pour ne conserver que les informations essentielles à la réservation.
@@ -34,6 +34,7 @@ const reservation = {
    * @param {Object} user - Données utilisateur (optionnel).
    */
   openReservationModal(service, user = null) {
+    this.init();
     const modal = document.getElementById('reservation-modal');
     if (!modal) {
       console.warn('Modale de réservation non trouvée.');
@@ -54,7 +55,7 @@ const reservation = {
 
     // Mise à jour titre modale
     document.getElementById('reservation-modal-title').textContent = `Réserver "${service.name}"`;
-    document.getElementById('reservation-modal-subtitle').textContent = `Réservez votre service de ${service.category.charAt(0).toUpperCase() + service.category.slice(1)}`;
+    document.getElementById('reservation-modal-subtitle').textContent = `Remplissez le formulaire pour réserver votre service de ${service.category.charAt(0).toUpperCase() + service.category.slice(1)}`;
 
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -78,25 +79,26 @@ const reservation = {
    * Sauvegarde les données du formulaire dans localStorage.
    * @function saveFormData
    */
-  saveFormData() {
-    const form = document.getElementById('reservation-form');
-    if (!form) return;
+    saveFormData() {
+        const form = document.getElementById('reservation-form');
+        if (!form) return;
 
-    const formData = new FormData(form);
-    const reservationData = {
-      name: formData.get('name')?.trim() || '',
-      email: formData.get('email')?.trim() || '',
-      phone: formData.get('phone')?.trim() || '',
-      date: formData.get('date') || '',
-      frequency: formData.get('frequency') || '',
-      address: formData.get('address')?.trim() || '',
-      message: formData.get('message')?.trim() || '',
-      serviceId: formData.get('serviceId') || '',
-      serviceName: formData.get('serviceName') || '',
-      serviceCategory: formData.get('serviceCategory') || '',
-    };
-    localStorage.setItem('reservationFormData', JSON.stringify(reservationData));
-  },
+        const formData = new FormData(form);
+        const reservationData = {
+            name: formData.get('name')?.trim() || '',
+            email: formData.get('email')?.trim() || '',
+            phone: formData.get('phone')?.trim() || '',
+            date: formData.get('date') || '',
+            hour: formData.get('hour') || '', 
+            address: formData.get('address')?.trim() || '',
+            message: formData.get('message')?.trim() || '',
+            serviceId: formData.get('serviceId') || '',
+            serviceName: formData.get('serviceName') || '',
+            serviceCategory: formData.get('serviceCategory') || '',
+        };
+        localStorage.setItem('reservationFormData', JSON.stringify(reservationData));
+    },
+
 
   /**
    * Charge les données du formulaire depuis localStorage.
@@ -108,20 +110,19 @@ const reservation = {
 
     const savedData = localStorage.getItem('reservationFormData');
     if (savedData) {
-      const reservationData = JSON.parse(savedData);
-      form.querySelector('[name="name"]').value = reservationData.name || '';
-      form.querySelector('[name="email"]').value = reservationData.email || '';
-      form.querySelector('[name="phone"]').value = reservationData.phone ? reservationData.phone.replace('+33 ', '') : '';
-      form.querySelector('[name="date"]').value = reservationData.date || '';
-      form.querySelector('[name="frequency"]').value = reservationData.frequency || '';
-      form.querySelector('[name="address"]').value = reservationData.address || '';
-      form.querySelector('[name="message"]').value = reservationData.message || '';
-      form.querySelector('[name="serviceId"]').value = reservationData.serviceId || '';
-      form.querySelector('[name="serviceName"]').value = reservationData.serviceName || '';
-      form.querySelector('[name="serviceCategory"]').value = reservationData.serviceCategory || '';
-     
+        const reservationData = JSON.parse(savedData);
+        form.querySelector('[name="name"]').value = reservationData.name || '';
+        form.querySelector('[name="email"]').value = reservationData.email || '';
+        form.querySelector('[name="phone"]').value = reservationData.phone ? reservationData.phone.replace('+33 ', '') : '';
+        form.querySelector('[name="date"]').value = reservationData.date || '';
+        form.querySelector('[name="hour"]').value = reservationData.hour || '';
+        form.querySelector('[name="address"]').value = reservationData.address || '';
+        form.querySelector('[name="message"]').value = reservationData.message || '';
+        form.querySelector('[name="serviceId"]').value = reservationData.serviceId || '';
+        form.querySelector('[name="serviceName"]').value = reservationData.serviceName || '';
+        form.querySelector('[name="serviceCategory"]').value = reservationData.serviceCategory || '';
     }
-  },
+},
 
   /**
    * Affiche un message d'erreur ou de validation pour un champ.
@@ -178,32 +179,35 @@ const reservation = {
   updateSubmitButtonState(form, submitButton, isInitialLoad = false) {
     const formData = new FormData(form);
     const reservationData = {
-      name: formData.get('name')?.trim() || '',
-      email: formData.get('email')?.trim() || '',
-      phone: formData.get('phone')?.trim() ? `+33 ${formData.get('phone').trim().replace(/\s+/g, ' ')}` : '',
-      date: formData.get('date') || '',
-      frequency: formData.get('frequency') || '',
-      address: formData.get('address')?.trim() || '',
-      message: formData.get('message')?.trim() || '',
-      serviceId: formData.get('serviceId') || '',
-      serviceName: formData.get('serviceName') || '',
-      serviceCategory: formData.get('serviceCategory') || '',
+        name: formData.get('name')?.trim() || '',
+        email: formData.get('email')?.trim() || '',
+        phone: formData.get('phone')?.trim() ? `+33 ${formData.get('phone').trim().replace(/\s+/g, ' ')}` : '',
+        date: formData.get('date') || '',
+        hour: formData.get('hour') || '',
+        address: formData.get('address')?.trim() || '',
+        message: formData.get('message')?.trim() || '',
+        serviceId: formData.get('serviceId') || '',
+        serviceName: formData.get('serviceName') || '',
+        serviceCategory: formData.get('serviceCategory') || '',
     };
 
     const errors = this.validateForm(reservationData, isInitialLoad);
     const isValid = Object.keys(errors).length === 0;
+
 
     submitButton.disabled = !isValid;
     submitButton.classList.toggle('opacity-50', !isValid);
     submitButton.classList.toggle('cursor-not-allowed', !isValid);
 
     if (!submitButton.innerHTML.includes('Envoi...')) {
-      submitButton.innerHTML = `
-        <i class="fas fa-paper-plane mr-2" aria-hidden="true"></i>
-        <span>Réserver</span>
-      `;
+        submitButton.innerHTML = `
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Confirmer la Réservation
+        `;
     }
-  },
+},
 
   /**
    * Effectue la validation initiale du formulaire.
@@ -213,30 +217,35 @@ const reservation = {
   initialValidation(form) {
     const formData = new FormData(form);
     const reservationData = {
-      name: formData.get('name')?.trim() || '',
-      email: formData.get('email')?.trim() || '',
-      phone: formData.get('phone')?.trim() ? `+33 ${formData.get('phone').trim()}` : '',
-      date: formData.get('date') || '',
-      frequency: formData.get('frequency') || '',
-      address: formData.get('address')?.trim() || '',
-      message: formData.get('message')?.trim() || '',
-      serviceId: formData.get('serviceId') || '',
-      serviceName: formData.get('serviceName') || '',
-      serviceCategory: formData.get('serviceCategory') || '',
+        name: formData.get('name')?.trim() || '',
+        email: formData.get('email')?.trim() || '',
+        phone: formData.get('phone')?.trim() ? `+33 ${formData.get('phone').trim()}` : '',
+        date: formData.get('date') || '',
+        hour: formData.get('hour') || '',
+        address: formData.get('address')?.trim() || '',
+        message: formData.get('message')?.trim() || '',
+        serviceId: formData.get('serviceId') || '',
+        serviceName: formData.get('serviceName') || '',
+        serviceCategory: formData.get('serviceCategory') || '',
     };
 
     form.querySelectorAll('input:not([type="hidden"]), textarea, select').forEach(input => {
-      const field = input.name;
-      let value = input.value.trim();
-      if (field === 'phone' && value) value = `+33 ${value}`;
-      
+        const field = input.name;
+        let value = input.value.trim();
+        if (field === 'phone' && value) value = `+33 ${value}`;
+        
+        const error = validateFieldInitial(field, value, false ,true);
+       
+      this.showFieldError(
+          field,
+          error || (value ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
+      );
 
-      const error = validateFieldInitial(field, value, false, true);
-      this.showFieldError(field, error);
+
     });
 
     this.updateSubmitButtonState(form, document.getElementById('reservation-submit'), true);
-  },
+},
 
   /**
    * Retourne le nom du champ en français.
@@ -250,6 +259,7 @@ const reservation = {
       email: 'Email',
       phone: 'Téléphone',
       date: 'Date',
+      hour: 'Heure',
       frequency: 'Fréquence',
       address: 'Adresse',
       message: 'Instructions',
@@ -283,34 +293,43 @@ const reservation = {
     submitButton.classList.add('opacity-50', 'cursor-not-allowed');
 
     form.querySelectorAll('input:not([type="hidden"]), textarea, select').forEach(input => {
-      input.addEventListener('input', () => {
-        const field = input.name;
-        let value = input.value.trim();
-        if (field === 'phone' && value) value = `+33 ${value.replace(/\s+/g, ' ').trim()}`;
-      
-        let error = null;
-        if (field === 'message' && value) {
-          if (value.length > 1000) error = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
-        } else if (field === 'date') {
-          if (!value) error = 'La date est requise.';
-          else if (new Date(value) < new Date()) error = 'La date ne peut pas être dans le passé.';
-        } else if (field === 'frequency') {
-          if (!value) error = 'La fréquence est requise.';
-        } else if (field === 'address') {
-          if (!value) error = 'L\'adresse est requise.';
-          else if (value.length < 5) error = 'L\'adresse doit contenir au moins 5 caractères.';
-        } else {
-          error = validateField(field, value, false, true,true);
-        }
+     input.addEventListener('input', () => {
+    const field = input.name;
+    let value = input.value.trim();
+    if (field === 'phone' && value) value = `+33 ${value.replace(/\s+/g, ' ').trim()}`;
+   
+    let error = null;
+    if (field === 'message' && value) {
+        if (value.length > 1000) error = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
+    } else if (field === 'date') {
+        if (!value) error = 'La date est requise.';
+       
+    } else if (field === 'hour') {
 
-        this.showFieldError(
+    if (!value) {
+        error = 'L\'horaire est requis.';
+    } else {
+        const dateValue = form.querySelector('[name="date"]').value;
+        const hourError = this.validateHourForToday(dateValue, value);
+        if (hourError) error = hourError;
+    }
+
+
+    } else if (field === 'address') {
+        if (!value) error = 'L\'adresse est requise.';
+    } else {
+        error = validateField(field, value, false, true, true);
+    }
+
+      this.showFieldError(
           field,
-          error
-        );
+          error || (value ? `${this.getFieldName(field)} valide <i class="fas fa-check-circle ml-1 text-green-500"></i>` : '')
+      );
+  
 
-        this.updateSubmitButtonState(form, submitButton);
-        this.saveFormData();
-      });
+    this.updateSubmitButtonState(form, submitButton);
+    this.saveFormData();
+});
     });
 
     form.addEventListener('submit', async event => {
@@ -336,6 +355,7 @@ const reservation = {
         let phoneValue = formData.get('phone')?.trim() || '';
         if (phoneValue) phoneValue = `+33 ${phoneValue.replace(/\s+/g, ' ').trim()}`;
 
+
         const reservationData = {
           id: crypto.randomUUID(),
           serviceId: formData.get('serviceId') || '',
@@ -345,11 +365,11 @@ const reservation = {
           email: formData.get('email')?.trim() || '',
           phone: phoneValue,
           date: formData.get('date') || '',
-          frequency: formData.get('frequency') || '',
+          hour: formData.get('hour') || '',
           address: formData.get('address')?.trim() || '',
           message: formData.get('message')?.trim() || '',
           createdAt: new Date().toISOString(),
-        };
+      };
 
         const errors = this.validateForm(reservationData);
         if (Object.keys(errors).length > 0) {
@@ -360,7 +380,7 @@ const reservation = {
           return;
         }
 
-        this.closeReservationModal();
+       // this.closeReservationModal();
         const confirmed = await this.showPreConfirmationModal(reservationData);
         if (!confirmed) {
           this.openReservationModal(localStorage.getItem('serviceSelected'),await loadUserData());
@@ -410,38 +430,74 @@ const reservation = {
   validateForm(data, isInitialLoad = false) {
     const errors = {};
 
-    const nameError = validateField('name', data.name, false, true ,true);
+    const nameError = validateField('name', data.name, false, true, true);
     if (nameError) errors.name = nameError;
 
-    const emailError = validateField('email', data.email, false, true , true);
+    const emailError = validateField('email', data.email, false, true, true);
     if (emailError) errors.email = emailError;
 
-    const phoneError = validateField('phone', data.phone, false, true , true);
+    const phoneError = validateField('phone', data.phone, false, true, true);
     if (phoneError && data.phone) errors.phone = phoneError;
 
     if (!data.date) errors.date = 'La date est requise.';
-    else if (new Date(data.date) < new Date()) errors.date = 'La date ne peut pas être dans le passé.';
 
-    if (!data.frequency) errors.frequency = 'La fréquence est requise.';
+if (!data.hour) {
+    errors.hour = 'L\'horaire est requis.';
+} else if (data.date) {
+    const hourError = this.validateHourForToday(data.date, data.hour);
+    if (hourError) errors.hour = hourError;
+}
 
     if (!data.address || data.address.trim() === '') {
-      errors.address = 'L\'adresse est requise.';
-    } else if (data.address.length < 5) {
-      errors.address = 'L\'adresse doit contenir au moins 5 caractères.';
-    }
-
+        errors.address = 'L\'adresse est requise.';
+    } 
     if (data.message && data.message.length > 1000) {
-      errors.message = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
+        errors.message = 'Les instructions ne peuvent pas dépasser 1000 caractères.';
     }
-
-
 
     if (!data.serviceId) errors.serviceId = 'ID du service requis.';
     if (!data.serviceName || data.serviceName.trim() === '') errors.serviceName = 'Nom du service requis.';
     if (!data.serviceCategory || data.serviceCategory.trim() === '') errors.serviceCategory = 'Catégorie du service requise.';
 
     return errors;
-  },
+},
+
+
+/**
+ * Valide si l'horaire sélectionné est disponible pour aujourd'hui.
+ * @function validateHourForToday
+ * @param {string} date - Date sélectionnée (format YYYY-MM-DD)
+ * @param {string} hour - Horaire sélectionné
+ * @returns {string|null} Message d'erreur ou null si valide
+ */
+validateHourForToday(date, hour) {
+    const selectedDate = new Date(date);
+    const today = new Date();
+    
+    if (selectedDate.toDateString() === today.toDateString()) {
+        const currentHour = today.getHours();
+        const currentMinutes = today.getMinutes();
+        
+        if (hour === 'flexible') return null;
+        
+        const startHourStr = hour.split('-')[0];
+        const [startHour, startMinutes] = startHourStr.split(':').map(Number);
+        
+        const currentTotalMinutes = currentHour * 60 + currentMinutes;
+        const startTotalMinutes = startHour * 60 + startMinutes;
+        
+        if (startTotalMinutes <= currentTotalMinutes) {
+            return 'Ce créneau horaire est déjà passé pour aujourd\'hui. Veuillez choisir un horaire ultérieur ou l\'option "Heure flexible".';
+        }
+        
+     //   const timeDifference = startTotalMinutes - currentTotalMinutes;
+       // if (timeDifference < 120) { 
+         //   return 'Pour une réservation aujourd\'hui, merci de choisir un créneau avec au moins 2 heures d\'avance.';
+     //   }
+    }
+    
+    return null;
+},
 
   /**
    * Efface les erreurs des champs.
@@ -476,11 +532,14 @@ const reservation = {
    */
   async showPreConfirmationModal(reservationData) {
     const isDark = document.documentElement.classList.contains('dark');
-    const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-    const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
-    const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
-    const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
-    const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
+    
+
+
+  const bgMain = isDark ? '#1F2937' : '#FFFFFF'; 
+  const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
+  const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
+  const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
+  const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
 
     const confirmationSvg = `
       <svg class="w-10 h-10 text-ll-blue dark:text-ll-light-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -488,94 +547,115 @@ const reservation = {
       </svg>
     `;
 
-    const { isConfirmed } = await Swal.fire({
-      title: `<span class="text-xl sm:text-2xl font-extrabold ${textTitle}">Confirmation de votre réservation</span>`,
-      html: `
-        <div class="${bgContent} p-4 sm:p-8 rounded-3xl shadow-2xl w-full max-w-full mx-auto font-sans text-left overflow-y-auto max-h-[75vh]">
-          <div class="flex items-start mb-6 pb-4 border-b ${borderSubtle}">
-            <div class="p-2 ${bgMain} rounded-xl shadow-inner mr-4">
-                <img src="/assets/images/logo.png" alt="L&L Ouest Services Logo" class="h-10 w-10 object-contain rounded-lg">
-            </div>
-            <div>
-              <h2 class="text-xl font-bold ${textTitle}">Récapitulatif de la réservation</h2>
-              <p class="text-sm ${textLabel} mt-1">Planifiée pour: ${reservationData.date}</p>
-            </div>
-          </div>
-          
-          <div class="flex justify-center mb-6">
-              ${confirmationSvg}
-          </div>
+    try {
+        const { isConfirmed } = await Swal.fire({
+            title: `<span class="text-xl sm:text-2xl font-extrabold ${textTitle}">Confirmation de votre réservation</span>`,
+            html: `
+                <div class="${bgContent} p-4 sm:p-8 rounded-3xl shadow-2xl w-full max-w-full mx-auto font-sans text-left overflow-y-auto max-h-[75vh]">
+                    <div class="flex items-start mb-6 pb-4 border-b ${borderSubtle}">
+                        <div class="p-2 ${bgMain} rounded-xl shadow-inner mr-4">
+                            <img src="/assets/images/logo.png" alt="L&L Ouest Services Logo" class="h-10 w-10 object-contain rounded-lg">
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold ${textTitle}">Récapitulatif de la réservation</h2>
+                            <p class="text-sm ${textLabel} mt-1">Planifiée pour: ${reservationData.date}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-6">
+                        ${confirmationSvg}
+                    </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
-              <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
-                  <i class="fas fa-user-circle mr-2"></i> Vos Coordonnées
-              </h3>
-              <div class="grid grid-cols-1 gap-3">
-                ${['name', 'email', 'phone', 'address'].map(key => `
-                  <div>
-                    <label class="block text-xs font-bold ${textLabel} uppercase">${key === 'name' ? 'Nom' : key === 'email' ? 'Email' : key === 'phone' ? 'Téléphone' : 'Adresse'}</label>
-                    <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200 break-words">${reservationData[key] || 'Non renseigné'}</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
+                                <i class="fas fa-user-circle mr-2"></i> Vos Coordonnées
+                            </h3>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${['name', 'email', 'phone', 'address'].map(key => `
+                                    <div>
+                                        <label class="block text-xs font-bold ${textLabel} uppercase">${key === 'name' ? 'Nom' : key === 'email' ? 'Email' : key === 'phone' ? 'Téléphone' : 'Adresse'}</label>
+                                        <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200 break-words">${reservationData[key] || 'Non renseigné'}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
 
-            <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
-              <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
-                  <i class="fas fa-calendar-check mr-2"></i> Détails de la Réservation
-              </h3>
-              <div class="grid grid-cols-1 gap-3">
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Service</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.serviceName} (${reservationData.serviceCategory})</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Date</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.date}</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Fréquence</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.frequency}</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Instructions</label>
-                  <div class="mt-0.5 p-3 rounded-xl ${bgContent} border ${borderSubtle} max-h-32 overflow-y-auto shadow-inner">
-                    <p class="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">${reservationData.message || 'Aucune'}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                        <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
+                                <i class="fas fa-calendar-check mr-2"></i> Détails de la Réservation
+                            </h3>
+                            <div class="grid grid-cols-1 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold ${textLabel} uppercase">Service</label>
+                                    <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.serviceName} (${reservationData.serviceCategory})</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold ${textLabel} uppercase">Date</label>
+                                    <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.date}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold ${textLabel} uppercase">Horaire</label>
+                                    <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.hour || 'À définir'}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold ${textLabel} uppercase">Instructions</label>
+                                    <div class="mt-0.5 p-3 rounded-xl ${bgContent} border ${borderSubtle} max-h-32 overflow-y-auto shadow-inner">
+                                        <p class="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">${reservationData.message || 'Aucune'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <div class="text-center mt-4">
-            <p class="text-sm italic ${textLabel}">
-              Veuillez vérifier l'exactitude de ces informations. Vous recevrez une confirmation par email.
-            </p>
-          </div>
-        </div>
-      `,
-      icon: undefined,
-      showCancelButton: true,
-      confirmButtonText: '<i class="fas fa-paper-plane mr-2"></i> Confirmer et réserver',
-      cancelButtonText: '<i class="fas fa-edit mr-2"></i> Modifier',
-      confirmButtonColor: '#1e90ff',
-      cancelButtonColor: '#6b7280',
-      width: '100%',
-      customClass: {
-        popup: 'swal-wide rounded-3xl shadow-xl w-full max-w-lg md:max-w-3xl',
-        confirmButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
-        cancelButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
-        title: 'pt-4',
-      },
-      background: bgMain,
-      color: isDark ? '#FDFDFC' : '#1B1B18',
-      showClass: { popup: 'animate__animated animate__zoomIn' },
-      hideClass: { popup: 'animate__animated animate__zoomOut' }
-    });
+                    <div class="text-center mt-4">
+                        <p class="text-sm italic ${textLabel}">
+                            Veuillez vérifier l'exactitude de ces informations. Vous recevrez une confirmation par email.
+                        </p>
+                    </div>
+                </div>
+            `,
+            icon: undefined,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-paper-plane mr-2"></i> Confirmer et réserver',
+            cancelButtonText: '<i class="fas fa-edit mr-2"></i> Modifier',
+            confirmButtonColor: '#1e90ff',
+            cancelButtonColor: '#6b7280',
+            width: '100%',
+            customClass: {
+                popup: 'swal-wide rounded-3xl shadow-xl w-full max-w-lg md:max-w-3xl',
+                confirmButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
+                cancelButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
+                title: 'pt-4',
+            },
+            background: bgMain,
+            color: isDark ? '#FDFDFC' : '#1B1B18',
+            showClass: { popup: 'animate__animated animate__zoomIn' },
+            hideClass: { popup: 'animate__animated animate__zoomOut' },
+            // Ajouter ce callback
+            willClose: () => {
+                // Cette fonction sera appelée quand la modale se ferme
+                const form = document.getElementById('reservation-form');
+                const submitButton = document.getElementById('reservation-submit');
+                if (form && submitButton) {
+                    // Remettre le bouton dans son état initial
+                    this.updateSubmitButtonState(form, submitButton, false);
+                }
+            }
+        });
 
-    return isConfirmed;
-  },
+        return isConfirmed;
+    } catch (error) {
+        console.error('Erreur dans showPreConfirmationModal:', error);
+        // En cas d'erreur, réinitialiser aussi le bouton
+        const form = document.getElementById('reservation-form');
+        const submitButton = document.getElementById('reservation-submit');
+        if (form && submitButton) {
+            this.updateSubmitButtonState(form, submitButton, false);
+        }
+        return false;
+    }
+},
 
   /**
    * Affiche la modale de confirmation après envoi.
@@ -585,12 +665,14 @@ const reservation = {
    */
   async showConfirmationModal(reservationData) {
     const isDark = document.documentElement.classList.contains('dark');
-    const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-    const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
-    const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
-    const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
-    const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
 
+
+  const bgMain = isDark ? '#1F2937' : '#FFFFFF'; 
+  const bgContent = isDark ? 'bg-gray-800' : 'bg-gray-50';
+  const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
+  const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
+  const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
+  
     const successSvg = `
       <svg class="w-10 h-10 text-ll-dark-green dark:text-ll-light-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -618,43 +700,29 @@ const reservation = {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
               <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
-                <i class="fas fa-user-circle mr-2"></i> Vos Coordonnées
+                  <i class="fas fa-calendar-check mr-2"></i> Détails de la Réservation
               </h3>
               <div class="grid grid-cols-1 gap-3">
-                ${['name', 'email', 'phone', 'address'].map(key => `
                   <div>
-                    <label class="block text-xs font-bold ${textLabel} uppercase">${key === 'name' ? 'Nom' : key === 'email' ? 'Email' : key === 'phone' ? 'Téléphone' : 'Adresse'}</label>
-                    <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200 break-words">${reservationData[key] || 'Non renseigné'}</p>
+                      <label class="block text-xs font-bold ${textLabel} uppercase">Service</label>
+                      <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.serviceName} (${reservationData.serviceCategory})</p>
                   </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <div class="${bgMain} p-5 rounded-2xl shadow-lg border ${borderSubtle} transition-all duration-300 hover:shadow-xl">
-              <h3 class="text-lg font-semibold mb-4 ${textTitle} flex items-center">
-                <i class="fas fa-calendar-check mr-2"></i> Détails de la Réservation
-              </h3>
-              <div class="grid grid-cols-1 gap-3">
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Service</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.serviceName} (${reservationData.serviceCategory})</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Date</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.date}</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Fréquence</label>
-                  <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.frequency}</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold ${textLabel} uppercase">Instructions</label>
-                  <div class="mt-0.5 p-3 rounded-xl ${bgContent} border ${borderSubtle} max-h-32 overflow-y-auto shadow-inner">
-                    <p class="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">${reservationData.message || 'Aucune'}</p>
+                  <div>
+                      <label class="block text-xs font-bold ${textLabel} uppercase">Date</label>
+                      <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.date}</p>
                   </div>
-                </div>
+                  <div>
+                      <label class="block text-xs font-bold ${textLabel} uppercase">Horaire</label>
+                      <p class="mt-0.5 text-base font-medium text-gray-800 dark:text-gray-200">${reservationData.hour || 'À définir'}</p>
+                  </div>
+                  <div>
+                      <label class="block text-xs font-bold ${textLabel} uppercase">Instructions</label>
+                      <div class="mt-0.5 p-3 rounded-xl ${bgContent} border ${borderSubtle} max-h-32 overflow-y-auto shadow-inner">
+                          <p class="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">${reservationData.message || 'Aucune'}</p>
+                      </div>
+                  </div>
               </div>
-            </div>
+          </div>
           </div>
 
           <div class="text-center mt-4">

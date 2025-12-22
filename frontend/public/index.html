@@ -22,7 +22,7 @@
             "@type": "ContactPoint",
             "telephone": "+33-01-23-45-67-89",
             "contactType": "Customer Service",
-            "email": "contact@llouestservice.fr"
+            "email": "ll.ouest.services@gmail.com"
         }
     }
     </script>
@@ -103,15 +103,11 @@
     <div id="app">
         <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay fixed inset-0 flex flex-col items-center justify-center z-[9999] transition-opacity duration-500 ease-in-out" style="background: rgb(59, 75, 114);">
-    <lottie-player 
-        src="/assets/json/icons/team.json" 
-        background="transparent" 
-        speed="1" 
+    <img 
+        src="/assets/images/equipments/fallback.png" 
         style="width: 250px; height: 250px; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));" 
-        loop 
-        autoplay
         class="scale-100 animate-pulse-slow">
-    </lottie-player>
+
     <div class="relative mt-6 flex flex-col items-center space-y-4">
         <div id="loading-status" class="flex items-center space-x-3">
             <div id="loading-icon" class="w-6 h-6 text-blue-400 animate-spin-slow">
@@ -452,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="../../assets/images/logo.png" alt="L&L Ouest Services Logo" class="h-10 w-10 rounded-full object-cover shadow-md ring-2 ring-blue-500/10">
                         <div>
                             <h3 class="text-sm font-bold text-black dark:text-white">L&L Ouest Services</h3>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">contact@llouestservice.fr</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">ll.ouest.services@gmail.com</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
@@ -723,6 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="lottie-slide absolute inset-0 opacity-0 transition-opacity duration-1000" data-lottie-url="/assets/json/icons/team.json"></div>
                     <div class="lottie-slide absolute inset-0 opacity-0 transition-opacity duration-1000" data-lottie-url="/assets/json/icons/spray.json"></div>
                     <div class="lottie-slide absolute inset-0 opacity-0 transition-opacity duration-1000" data-lottie-url="/assets/json/icons/Cleaning.json"></div>
+                    <div class="lottie-slide absolute inset-0 opacity-0 transition-opacity duration-1000" data-img-url="/assets/images/equipments/fallback.png"></div>
                 </div>
             </div>
 
@@ -799,8 +796,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Advanced Filter Panel -->
  <!-- Advanced Filter Panel -->
-<div id="filter-panel" class="bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 mb-12 border border-gray-200 dark:border-gray-600">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div id="filter-panel" class="bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-4 sm:p-6 mb-8 sm:mb-12 border border-gray-200 dark:border-gray-600">
+    
+    <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="filter-group">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Catégorie</label>
             <button id="category-trigger" class="w-full flex items-center justify-between  bg-white/50 dark:bg-gray-600/30 text-left p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 border border-gray-200 dark:border-gray-600 focus:outline-none">
@@ -851,21 +849,21 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     </div>
     <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden"></div>
-    <!-- Nouvelle liste des services dans le panneau de filtres -->
-    <div id="services-list-container" class="mt-6 hidden lg:block"> <!-- Masqué sur petits écrans, visible à partir de lg -->
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+-->
+    <div id="services-list-container" class="mt-2 lg:block"> 
+        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="3" y1="9" x2="21" y2="9"></line>
                 <line x1="9" y1="21" x2="9" y2="9"></line>
             </svg>
             Services Disponibles
-            <span class="bg-blue-500 text-white text-sm px-2 py-1 rounded-full ml-2" id="services-count">0</span>
+            <span class="bg-blue-500 text-white text-xs sm:text-sm px-2 py-1 rounded-full ml-2" id="services-count">0</span>
         </h3>
-        <div id="services-list" class="flex overflow-x-auto space-x-4 px-4 pb-4 custom-scrollbar"></div>
+        <div id="services-list" class="flex overflow-x-auto space-x-3 sm:space-x-4 px-3 sm:px-4 pb-3 sm:pb-4 custom-scrollbar"></div>
     </div>
-    <div class="flex justify-end items-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button id="reset-filters" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white py-2 px-4 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 font-semibold">
+    <div class="flex justify-end items-center mt-4 sm:mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <button id="reset-filters" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white py-2 px-3 sm:px-4 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 font-semibold text-sm sm:text-base">
             Réinitialiser
         </button>
     </div>
@@ -884,12 +882,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="detail" class="xl:col-span-4">
                 <div id="service-detail-container" class="bg-white dark:bg-ll-black/20 rounded-xl shadow-lg p-6 md:p-8 min-h-[500px] border border-gray-200 dark:border-gray-600">
                     <div class="service-detail-content">
-                        <div class="xl:hidden mb-6">
-                            <select id="mobile-service-selector" class="w-full p-3 bg-ll-black/50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                     <!--   <div class="xl:hidden mb-6">
+                            <select id="mobile-service-selector" class="w-full p-3 bg-ll-white/50 dark:bg-ll-black/50 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
                                 <option value="">Sélectionnez un service</option>
                                 <option value="residentiel">Nettoyage Résidentiel</option>
-                            </select>
-                        </div>
+                            </select> 
+                        </div>-->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="order-1 lg:col-start-1 lg:col-span-1 space-y-6">
                                 <div class="swiper service-image-swiper rounded-xl overflow-hidden shadow-md">
@@ -899,8 +897,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                         </div>
                                     </div>
                                     <div class="swiper-pagination !bottom-3"></div>
-                                    <div class="swiper-button-next !text-white !bg-black/30 !w-10 !h-10 rounded-full hover:!bg-black/50 transition-colors duration-200"></div>
-                                    <div class="swiper-button-prev !text-white !bg-black/30 !w-10 !h-10 rounded-full hover:!bg-black/50 transition-colors duration-200"></div>
+                                    <div class="swiper-button-next no-border custom-prev-btn text-white p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"></div>
+                                    <div class="swiper-button-prev no-border custom-next-btn text-white p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"></div>
+
+
                                 </div>
                                 <div class="service-header-mobile lg:hidden border-b border-gray-200 dark:border-gray-700 pb-4">
                                     <h3 class="service-name-mobile text-2xl font-bold text-gray-900 dark:text-white mb-2">Nettoyage Résidentiel</h3>
@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="service-difficulty-mobile difficulty-badge px-2 py-1 rounded-full text-xs font-semibold capitalize bg-green-100 text-green-700">Facile</span>
                                     </div>
                                 </div>
-                                <div class="service-team-section bg-gradient-to-br from-purple-50 to-pink-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-purple-200/50 dark:border-gray-600/50 rounded-xl p-4">
+                                <div class="service-team-section bg-gradient-to-br from-white-50 to-white-20 dark:from-ll-black/60 dark:to-ll-black/20 border border-purple-200/50 dark:border-gray-600/50 rounded-xl p-4">
                                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-base">
                                         <svg width="30" height="30" viewBox="0 0 74.34 74.34" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <g>
@@ -932,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="service-availability-section bg-gradient-to-br from-gray-50 to-gray-50 dark:from-ll-black/60 dark:to-ll-black/20 dark:border-gray-600/50 rounded-xl p-4 border">
+                                <div class="service-availability-section bg-gradient-to-br from-white-50 to-white-50 dark:from-ll-black/60 dark:to-ll-black/20 dark:border-gray-600/50 rounded-xl p-4 border">
                                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-base">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500">
                                             <circle cx="12" cy="12" r="10"></circle>
@@ -947,12 +947,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                     </ul>
                                 </div>
                                 <div class="service-actions-section grid grid-cols-2 gap-3">
-                                    <button class="service-book-btn bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
+                                    <button class="service-book-btn bg-gray-100 dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-4 px-4 rounded-xl font-semibold hover:bg-white dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
                                         <svg  width="20" height="20" viewBox="-4.57 0 359.906 359.906" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><defs><style>.a{fill:#ffffff;}.b{fill:#211715;}.c{fill:#d9d9d9;}.d{fill:#3d8dcc;}</style></defs><path class="a" d="M191.649,213.868a61.1,61.1,0,0,0,4.9-6.794,21.29,21.29,0,0,0,3.45-7.938,14.006,14.006,0,0,0-5.324-12.786,14.82,14.82,0,0,0-15.831-1.578c-3.8,1.887-6.841,5-9.557,8.258a39.934,39.934,0,0,0-6.135,9.4,19.543,19.543,0,0,0-1.63,10.981,12.176,12.176,0,0,0,13.941,10.609,19.751,19.751,0,0,0,7.7-2.748A33.577,33.577,0,0,0,191.649,213.868Z"></path><path class="b" d="M193.346,215.565a49.262,49.262,0,0,0,7.887-12.177,15.686,15.686,0,0,0-.086-12.443,17.238,17.238,0,0,0-21.774-9.01,28.1,28.1,0,0,0-10.443,7.838,45.574,45.574,0,0,0-7.676,11.046,21.941,21.941,0,0,0-1.86,14.145,15.177,15.177,0,0,0,7.082,9.723c9.711,5.384,20.613-1.774,26.87-9.122a2.463,2.463,0,0,0,0-3.394,2.42,2.42,0,0,0-3.394,0c-4.31,5.062-11.15,10.9-18.365,9.334a9.65,9.65,0,0,1-6.913-5.782,14.915,14.915,0,0,1-.017-10.553,31.183,31.183,0,0,1,5.638-9.6,35.165,35.165,0,0,1,7.634-7.5,13.169,13.169,0,0,1,9.6-2.324,12.485,12.485,0,0,1,8.093,5.035,11.268,11.268,0,0,1,1.414,10.234,27,27,0,0,1-2.937,5.435,56.783,56.783,0,0,1-4.148,5.721,2.466,2.466,0,0,0,0,3.394A2.42,2.42,0,0,0,193.346,215.565Z"></path><path class="a" d="M191.649,140.905a61.1,61.1,0,0,0,4.9-6.794,21.29,21.29,0,0,0,3.45-7.938,14,14,0,0,0-5.324-12.786,14.82,14.82,0,0,0-15.831-1.578c-3.8,1.887-6.841,5-9.557,8.258a39.934,39.934,0,0,0-6.135,9.395,19.541,19.541,0,0,0-1.63,10.981,12.178,12.178,0,0,0,13.941,10.609,19.751,19.751,0,0,0,7.7-2.748A33.6,33.6,0,0,0,191.649,140.905Z"></path><path class="a" d="M191.649,180.907a61.09,61.09,0,0,0,4.9-6.793,21.294,21.294,0,0,0,3.45-7.939,14.006,14.006,0,0,0-5.324-12.786,14.822,14.822,0,0,0-15.831-1.577c-3.8,1.887-6.841,5-9.557,8.258a39.913,39.913,0,0,0-6.135,9.4,19.538,19.538,0,0,0-1.63,10.98,12.176,12.176,0,0,0,13.941,10.609,19.751,19.751,0,0,0,7.7-2.748A33.557,33.557,0,0,0,191.649,180.907Z"></path><path class="a" d="M170.391,65.461a60.753,60.753,0,0,0-4.9,6.794,21.29,21.29,0,0,0-3.45,7.938,14,14,0,0,0,5.324,12.786A14.82,14.82,0,0,0,183.2,94.556c3.8-1.887,11.492-9.023,14.208-12.28a76.815,76.815,0,0,0,7.222-11.028,18.709,18.709,0,0,0,1.534-11.487,11.955,11.955,0,0,0-5.891-8.6,12.971,12.971,0,0,0-7.954-1.5,19.741,19.741,0,0,0-7.7,2.748C181.361,54.331,172.837,62.561,170.391,65.461Z"></path><path class="a" d="M14.648,280.32c-7.321-15.095-3.332-33.6-4.1-50.821C9.436,204.61,7.658,181.943,3.1,144.388c-.911-7.508-1.516-15.023,2-21.717s11.364-9.251,18.666-7.283c6.6,1.778,10.556,5.887,13.066,12.244L158.49,256.551a288.751,288.751,0,0,1-54.054,41.837Z"></path><path class="b" d="M105.648,300.46a287.726,287.726,0,0,0,43.387-31.866q5.693-5.048,11.152-10.346c2.225-2.152-1.171-5.544-3.394-3.395a298.746,298.746,0,0,1-40.575,33.227q-6.379,4.3-12.993,8.235c-2.65,1.582-.239,5.733,2.423,4.145Z"></path><path class="b" d="M39.15,126.994c-2.371-5.9-6.183-10.632-12.188-13.063-5.815-2.354-12.85-2.187-18.195,1.3C2.538,119.3.233,126.764.018,133.883a76.657,76.657,0,0,0,.805,11.494q.726,6.015,1.417,12.034c1.532,13.39,2.906,26.8,3.967,40.236.909,11.515,1.825,23.108,2.026,34.661.253,14.577-2.469,29.874,2.228,44.024a44.712,44.712,0,0,0,2.115,5.2,2.42,2.42,0,0,0,3.283.861,2.451,2.451,0,0,0,.861-3.283c-6.03-12.619-3.995-27.417-3.71-40.915.24-11.4-.715-22.89-1.53-34.259C10.622,191.957,9.5,180,8.222,168.058q-1.191-11.1-2.54-22.189c-.835-6.925-1.988-14.614,1.092-21.18a13.452,13.452,0,0,1,14.939-7.312,16.565,16.565,0,0,1,7.833,3.569,18.952,18.952,0,0,1,4.976,7.324,2.475,2.475,0,0,0,2.952,1.677,2.417,2.417,0,0,0,1.676-2.953Z"></path><path class="b" d="M193.346,142.6a49.281,49.281,0,0,0,7.887-12.177,15.686,15.686,0,0,0-.086-12.443,17.239,17.239,0,0,0-21.774-9.011,28.1,28.1,0,0,0-10.443,7.839,45.574,45.574,0,0,0-7.676,11.046A21.941,21.941,0,0,0,159.394,142a15.177,15.177,0,0,0,7.082,9.722c9.711,5.385,20.613-1.773,26.87-9.121a2.464,2.464,0,0,0,0-3.4,2.421,2.421,0,0,0-3.394,0c-4.31,5.063-11.15,10.9-18.365,9.335a9.653,9.653,0,0,1-6.913-5.782,14.915,14.915,0,0,1-.017-10.553,31.171,31.171,0,0,1,5.638-9.6,35.142,35.142,0,0,1,7.634-7.5,13.175,13.175,0,0,1,9.6-2.325,12.491,12.491,0,0,1,8.093,5.036,11.268,11.268,0,0,1,1.414,10.234,27,27,0,0,1-2.937,5.435,56.657,56.657,0,0,1-4.148,5.72,2.467,2.467,0,0,0,0,3.4A2.421,2.421,0,0,0,193.346,142.6Z"></path><path class="b" d="M193.346,182.6a49.244,49.244,0,0,0,7.887-12.177,15.683,15.683,0,0,0-.086-12.442,17.237,17.237,0,0,0-21.774-9.011,28.112,28.112,0,0,0-10.443,7.838,45.593,45.593,0,0,0-7.676,11.046A21.943,21.943,0,0,0,159.394,182a15.177,15.177,0,0,0,7.082,9.722c9.711,5.384,20.613-1.773,26.87-9.122a2.463,2.463,0,0,0,0-3.394,2.421,2.421,0,0,0-3.394,0c-4.31,5.062-11.15,10.895-18.365,9.335a9.652,9.652,0,0,1-6.913-5.783,14.912,14.912,0,0,1-.017-10.552A31.187,31.187,0,0,1,170.3,162.6a35.137,35.137,0,0,1,7.634-7.494,13.175,13.175,0,0,1,9.6-2.325,12.489,12.489,0,0,1,8.093,5.035,11.269,11.269,0,0,1,1.414,10.234,26.977,26.977,0,0,1-2.937,5.435,56.783,56.783,0,0,1-4.148,5.721,2.466,2.466,0,0,0,0,3.394A2.419,2.419,0,0,0,193.346,182.6Z"></path><path class="b" d="M168.694,63.764a67.382,67.382,0,0,0-5.5,7.649,22.691,22.691,0,0,0-3.46,8.142,16.325,16.325,0,0,0,5.093,14.423,17.575,17.575,0,0,0,15.866,4.056c4.417-1.1,7.977-4.127,11.325-7.061a59.854,59.854,0,0,0,8.817-9.214A77.562,77.562,0,0,0,205.258,75,23.182,23.182,0,0,0,208.4,67.68c1.01-5.178.452-10.934-2.917-15.168-3.615-4.544-9.535-6.067-15.086-4.966-5.075,1.006-9.011,4.02-12.764,7.375a92.924,92.924,0,0,0-8.939,8.843,2.462,2.462,0,0,0,0,3.394,2.42,2.42,0,0,0,3.394,0,84.788,84.788,0,0,1,6.691-6.782c1.328-1.245,2.676-2.47,4.066-3.646a19.823,19.823,0,0,1,2.915-2.21c3.894-2.376,9.1-3.7,13.3-1.289,3.668,2.1,5,5.974,4.987,10.02a14.819,14.819,0,0,1-1.233,6.282,55.113,55.113,0,0,1-3.571,6.078,48.624,48.624,0,0,1-7.1,8.723,59.212,59.212,0,0,1-8.643,7.268,12.53,12.53,0,0,1-11.679,1.207,11.919,11.919,0,0,1-7.5-10.783c-.007-2.715,1.2-5.163,2.567-7.443a57.933,57.933,0,0,1,5.211-7.425,2.467,2.467,0,0,0,0-3.394A2.419,2.419,0,0,0,168.694,63.764Z"></path><rect class="c" x="32.777" y="2.406" width="151.139" height="267.253" rx="20.489"></rect><path class="b" d="M98.445,19.36q9.9,0,19.8-.01c3.088,0,3.093-4.8,0-4.8q-9.9,0-19.8.01c-3.088,0-3.093,4.8,0,4.8Z"></path><path class="a" d="M179.65,29.682l-146.434.01h-.435c0,32.929,0,175.737,0,211.389.286,0,.439,0,.439,0l150.552-.011h.146c0-35.668,0-178.478,0-211.384H179.65Z"></path><path class="b" d="M163.428,267.258H63.5c-3.34,0-6.681.01-10.021,0a18.287,18.287,0,0,1-18.306-18.089c-.01-1.353,0-2.706,0-4.059V24.609c0-.542,0-1.085,0-1.627A18.05,18.05,0,0,1,53.27,4.806c.732-.006,1.465,0,2.2,0H160.089c1.053,0,2.107,0,3.16,0A18.321,18.321,0,0,1,174.662,8.7c4.782,3.81,6.855,9.364,6.855,15.323V244.078c0,1.674.01,3.348,0,5.021a18.282,18.282,0,0,1-18.089,18.159c-3.087.028-3.095,4.828,0,4.8a23.158,23.158,0,0,0,22.889-22.9c.011-1.523,0-3.047,0-4.57V23.744a23.438,23.438,0,0,0-8.811-18.873A23.171,23.171,0,0,0,163.325.006c-.981-.006-1.963,0-2.944,0H55.228c-.9,0-1.81-.02-2.713.013a22.977,22.977,0,0,0-16.5,7.845c-4.023,4.689-5.636,10.358-5.636,16.424V245.6a50.915,50.915,0,0,0,.164,6.165A23.145,23.145,0,0,0,53.4,272.058c3.26.018,6.521,0,9.781,0H163.428C166.516,272.058,166.522,267.258,163.428,267.258Z"></path><path class="b" d="M33.216,243.477H49.024l35.485,0,42.589,0,37.116,0c6.353,0,12.715.1,19.068,0,.162,0,.324,0,.486,0,3.089,0,3.094-4.8,0-4.8H167.821l-35.557,0-42.593,0-37.052,0c-6.31,0-12.628-.1-18.937,0-.155,0-.31,0-.466,0-3.088,0-3.093,4.8,0,4.8Z"></path><path class="b" d="M33.216,32.092H49.024l35.485,0,42.589,0,37.116,0c6.353,0,12.715.1,19.068,0,.162,0,.324,0,.486,0,3.089,0,3.094-4.8,0-4.8H167.821l-35.557,0-42.593,0-37.052,0c-6.31,0-12.628-.1-18.937,0-.155,0-.31,0-.466,0-3.088,0-3.093,4.8,0,4.8Z"></path><path class="c" d="M108.479,87.056a49.415,49.415,0,0,0-29.618,9.557,48.231,48.231,0,0,0-16.989,24.179c-5.9,18.966-.2,41.745,15.723,54.121,15.825,12.3,39.881,13.515,57.139,3.428,17.433-10.191,24.893-31.244,21.945-50.662a48.232,48.232,0,0,0-13.138-26.355,47.749,47.749,0,0,0-26.752-13.61,56.39,56.39,0,0,0-8.31-.658c-3.089-.011-3.093,4.789,0,4.8a45.151,45.151,0,0,1,26.9,8.662A42.706,42.706,0,0,1,150.452,122c5.3,17.022.629,37.549-13.389,48.943-6.755,5.491-15.52,8.455-24.22,9.1-9.252.688-18.723-.827-26.9-5.34a40.773,40.773,0,0,1-17.226-18.564,48.433,48.433,0,0,1-3.76-27.471,44.014,44.014,0,0,1,11.818-23.892A43.476,43.476,0,0,1,101.25,92.374a47.778,47.778,0,0,1,7.229-.518C111.567,91.845,111.573,87.045,108.479,87.056Z"></path><path class="a" d="M278.822,357.5c-17.061-1.467-38.293-5.977-53.3-16.044-6.283-4.213-20.4-19.843-36.051-35.042-4.785-4.647-7.362-10.051-5.5-16.456a11.155,11.155,0,0,1,7.708-7.585,37.871,37.871,0,0,1,8.8-1.493l.589-.05c-12.732-16.757-32.018-42.17-45.027-59.072-4.7-6.111-8.375-18.768.073-25.271,8.2-6.31,16.544-1.526,22.63,5.226,9.67,10.727,30.8,36.472,40.793,47.423-.534-6.137,2.71-12.073,10.376-14.788,5.989-2.121,12.525-.283,15.256,5.03-1.695-5.508,1.358-12.314,7.915-15.365s14.593-2.339,18.014,3.3c-.626-5.314,4.188-9.489,8.913-11.176,5.084-1.815,12.731-.217,18.312,6.439,10.852,12.944,19.645,26.582,27.279,38.369,11.151,17.217,18.729,30.207,22.772,37.523Z"></path><path class="d" d="M86.141,141.457c4.417,4.422,8.745,8.933,13.16,13.358a6.209,6.209,0,0,0,8.641,0q13.662-13.407,27.066-27.076a6.11,6.11,0,0,0-8.641-8.641Q112.99,132.789,99.3,146.173h8.641c-4.415-4.424-8.743-8.935-13.16-13.358a6.11,6.11,0,0,0-8.641,8.642Z"></path><path class="b" d="M214.716,294.825c-6.229-8.107-12.388-16.268-18.572-24.408q-13.792-18.154-27.622-36.283-3.243-4.243-6.494-8.483a72.549,72.549,0,0,1-5.475-7.435c-2.917-5.021-4.657-12.109-1.343-17.3a11.059,11.059,0,0,1,9.364-4.974c3.938.136,7.5,2.618,10.272,5.221a91.355,91.355,0,0,1,6.222,6.807q3.224,3.707,6.4,7.451c9.242,10.846,18.315,21.845,27.763,32.512q1.29,1.457,2.6,2.9c2.084,2.289,5.471-1.113,3.394-3.394-9.595-10.532-18.623-21.587-27.842-32.445-4.177-4.919-8.343-9.853-12.658-14.652-5.978-6.65-14.921-12.129-23.748-7.294a15.724,15.724,0,0,0-7.565,9.066,20.647,20.647,0,0,0-.112,10.71,27.422,27.422,0,0,0,3.978,9.2c1.874,2.751,4.052,5.328,6.076,7.97q14.259,18.609,28.423,37.29Q198.5,281.394,209.23,295.5q.671.876,1.341,1.75a2.48,2.48,0,0,0,3.284.861,2.416,2.416,0,0,0,.861-3.283Z"></path><path class="b" d="M278.822,355.1a148.459,148.459,0,0,1-27.773-4.988c-8.761-2.5-17.615-5.9-25.062-11.251a2.6,2.6,0,0,1-.4-.308c-.262-.211-.525-.422-.784-.638-.58-.483-1.15-.979-1.714-1.482-1.35-1.205-2.666-2.45-3.967-3.708-3.312-3.2-6.541-6.486-9.769-9.769-3.855-3.919-7.7-7.847-11.589-11.733q-3.1-3.1-6.243-6.163a22.478,22.478,0,0,1-4.312-5.417c-2.07-3.862-2.1-9.264,1.1-12.555,3-3.083,7.93-3.465,12.165-3.808a2.461,2.461,0,0,0,2.4-2.4,2.418,2.418,0,0,0-2.4-2.4c-4.405.357-9.51.8-13.283,3.347a14.545,14.545,0,0,0-6.222,12.751c.2,5.169,2.931,9.66,6.507,13.242,4.332,4.339,8.724,8.616,13.028,12.984,6.6,6.7,13.026,13.73,20.165,19.879,6.945,5.983,15.765,9.76,24.391,12.61a148.8,148.8,0,0,0,33.764,6.607,2.419,2.419,0,0,0,2.4-2.4,2.45,2.45,0,0,0-2.4-2.4Z"></path><path class="b" d="M221.93,249.135c-.41-5.345,2.431-9.685,7.333-11.958,4.837-2.243,11.11-1.668,13.826,3.411,1.284,2.4,5.147.759,4.387-1.849-1.537-5.273,2.071-10.557,6.98-12.731,4.634-2.052,11.529-2.3,14.562,2.517,1.172,1.86,4.711,1.3,4.473-1.212-.344-3.612,2.193-6.286,5.172-7.945a11.323,11.323,0,0,1,8.242-1.25,17.555,17.555,0,0,1,9.438,5.832c3.235,3.7,6.217,7.654,9.136,11.606,5.521,7.475,10.66,15.219,15.718,23.011,4.988,7.684,9.912,15.407,14.669,23.236,3.581,5.9,7.09,11.839,10.428,17.876,1.5,2.7,5.643.285,4.145-2.423-7.738-13.992-16.284-27.53-24.985-40.938-5.434-8.374-10.961-16.693-16.947-24.686q-2.38-3.18-4.853-6.292a67.32,67.32,0,0,0-5.053-6,21.357,21.357,0,0,0-10.892-5.948,16.761,16.761,0,0,0-12.087,2.19c-4.056,2.484-7.406,6.739-6.931,11.728l4.472-1.211c-4.453-7.073-13.769-7.46-20.794-4.387-6.9,3.016-11.718,10.764-9.522,18.3l4.387-1.849c-3.848-7.195-12.7-8.461-19.674-5.453-6.595,2.844-10.989,9.127-10.43,16.422a2.459,2.459,0,0,0,2.4,2.4,2.419,2.419,0,0,0,2.4-2.4Z"></path></g></svg>
                                            
                                         <span class="ml-2">Réserver</span>
                                     </button>
-                                    <button class="service-demo-btn bg-white dark:bg-ll-black/20 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
+                                    <button class="service-demo-btn bg-white dark:bg-ll-black/20 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-4 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <polygon points="10 8 16 12 10 16 10 8"></polygon>
@@ -976,7 +976,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="service-difficulty-desktop difficulty-badge px-2 py-1 rounded-full text-xs font-semibold capitalize bg-green-100 text-green-700">Facile</span>
                                     </div>
                                 </div>
-                                <div class="service-features-section bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-blue-200/50 dark:border-gray-600/50 rounded-xl p-4">
+                                <div class="service-features-section bg-gradient-to-br from-white-50 to-white-20 dark:from-ll-black/60 dark:to-ll-black/20 border border-blue-200/50 dark:border-gray-600/50 rounded-xl p-4">
                                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-base">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
                                             <path d="M20 6 9 17l-5-5"></path>
@@ -988,7 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <li class="text-gray-600 dark:text-gray-300">Service personnalisé</li>
                                     </ul>
                                 </div>
-                                <div class="service-equipment-section bg-gradient-to-br from-green-50 to-emerald-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-green-200/50 dark:border-gray-600/50 rounded-xl p-4">
+                                <div class="service-equipment-section bg-gradient-to-br from-white-50 to-white-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-green-200/50 dark:border-gray-600/50 rounded-xl p-4">
                                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-base">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
                                             <path d="M22 2H2v6h2l2 2 2-2h8l2 2 2-2h2V2z"></path>
@@ -997,12 +997,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                         </svg>
                                         Équipements Utilisés
                                     </h4>
-                                    <div class="service-equipment-content grid grid-cols-2 md:grid-cols-4 gap-3">
-                                        <div class="text-gray-600 dark:text-gray-300">Aspirateur HEPA</div>
-                                        <div class="text-gray-600 dark:text-gray-300">Produits bio</div>
+                                    <div class="service-equipment-content grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        
                                     </div>
                                 </div>
-                                <div class="service-additional-info bg-gradient-to-br from-gray-50 to-blue-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-gray-200/50 dark:border-gray-600/50 rounded-xl p-4">
+                                <!-- 
+                                <div class="service-additional-info bg-gradient-to-br from-white-50 to-white-50 dark:from-ll-black/60 dark:to-ll-black/20 border border-gray-200/50 dark:border-gray-600/50 rounded-xl p-4">
                                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-base">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">
                                             <circle cx="12" cy="12" r="10"></circle>
@@ -1030,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         </div>
                                     </div>
                                 </div>
+                            -->
                             </div>
                         </div>
                         <div class="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -1325,6 +1326,43 @@ html {
 }
 </style>
 
+
+ <div class="section-divider container mx-auto px-6"></div>
+                 
+                    
+                 
+               <section id="equipment" class="relative py-24 sm:py-32 overflow-hidden">
+    <div class="container mx-auto px-4 max-w-7xl relative z-10">
+    
+        <div class="text-center mb-16 max-w-4xl mx-auto">
+
+                <h2 class="text-4xl lg:text-5xl font-cinzel gradiant font-bold text-gray-900 dark:text-white mb-6 flex items-center justify-center gap-4 aos-init aos-animate" data-aos="zoom-in">
+                 <img 
+        src="/assets/images/equipments/fallback.png" 
+        style="filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));" 
+        class="scale-100 animate-pulse-slow no-lightbox  w-24 h-24">
+
+                <span>Nos Équipements de Pointe</span>
+            </h2>
+            <p class="text-lg sm:text-xl text-ll-text-gray dark:text-ll-medium-gray leading-relaxed" data-aos="fade-up" data-aos-delay="100">
+                Dotés des technologies les plus avancées, nos équipements garantissent un nettoyage impeccable et durable pour tous vos besoins professionnels.
+            </p>
+        </div>
+
+        <div id="equipment-list" class="lg:w-full relative" data-aos="fade-up" data-aos-delay="200">
+       
+        </div>
+
+        <div class="mt-16 text-center" data-aos="fade-up" data-aos-delay="300">
+            <a href="#contact" class="cta inline-flex border-2 border-gray-200 dark:border-gray-600  items-center gap-3 px-8 py-4 text-lg font-semibold rounded-full dark:bg-gray-600/30 bg-ll-blue text-ll-white hover:bg-ll-dark-blue transition-colors duration-300 shadow-md dark:shadow-lg-dark-custom">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-ll-white" fill="currentColor">
+                    <path d="M49.725 16.293c-.027.27-.043.578-.05.912l-3.834 1.831c-.537-.088-3.2.067-7.172-1.893c-1.007-.497-1.991-.761-2.936-.761a5.41 5.41 0 0 0-2.459.595c-1.003-.217-2.448-.773-3.293-.771c-1.912.01-6.259 1.567-7.463 1.7c-1.178.129-2.391.453-3.612.969c-2.219-.646-5.001-1.701-6.491-2.284L2 9v24.41l7.654 3.642c.111-.13.238-.33.376-.578l.237.11c.116.3.244.599.384.896c-.84 1.414-.94 3.007-.269 4.392c.575 1.185 1.646 2.017 2.839 2.25c.065.738.313 1.452.731 2.071c.75 1.107 1.942 1.768 3.191 1.768c.113 0 .226-.005.338-.018c.178.481.439.929.778 1.317c.754.867 1.81 1.364 2.896 1.364c.08 0 .158-.002.237-.008c.138.524.373 1.02.701 1.462c.755 1.02 1.92 1.627 3.118 1.627c.744 0 1.455-.228 2.082-.655c1.212.778 2.266 1.325 3.201 1.661c.469.191.957.289 1.455.289c1.178 0 2.321-.55 3.137-1.512c.303-.358.549-.758.729-1.186a3.78 3.78 0 0 0 1.087.162c1.252 0 2.439-.613 3.26-1.685a4.715 4.715 0 0 0 .83-1.711c.086.006.171.009.256.009c1.447 0 2.832-.849 3.611-2.216a4.735 4.735 0 0 0 .629-2.336c1.43-.213 2.689-1.23 3.302-2.713c.604-1.461.44-3.073-.403-4.417l3.895-2.195c.1.342.198.657.293.913L62 31.098V10.642l-12.275 5.651m-.001 3.037c.062 1.082.175 2.305.321 3.582c-.8-1.344-1.81-1.957-3.064-2.262l2.743-1.32m-5.228 23.756c-2.148-.739-6.619-5.995-6.619-5.995h.088c.455-.032 1.438-.511 2.541-.282c-1.732-1.488-3.637-.229-4.934-1c.301.965 1.748 1.269 2.119 1.281l4.284 4.982c1.94 2.255.589 5.045-1.356 5.489c-1.305-.635-4.99-5.018-4.99-5.018c.126-.023.873-.257 1.634-.157c-1.757-1.314-3.749-.174-4.931-.999c.67 1.655 2.877 1.231 3.108 1.191l2.292 2.926c1.834 2.34.393 5.043-1.555 5.409c-1.727-.607-2.848-2.767-2.848-2.767c.174-.028.756-.287 1.584-.167c-1.473-1.291-3.188-.12-4.219-.855c.637 1.388 2.225 1.072 2.314 1.062c1.588 2.501-.059 5.109-2.027 5.187h-.002l-.002.001c-1.182-.205-2.42-1.15-3.818-2.12c.48-.532.904-1.467.904-1.467c1.404-2.542-.418-4.79-2.299-4.597c1.526.417 2.67 2.365 1.479 4.528l-.523.88c-.568 1.035-1.455 1.66-2.107 1.583c-1.004-.122-2.419-1.588-1.824-3.656c.23-.21 2.448-3.603 2.448-3.603c1.525-2.456-.187-4.807-2.073-4.727c1.502.507 2.555 2.521 1.26 4.611l-1.803 2.811c-.615.994-1.411 1.557-2.17 1.453c-1.178-.16-2.004-1.597-1.815-3.08c-.01.009 1.298-1.454 1.298-1.454c1.738-2.271.25-4.807-1.633-4.94c1.447.674 2.309 2.798.832 4.731l-.638.782c-.7.918-1.543 1.385-2.281 1.201c-1.288-.323-1.958-2.733-1.349-3.39c.479-.517 1.824-2.154 1.824-2.154c1.737-2.272.251-4.807-1.634-4.942c1.448.676 2.31 2.8.833 4.734l-.638.78c-.704.926-1.55 1.391-2.293 1.202c-1.548-.392-2.321-2.782-.84-4.722c0 0-.503-1.598-.73-2.281l-.746-.346c1.749-4.075 4.391-13.069 4.513-16.057c1.288.459 4.688 1.437 5.049 1.439l-.002.002c3.66-1.15 7.496-1.023 9.246-1.699c.567-.216 1.695-.23 2.891.454c-.747.655-1.453 1.435-2.186 2.162c-1.752 1.739-8.266 4.451-7.01 7.303c1.084 2.461 4.137 4.979 9.258 1.026l2.88-.396l4.479 2.21l5.74 5.895c2.047 2.098.888 4.946-1.003 5.556m1.44-6.495c-.658-1.23-2.709-3.247-4.645-4.896l-.012-.012c.893.036 1.83-1.402 3.041-1.513c-.846-.646-2.248.1-2.685.218c-2.409.648-6.153-2.383-6.153-2.383l-3.582.516s-4.26 5.199-7.849.916c-1.949-2.326 5.114-5.364 6.854-7.093c2.229-2.215 4.215-4.925 7.882-3.079c3.046 1.536 4.246 1.441 8.332 2.152c1.218.213 2.062.771 2.967 1.86c.426 3.584 1.115 7.559 1.776 10.325c-.341.287-3.264 2.253-5.926 2.989"/>
+                </svg>
+                Demander un devis
+            </a>
+        </div>
+    </div>
+</section>            
 
                 
                 <!-- Section Équipe 
@@ -1647,7 +1685,7 @@ html {
     </div>
     
     <!-- Votre conteneur de boutons -->
-    <div class="relative z-10 flex overflow-x-auto pb-4 space-x-2 py-2 scrollbar-hide px-2 backdrop-blur-sm  rounded-2xl ">
+    <div class="relative z-10 flex overflow-x-auto space-x-2 py-2 scrollbar-hide px-2 backdrop-blur-sm  rounded-2xl ">
 
         <button class="faq-filter-btn no-border flex-shrink-0 px-5 py-2 rounded-full font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gradient-to-r from-green-500 to-emerald-600 text-white " data-filter="all">
                     <i class="bi bi-grid-fill text-lg"></i>
@@ -1757,7 +1795,7 @@ html {
             <svg class="w-7 h-7 text-ll-blue dark:text-ll-blue-light mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            <a href="mailto:contact@llouestservice.fr" class="!text-ll-text-gray dark:!text-white transition-colors duration-200">contact@llouestservice.fr</a>
+            <a href="mailto:ll.ouest.services@gmail.com" class="!text-ll-text-gray dark:!text-white transition-colors duration-200">ll.ouest.services@gmail.com</a>
           </li>
         </ul>
         <div class="mt-10">
@@ -1894,6 +1932,12 @@ html {
             </svg>
             <span>Envoyer le message</span>
           </button>
+          <div class="text-sm text-ll-text-gray dark:text-gray-400">
+                                <svg class="w-5 h-5 inline mr-2 text-ll-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                Vos données sont sécurisées et confidentielles
+                            </div>
         </form>
 
          <div class="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -1910,10 +1954,17 @@ html {
   <div class="container mx-auto px-4 sm:px-6 lg:px-20 text-center">
     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold font-cinzel mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-ll-light-gray bg-[length:200%_100%] animate-gradient-scroll">
       Prêt à briller avec L&L ?
-      <svg class="inline-block w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class=" w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
       </svg>
     </h2>
+
+       <img
+                        src="/assets/images/equipments/fallback.png"
+                        class="w-48 h-48 mx-auto mb-6 no-lightbox"
+                        >
+
+
     <p class="text-base sm:text-lg mb-8 opacity-90 max-w-2xl mx-auto">
       Demandez votre devis gratuit dès aujourd'hui et découvrez la différence d'un nettoyage d'exception.
     </p>
@@ -1974,9 +2025,9 @@ html {
             <div>
                 <h4 class="text-lg font-semibold text-ll-white mb-4">Liens Utiles</h4>
                 <ul class="space-y-2">
-                    <li><a href="/pages/about.html" class="text-ll-white hover:text-ll-blue transition-colors duration-300 text-sm">À propos</a></li>
-                    <li><a href="/pages/contact/index.html" class="text-ll-white hover:text-ll-blue transition-colors duration-300 text-sm">Contact</a></li>
-                    <li><a href="/pages/mentions.html" class="text-ll-white hover:text-ll-blue transition-colors duration-300 text-sm">Mentions légales</a></li>
+                    <li><a href="/#about" class="text-ll-white hover:text-ll-blue transition-colors duration-300 text-sm">À propos</a></li>
+                    <li><a href="/#contact" class="text-ll-white hover:text-ll-blue transition-colors duration-300 text-sm">Contact</a></li>
+                    
                 </ul>
             </div>
 
@@ -2000,8 +2051,8 @@ html {
             <div class="text-center md:text-right">
                 <h4 class="text-lg font-semibold text-ll-white mb-4">Contactez-nous</h4>
                 <p class="text-sm text-ll-medium-gray">
-                    Email: <a href="mailto:contact@llouestservice.fr"
-                        class="text-ll-white hover:text-ll-blue transition-colors duration-300">contact@llouestservice.fr</a>
+                    Email: <a href="mailto:ll.ouest.services@gmail.com"
+                        class="text-ll-white hover:text-ll-blue transition-colors duration-300">ll.ouest.services@gmail.com</a>
                 </p>
                 <p class="text-sm text-ll-medium-gray">
                     Téléphone: <a href="tel:+330123456789"
@@ -2021,7 +2072,7 @@ html {
     </div>
 
     <!-- Essential Scripts -->
-    <script type="module" src="/js/animations/animation.js"></script>
+    <script type="module" async src="/js/animations/animation.js"></script>
     <script type="module" src="/js/main.js"></script>
     <script type="module" src="/js/injection/loadService.js"></script>
     <script type="module" src="/js/loadData.js"></script>

@@ -48,7 +48,7 @@ const replySchema = Joi.object({
 }).label('ReplySchema');
 
 /**
- * Schéma pour les réservations.
+ * Schéma pour les réservations (format mis à jour).
  * @type {Joi.ObjectSchema}
  */
 const reservationSchema = Joi.object({
@@ -60,12 +60,28 @@ const reservationSchema = Joi.object({
   name: Joi.string().min(2).max(100).required().description('Nom du client'),
   email: Joi.string().email().required().max(255).description('Email du client'),
   phone: Joi.string().pattern(/^\+33[\s\-]?[1-9](?:[\s\-]?\d{2}){4}$/).allow(null, '').optional().description('Numéro de téléphone international'),
-  date: Joi.string().isoDate().required().description('Date souhaitée de l\'intervention (format YYYY-MM-DD)'),
-  frequency: Joi.string().valid('ponctuelle', 'hebdomadaire', 'bi-mensuelle', 'mensuelle').required().description('Fréquence de la réservation'),
+  date: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().description('Date souhaitée de l\'intervention (format YYYY-MM-DD)'),
+  hour: Joi.string().required().description('Horaire de réservation'),
   address: Joi.string().min(5).max(200).required().description('Adresse d\'intervention'),
-  options: Joi.string().min(3).max(500).optional().allow('').description('Options supplémentaires, séparées par des tirets'),
-  message: Joi.string().min(1).max(10000).required().description('Instructions ou message spécial'),
+  message: Joi.string().min(1).max(1000).required().description('Instructions ou message spécial'),
   createdAt: Joi.string().isoDate().default(() => new Date().toISOString()).description('Date de création'),
+  clientHtmlTemplate: Joi.string().optional().description('Template HTML pour email client'),
+  adminHtmlTemplate: Joi.string().optional().description('Template HTML pour email admin'),
+  reply: Joi.string().allow(null, '').optional().description('Réponse de l\'administrateur'),
+  repliedAt: Joi.string().isoDate().allow(null).optional().description('Date de réponse'),
+  status: Joi.string().valid('pending', 'confirmed', 'completed', 'cancelled', 'deleted', 'replied', 'created_email_failed', 'spam', 'closed').default('pending').description('Statut de la réservation'),
+  emailStatus: Joi.object({
+    clientSent: Joi.boolean().default(false),
+    adminSent: Joi.boolean().default(false),
+    clientMessageId: Joi.string().optional(),
+    adminMessageId: Joi.string().optional(),
+    sentAt: Joi.string().isoDate().optional(),
+  }).optional(),
+  updatedAt: Joi.string().isoDate().optional().description('Date de mise à jour'),
+  updatedBy: Joi.string().optional().allow(null).description('Utilisateur ayant mis à jour'),
+  deletedAt: Joi.string().isoDate().optional().description('Date de suppression'),
+  deletedBy: Joi.string().optional().allow(null).description('Utilisateur ayant supprimé'),
+  errorMessage: Joi.string().optional().allow('', null).description('Message d\'erreur'),
 }).label('ReservationSchema');
 
 module.exports = {

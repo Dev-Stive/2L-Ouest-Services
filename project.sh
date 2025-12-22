@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# Script de création de l'arborescence du projet pour L&L Ouest Services
+# Script de création de l'arborescence du projet pour
 # Auteur: Gemini AI
 # Date: 15 août 2025
 # Description: Ce script crée la structure de fichiers et de dossiers

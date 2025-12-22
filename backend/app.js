@@ -36,6 +36,7 @@ const {
   serviceRoutes,
   userRoutes,
   configRoutes,
+  reservationRoutes
 } = require('./routes');
 
 const app = express();
@@ -345,6 +346,7 @@ app.use(`${apiPrefix}/services`, serviceRoutes);
 app.use(`${apiPrefix}/review`, reviewRoutes);
 app.use(`${apiPrefix}/chat`, chatRoutes);
 app.use(`${apiPrefix}/contact`, contactRoutes);
+app.use(`${apiPrefix}/reservation`, reservationRoutes);
 app.use(`${apiPrefix}/document`, documentRoutes);
 app.use(`${apiPrefix}/map`, mapRoutes);
 app.use(`${apiPrefix}/notification`, notificationRoutes);

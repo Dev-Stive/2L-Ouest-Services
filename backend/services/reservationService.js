@@ -26,19 +26,20 @@ const path = require('path');
  * @property {string} email - Email du client.
  * @property {string} phone - Numéro de téléphone du client (optionnel).
  * @property {string} date - Date souhaitée de l'intervention.
- * @property {string} frequency - Fréquence de la réservation.
+ * @property {string} hour - Horaire de réservation.
  * @property {string} address - Adresse d'intervention.
- * @property {string} options - Options supplémentaires (séparées par des tirets, optionnel).
  * @property {string} message - Instructions ou message spécial.
  * @property {string} createdAt - Date de création.
+ * @property {string} clientHtmlTemplate - Template HTML pour email client.
+ * @property {string} adminHtmlTemplate - Template HTML pour email admin.
  * @property {string} reply - Réponse de l'admin (optionnel).
  * @property {string} repliedAt - Date de réponse (optionnel).
- * @property {string} status - Statut de la réservation ('pending'|'confirmed'|'completed'|'cancelled').
+ * @property {string} status - Statut de la réservation ('pending'|'confirmed'|'completed'|'cancelled'|'replied'|'deleted').
+ * @property {Object} emailStatus - Statut des emails envoyés.
  * @property {string} updatedAt - Date de mise à jour (optionnel).
  * @property {string} updatedBy - ID de l'utilisateur qui a mis à jour (optionnel).
  * @property {string} deletedAt - Date de suppression (soft delete, optionnel).
  * @property {string} deletedBy - ID de l'utilisateur qui a supprimé (optionnel).
- * @property {string} emailStatus - Statut des emails envoyés (optionnel).
  * @property {string} errorMessage - Message d'erreur (optionnel).
  */
 
@@ -75,8 +76,11 @@ class ReservationService {
     let reservationCache = null;
 
     try {
-      if (!reservationData.email || !reservationData.name || !reservationData.message || !reservationData.date || !reservationData.frequency || !reservationData.address || !reservationData.serviceId || !reservationData.serviceName || !reservationData.serviceCategory ) {
-        throw new AppError(400, 'Données de réservation incomplètes (nom, email, message, date, fréquence, adresse, service requis )');
+      // Validation des champs obligatoires selon le nouveau format
+      if (!reservationData.email || !reservationData.name || !reservationData.message || 
+          !reservationData.date || !reservationData.hour || !reservationData.address || 
+          !reservationData.serviceId || !reservationData.serviceName || !reservationData.serviceCategory) {
+        throw new AppError(400, 'Données de réservation incomplètes (nom, email, message, date, heure, adresse, service requis)');
       }
 
       const reservation = await reservationRepo.create({
@@ -85,8 +89,9 @@ class ReservationService {
         createdAt: new Date().toISOString(),
         email: reservationData.email,
         phone: reservationData.phone,
-        options: reservationData.options,
         status: 'pending',
+        clientHtmlTemplate: clientHtmlTemplate || null,
+        adminHtmlTemplate: adminHtmlTemplate || null,
       });
 
       reservationCache = reservation;
@@ -97,11 +102,11 @@ class ReservationService {
         email: reservation.email,
         serviceName: reservation.serviceName,
         serviceCategory: reservation.serviceCategory,
-        hasPhone: !!reservation.phone,
-        hasOptions: !!reservation.options,
-        messageLength: reservation.message.length,
         date: reservation.date,
-        frequency: reservation.frequency,
+        hour: reservation.hour,
+        address: reservation.address,
+        hasPhone: !!reservation.phone,
+        messageLength: reservation.message.length,
       });
 
       // Envoi de la confirmation au client
@@ -110,19 +115,19 @@ class ReservationService {
           reservation.id,
           reservation.email,
           clientHtmlTemplate,
-          'Confirmation de votre réservation - L&L Ouest Services',
+          `Confirmation de votre réservation - ${reservation.serviceName}`,
           { isClientConfirmation: true }
         );
       }
 
-      // Envoi de la notification à l'admin (config.smtp.user ou fallback)
+      // Envoi de la notification à l'admin
       if (adminHtmlTemplate) {
-        const adminEmail = config.smtp?.user || 'nanatchoffojunior@gmail.com';
+        const adminEmail = process.env.ADMIN_EMAIL || 'll.ouest.services@gmail.com'; //'nanatchoffojunior@gmail.com';
         adminSendResult = await this.sendReservationEmail(
           reservation.id,
           adminEmail,
           adminHtmlTemplate,
-          `Nouvelle réservation reçue - ${reservation.name}`,
+          `Nouvelle réservation reçue - ${reservation.name} - ${reservation.serviceName}`,
           { isAdminNotification: true }
         );
       }
@@ -130,6 +135,9 @@ class ReservationService {
       if (reservation.userId) {
         socketService.emitToUser(reservation.userId, 'newReservation', {
           reservationId: reservation.id,
+          serviceName: reservation.serviceName,
+          date: reservation.date,
+          hour: reservation.hour,
           clientSent: !!clientSendResult,
           adminSent: !!adminSendResult,
         });
@@ -140,7 +148,9 @@ class ReservationService {
         name: reservation.name,
         email: reservation.email,
         serviceName: reservation.serviceName,
-        hasOptions: !!reservation.options,
+        serviceCategory: reservation.serviceCategory,
+        date: reservation.date,
+        hour: reservation.hour,
         clientEmailSent: !!clientSendResult,
         adminEmailSent: !!adminSendResult,
         clientMessageId: clientSendResult?.messageId,
@@ -166,10 +176,9 @@ class ReservationService {
           name: reservationData.name,
           email: reservationData.email,
           hasMessage: !!reservationData.message,
-          hasOptions: !!reservationData.options,
           hasPhone: !!reservationData.phone,
           hasDate: !!reservationData.date,
-          hasFrequency: !!reservationData.frequency,
+          hasHour: !!reservationData.hour,
           hasAddress: !!reservationData.address,
           hasServiceId: !!reservationData.serviceId,
           hasServiceName: !!reservationData.serviceName,
@@ -184,7 +193,6 @@ class ReservationService {
       };
       
       logError('Erreur lors de la création de la réservation', errorDetails);
-
 
       if (reservationCache && reservationCache.id) {
         try {
@@ -218,9 +226,6 @@ class ReservationService {
 
       const enrichedReservation = {
         ...reservation,
-        optionsArray: reservation.options ? reservation.options.split('-').map(s => s.trim()).filter(s => s.length > 0) : [],
-        optionsCount: reservation.options ? reservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
-        optionsPreview: reservation.options ? (reservation.options.length > 50 ? reservation.options.substring(0, 50) + '...' : reservation.options) : 'N/A',
         messagePreview: reservation.message ? (reservation.message.length > 100 ? reservation.message.substring(0, 100) + '...' : reservation.message) : '',
         messageLength: reservation.message ? reservation.message.length : 0,
         createdAtFormatted: reservation.createdAt ? new Date(reservation.createdAt).toLocaleDateString('fr-FR', {
@@ -245,6 +250,7 @@ class ReservationService {
           month: 'long',
           day: 'numeric',
         }) : null,
+        hourFormatted: reservation.hour || 'Non spécifié',
         statusLabel: this.getStatusLabel(reservation.status),
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
         emailStatus: reservation.emailStatus || {
@@ -258,8 +264,9 @@ class ReservationService {
         reservationId,
         name: reservation.name,
         status: reservation.status,
-        hasOptions: !!reservation.options,
-        optionsCount: enrichedReservation.optionsCount,
+        serviceName: reservation.serviceName,
+        date: reservation.date,
+        hour: reservation.hour,
         messageLength: enrichedReservation.messageLength,
         phoneValid: enrichedReservation.phoneValid,
       });
@@ -283,6 +290,7 @@ class ReservationService {
       confirmed: 'Confirmée',
       completed: 'Terminée',
       cancelled: 'Annulée',
+      replied: 'Répondu',
       created_email_failed: 'Créée (email échoué)',
       spam: 'Spam',
       closed: 'Fermée',
@@ -301,13 +309,6 @@ class ReservationService {
         throw new AppError(400, 'Aucune donnée à mettre à jour fournie');
       }
 
-      if (reservationData.options !== undefined && typeof reservationData.options === 'string') {
-        reservationData.options = reservationData.options.trim().replace(/,/g, '-').trim();
-        if (reservationData.options.length === 0) {
-          reservationData.options = null;
-        }
-      }
-
       if (reservationData.phone !== undefined && typeof reservationData.phone === 'string') {
         const normalizedPhone = reservationData.phone.trim().replace(/[^\d+]/g, '');
         if (normalizedPhone.startsWith('33')) {
@@ -320,11 +321,6 @@ class ReservationService {
         }
       }
 
-      if (reservationData.status === undefined) {
-        reservationData.status = 'pending';
-      }
-
-
       const reservation = await reservationRepo.update(reservationId, reservationData);
       if (!reservation) {
         throw new AppError(404, 'Réservation non trouvée');
@@ -332,9 +328,6 @@ class ReservationService {
 
       const enrichedReservation = {
         ...reservation,
-        optionsArray: reservation.options ? reservation.options.split('-').map(s => s.trim()).filter(s => s.length > 0) : [],
-        optionsCount: reservation.options ? reservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
-        optionsPreview: reservation.options ? (reservation.options.length > 50 ? reservation.options.substring(0, 50) + '...' : reservation.options) : 'N/A',
         messagePreview: reservation.message ? (reservation.message.length > 100 ? reservation.message.substring(0, 100) + '...' : reservation.message) : '',
         messageLength: reservation.message ? reservation.message.length : 0,
         createdAtFormatted: reservation.createdAt ? new Date(reservation.createdAt).toLocaleDateString('fr-FR', {
@@ -359,9 +352,9 @@ class ReservationService {
           month: 'long',
           day: 'numeric',
         }) : null,
+        hourFormatted: reservation.hour || 'Non spécifié',
         statusLabel: this.getStatusLabel(reservation.status),
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
-     
         emailStatus: reservation.emailStatus || {
           clientSent: false,
           adminSent: false,
@@ -390,8 +383,9 @@ class ReservationService {
         updatedFields: Object.keys(reservationData),
         oldStatus: reservationData.status ? 'N/A' : 'unchanged',
         newStatus: enrichedReservation.status,
-        hasOptions: !!enrichedReservation.options,
-        optionsCount: enrichedReservation.optionsCount,
+        serviceName: reservation.serviceName,
+        date: reservation.date,
+        hour: reservation.hour,
       });
 
       return enrichedReservation;
@@ -402,7 +396,6 @@ class ReservationService {
         name: error.name,
         reservationId,
         updatedFields: Object.keys(reservationData || {}),
-        hasOptions: !!reservationData?.options,
       };
       logError('Erreur lors de la mise à jour de la réservation', errorDetails);
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la mise à jour de la réservation', error.message);
@@ -433,8 +426,6 @@ class ReservationService {
         deletedAt,
         deletedBy,
         statusLabel: 'Supprimée',
-        optionsArray: reservation.options ? reservation.options.split('-').map(s => s.trim()).filter(s => s.length > 0) : [],
-        optionsCount: reservation.options ? reservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
         messagePreview: reservation.message ? (reservation.message.length > 100 ? reservation.message.substring(0, 100) + '...' : reservation.message) : '',
         phoneValid: reservation.phone && reservation.phone.startsWith('+33') && reservation.phone.length === 12,
       };
@@ -455,7 +446,9 @@ class ReservationService {
           name: reservation.name,
           email: reservation.email,
           serviceName: reservation.serviceName,
+          serviceCategory: reservation.serviceCategory,
           date: reservation.date,
+          hour: reservation.hour,
           deletedAt,
         },
       });
@@ -465,9 +458,9 @@ class ReservationService {
         name: reservation.name,
         email: reservation.email,
         serviceName: reservation.serviceName,
+        serviceCategory: reservation.serviceCategory,
         deletedBy,
         deletedAt,
-        hadOptions: !!reservation.options,
         originalStatus: reservation.status,
       });
 
@@ -505,22 +498,15 @@ class ReservationService {
         serviceId: filters.serviceId || null,
         serviceName: (filters.serviceName || '').trim().toLowerCase(),
         serviceCategory: (filters.serviceCategory || '').trim().toLowerCase(),
-        frequency: filters.frequency || null,
-        dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : null,
-        dateTo: filters.dateTo ? new Date(filters.dateTo) : null,
+        hour: filters.hour || null,
+        dateFrom: filters.dateFrom || null,
+        dateTo: filters.dateTo || null,
+        address: (filters.address || '').trim().toLowerCase(),
         withReply: filters.withReply === true,
         repliedOnly: filters.repliedOnly === true,
-        hasOptions: filters.hasOptions === true,
       };
 
-      if (normalizedFilters.dateFrom && isNaN(normalizedFilters.dateFrom.getTime())) {
-        throw new AppError(400, 'Date de début invalide');
-      }
-      if (normalizedFilters.dateTo && isNaN(normalizedFilters.dateTo.getTime())) {
-        throw new AppError(400, 'Date de fin invalide');
-      }
-
-      const validSortFields = ['createdAt', 'name', 'email', 'status', 'repliedAt', 'date', 'serviceName'];
+      const validSortFields = ['createdAt', 'name', 'email', 'status', 'repliedAt', 'date', 'serviceName', 'hour'];
       const validSortOrders = ['asc', 'desc'];
       const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
       const finalSortOrder = validSortOrders.includes(sortOrder) ? sortOrder : 'desc';
@@ -529,9 +515,6 @@ class ReservationService {
 
       const enrichedReservations = result.reservations.map(reservation => ({
         ...reservation,
-        optionsArray: reservation.options ? reservation.options.split('-').map(s => s.trim()).filter(s => s.length > 0) : [],
-        optionsCount: reservation.options ? reservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
-        optionsPreview: reservation.options ? (reservation.options.length > 50 ? reservation.options.substring(0, 50) + '...' : reservation.options) : 'N/A',
         messagePreview: reservation.message ? (reservation.message.length > 100 ? reservation.message.substring(0, 100) + '...' : reservation.message) : '',
         messageLength: reservation.message ? reservation.message.length : 0,
         createdAtFormatted: reservation.createdAt ? new Date(reservation.createdAt).toLocaleDateString('fr-FR', {
@@ -556,6 +539,7 @@ class ReservationService {
           month: 'short',
           day: 'numeric',
         }) : null,
+        hourFormatted: reservation.hour || 'Non spécifié',
         statusLabel: this.getStatusLabel(reservation.status),
         hasReply: !!reservation.reply && !!reservation.repliedAt,
         daysSinceCreation: reservation.createdAt ? Math.floor((new Date() - new Date(reservation.createdAt)) / (1000 * 60 * 60 * 24)) : 0,
@@ -588,7 +572,7 @@ class ReservationService {
           confirmed: enrichedReservations.filter(r => r.status === 'confirmed').length,
           completed: enrichedReservations.filter(r => r.status === 'completed').length,
           cancelled: enrichedReservations.filter(r => r.status === 'cancelled').length,
-          withOptions: enrichedReservations.filter(r => r.optionsCount > 0).length,
+          replied: enrichedReservations.filter(r => r.status === 'replied').length,
           avgMessageLength: enrichedReservations.reduce((sum, r) => sum + r.messageLength, 0) / Math.max(enrichedReservations.length, 1),
         },
       };
@@ -602,7 +586,7 @@ class ReservationService {
         sortBy: finalSortBy,
         sortOrder: finalSortOrder,
         pendingCount: enrichedResult.summary.pending,
-        confirmedCount: enrichedResult.summary.confirmed,
+        repliedCount: enrichedResult.summary.replied,
       });
 
       return enrichedResult;
@@ -647,7 +631,7 @@ class ReservationService {
       const cleanReply = replyMessage.trim();
 
       const subject = replySubject ||
-        `Re: Votre réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')} - L&L Ouest Services`;
+        `Re: Votre réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')} - ${reservation.serviceName} - L&L Ouest Services`;
 
       let html;
       let text;
@@ -659,15 +643,15 @@ class ReservationService {
           serviceName: reservation.serviceName,
           serviceCategory: reservation.serviceCategory,
           originalMessage: reservation.message,
-          originalOptions: reservation.options || 'N/A',
           reply: cleanReply,
           date: new Date(reservation.date).toLocaleDateString('fr-FR'),
-          frequency: reservation.frequency,
+          hour: reservation.hour,
           address: reservation.address,
+          phone: reservation.phone || 'Non renseigné',
           createdAt: new Date(reservation.createdAt).toLocaleDateString('fr-FR'),
           company: 'L&L Ouest Services',
           supportPhone: '+33 1 23 45 67 89',
-          website: 'https://www.llouestservices.com',
+          website: 'https://www.ll-ouest-services.fr',
           repliedByName: additionalData.repliedByName || 'L&L Ouest Services',
           logoBase64,
           ...additionalData,
@@ -678,13 +662,15 @@ class ReservationService {
 
 Réponse à votre réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')} pour le service "${reservation.serviceName}" (${reservation.serviceCategory}).
 
-Votre message original:
-${reservation.message.replace(/\n/g, '\n')}
+Détails de la réservation:
+- Service: ${reservation.serviceName} (${reservation.serviceCategory})
+- Date: ${new Date(reservation.date).toLocaleDateString('fr-FR')}
+- Horaire: ${reservation.hour}
+- Adresse: ${reservation.address}
+${reservation.phone ? `- Téléphone: ${reservation.phone}` : ''}
 
-${reservation.phone ? `Téléphone: ${reservation.phone}` : ''}
-${reservation.address ? `Adresse: ${reservation.address}` : ''}
-Fréquence: ${reservation.frequency}
-Options: ${reservation.options ? reservation.options.replace(/-/g, ', ') : 'Aucune'}
+Votre message:
+${reservation.message.replace(/\n/g, '\n')}
 
 Notre réponse:
 ${cleanReply.replace(/\n/g, '\n')}
@@ -710,8 +696,8 @@ L&L Ouest Services`;
               .header h1 { font-family: 'Merriweather', serif; font-size: 18px; color: #2563eb; margin: 0; font-weight: 700; }
               .content { padding: 20px; }
               .content p { margin: 10px 0; }
-              .original-message { border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin-bottom: 15px; background-color: #f8f9fa; }
-              .original-message h3 { font-family: 'Merriweather', serif; font-size: 16px; color: #2563eb; margin: 0 0 10px; }
+              .reservation-details { border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin-bottom: 15px; background-color: #f8f9fa; }
+              .reservation-details h3 { font-family: 'Merriweather', serif; font-size: 16px; color: #2563eb; margin: 0 0 10px; }
               .reply-section { border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin-bottom: 15px; }
               .reply-section h3 { font-family: 'Merriweather', serif; font-size: 16px; color: #2563eb; margin: 0 0 10px; }
               .button { display: inline-block; background-color: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 600; margin: 10px 0; transition: background-color 0.3s; }
@@ -735,26 +721,28 @@ L&L Ouest Services`;
               <div class="content">
                 <p>Cher(e) ${reservation.name || 'Utilisateur'},</p>
                 <p>Merci pour votre réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')} pour le service "${reservation.serviceName}" (${reservation.serviceCategory}). Voici notre réponse :</p>
-                <div class="original-message">
-                  <h3>Votre message original :</h3>
-                  <p>${reservation.message.replace(/\n/g, '<br>')}</p>
-                  ${reservation.phone ? `<p><strong>Téléphone :</strong> ${reservation.phone}</p>` : ''}
+                <div class="reservation-details">
+                  <h3>Détails de votre réservation :</h3>
+                  <p><strong>Service :</strong> ${reservation.serviceName} (${reservation.serviceCategory})</p>
+                  <p><strong>Date :</strong> ${new Date(reservation.date).toLocaleDateString('fr-FR')}</p>
+                  <p><strong>Horaire :</strong> ${reservation.hour}</p>
                   <p><strong>Adresse :</strong> ${reservation.address}</p>
-                  <p><strong>Fréquence :</strong> ${reservation.frequency}</p>
-                  ${reservation.options ? `<p><strong>Options :</strong> ${reservation.options.replace(/-/g, ', ')}</p>` : ''}
+                  ${reservation.phone ? `<p><strong>Téléphone :</strong> ${reservation.phone}</p>` : ''}
+                  <p><strong>Votre message :</strong></p>
+                  <p>${reservation.message.replace(/\n/g, '<br>')}</p>
                 </div>
                 <div class="reply-section">
                   <h3>Notre réponse :</h3>
                   <p>${cleanReply.replace(/\n/g, '<br>')}</p>
                   ${additionalData.repliedByName ? `<p>Répondu par : ${additionalData.repliedByName}</p>` : ''}
                 </div>
-                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 1 23 45 67 89</strong> ou par email à <a href="mailto:contact@llouestservices.com">contact@llouestservices.com</a>.</p>
-                <p><a href="https://www.llouestservices.com" class="button">Visiter notre site</a></p>
+                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 1 23 45 67 89</strong> ou par email à <a href="mailto:ll.ouest.services@gmail.com">ll.ouest.services@gmail.com</a>.</p>
+                <p><a href="https://www.ll-ouest-services.fr" class="button">Visiter notre site</a></p>
                 <p>Cordialement,<br>L&L Ouest Services</p>
               </div>
               <div class="footer">
                 <p>L&L Ouest Services &copy; ${new Date().getFullYear()} | Tous droits réservés<br>
-                   <a href="https://www.llouestservices.com">https://www.llouestservices.com</a> | Support : +33 1 23 45 67 89</p>
+                   <a href="https://www.ll-ouest-services.fr">https://www.ll-ouest-services.fr</a> | Support : +33 1 23 45 67 89</p>
               </div>
             </div>
           </body>
@@ -764,26 +752,28 @@ L&L Ouest Services`;
 
 Merci pour votre réservation du ${new Date(reservation.date).toLocaleDateString('fr-FR')} pour le service "${reservation.serviceName}" (${reservation.serviceCategory}).
 
-Votre message original:
-${reservation.message.replace(/\n/g, '\n')}
+Détails de la réservation:
+- Service: ${reservation.serviceName} (${reservation.serviceCategory})
+- Date: ${new Date(reservation.date).toLocaleDateString('fr-FR')}
+- Horaire: ${reservation.hour}
+- Adresse: ${reservation.address}
+${reservation.phone ? `- Téléphone: ${reservation.phone}` : ''}
 
-${reservation.phone ? `Téléphone: ${reservation.phone}` : ''}
-Adresse: ${reservation.address}
-Fréquence: ${reservation.frequency}
-Options: ${reservation.options ? reservation.options.replace(/-/g, ', ') : 'Aucune'}
+Votre message:
+${reservation.message.replace(/\n/g, '\n')}
 
 Notre réponse:
 ${cleanReply.replace(/\n/g, '\n')}
 
 ${additionalData.repliedByName ? `Répondu par : ${additionalData.repliedByName}` : ''}
 
-Pour toute question supplémentaire, contactez-nous au +33 1 23 45 67 89 ou par email à contact@llouestservices.com.
+Pour toute question supplémentaire, contactez-nous au +33 1 23 45 67 89 ou par email à ll.ouest.services@gmail.com.
 
 Cordialement,
 L&L Ouest Services`;
       }
 
-      const sendResult = await this.sendEmail({
+      const sendResult = await emailService.sendEmail({
         to: reservation.email.trim().toLowerCase(),
         subject,
         text,
@@ -810,9 +800,6 @@ L&L Ouest Services`;
 
       const enrichedUpdatedReservation = {
         ...updatedReservation,
-        optionsArray: updatedReservation.options ? updatedReservation.options.split('-').map(s => s.trim()).filter(s => s.length > 0) : [],
-        optionsCount: updatedReservation.options ? updatedReservation.options.split('-').filter(s => s.trim().length > 0).length : 0,
-        optionsPreview: updatedReservation.options ? (updatedReservation.options.length > 50 ? updatedReservation.options.substring(0, 50) + '...' : updatedReservation.options) : 'N/A',
         messagePreview: updatedReservation.message ? (updatedReservation.message.length > 100 ? updatedReservation.message.substring(0, 100) + '...' : updatedReservation.message) : '',
         replyPreview: updatedReservation.reply ? (updatedReservation.reply.length > 100 ? updatedReservation.reply.substring(0, 100) + '...' : updatedReservation.reply) : '',
         statusLabel: this.getStatusLabel(updatedReservation.status),
@@ -833,6 +820,7 @@ L&L Ouest Services`;
           month: 'long',
           day: 'numeric',
         }) : null,
+        hourFormatted: updatedReservation.hour || 'Non spécifié',
       };
 
       if (reservation.userId) {
@@ -901,7 +889,9 @@ L&L Ouest Services`;
         throw new AppError(404, 'Réservation non trouvée');
       }
 
-      if (!reservation.email || !reservation.name || !reservation.message || !reservation.date || !reservation.frequency || !reservation.address || !reservation.serviceId || !reservation.serviceName || !reservation.serviceCategory) {
+      if (!reservation.email || !reservation.name || !reservation.message || 
+          !reservation.date || !reservation.hour || !reservation.address || 
+          !reservation.serviceId || !reservation.serviceName || !reservation.serviceCategory) {
         throw new AppError(400, 'Données de réservation incomplètes');
       }
 
@@ -926,17 +916,16 @@ L&L Ouest Services`;
         serviceCategory: reservation.serviceCategory,
         name: reservation.name,
         email: reservation.email,
-        phone: reservation.phone || 'N/A',
-        date: reservation.date,
-        frequency: reservation.frequency,
+        phone: reservation.phone || 'Non renseigné',
+        date: new Date(reservation.date).toLocaleDateString('fr-FR'),
+        hour: reservation.hour,
         address: reservation.address,
-        options: reservation.options || 'Aucune option sélectionnée',
         message: reservation.message,
         createdAt: reservation.createdAt ? new Date(reservation.createdAt).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR'),
         company: 'L&L Ouest Services',
         currentYear: new Date().getFullYear(),
         supportPhone: '+33 1 23 45 67 89',
-        website: 'https://www.llouestservices.com',
+        website: 'https://www.ll-ouest-services.fr',
         logoBase64,
         ...templateData,
       });
@@ -946,11 +935,15 @@ L&L Ouest Services`;
 
 Vous avez soumis une réservation le ${new Date(reservation.createdAt).toLocaleDateString('fr-FR')} pour le service "${reservation.serviceName}" (${reservation.serviceCategory}).
 
-Date souhaitée: ${reservation.date}
-Fréquence: ${reservation.frequency}
-Adresse: ${reservation.address}
-Options: ${reservation.options || 'Aucune'}
-Message: ${reservation.message}
+Détails de la réservation:
+- Service: ${reservation.serviceName} (${reservation.serviceCategory})
+- Date: ${new Date(reservation.date).toLocaleDateString('fr-FR')}
+- Horaire: ${reservation.hour}
+- Adresse: ${reservation.address}
+${reservation.phone ? `- Téléphone: ${reservation.phone}` : ''}
+
+Votre message:
+${reservation.message}
 
 Cordialement,
 L&L Ouest Services`;
@@ -978,16 +971,16 @@ L&L Ouest Services`;
       }
 
       const logType = templateData.isAdminReply ? 'réponse admin' :
-                     templateData.isClientConfirmation ? 'confirmation client' : 'email réservation';
+                     templateData.isClientConfirmation ? 'confirmation client' : 'notification admin';
       logInfo(`Email de réservation ${logType} envoyé`, {
         reservationId,
         recipient,
         messageId: result.messageId,
         serviceName: reservation.serviceName,
         serviceCategory: reservation.serviceCategory,
+        date: reservation.date,
+        hour: reservation.hour,
         subject: subject.substring(0, 50) + (subject.length > 50 ? '...' : ''),
-        htmlLength: html.length,
-        textLength: text.length,
       });
 
       return result;

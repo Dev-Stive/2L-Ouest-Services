@@ -39,19 +39,20 @@ class ReservationRepository {
       email: doc.data().email,
       phone: doc.data().phone || null,
       date: doc.data().date,
-      frequency: doc.data().frequency,
+      hour: doc.data().hour,
       address: doc.data().address,
-      options: doc.data().options || null,
       message: doc.data().message,
       createdAt: doc.data().createdAt || null,
+      clientHtmlTemplate: doc.data().clientHtmlTemplate || null,
+      adminHtmlTemplate: doc.data().adminHtmlTemplate || null,
       reply: doc.data().reply || null,
       repliedAt: doc.data().repliedAt || null,
       status: doc.data().status || 'pending',
+      emailStatus: doc.data().emailStatus || null,
       updatedAt: doc.data().updatedAt || null,
       updatedBy: doc.data().updatedBy || null,
       deletedAt: doc.data().deletedAt || null,
       deletedBy: doc.data().deletedBy || null,
-      emailStatus: doc.data().emailStatus || null,
       errorMessage: doc.data().errorMessage || null,
     };
   }
@@ -71,19 +72,20 @@ class ReservationRepository {
       email: reservation.email,
       phone: reservation.phone || null,
       date: reservation.date,
-      frequency: reservation.frequency,
+      hour: reservation.hour,
       address: reservation.address,
-      options: reservation.options || null,
       message: reservation.message,
       createdAt: reservation.createdAt || formatDate(new Date()),
+      clientHtmlTemplate: reservation.clientHtmlTemplate || null,
+      adminHtmlTemplate: reservation.adminHtmlTemplate || null,
       reply: reservation.reply || null,
       repliedAt: reservation.repliedAt || null,
       status: reservation.status || 'pending',
+      emailStatus: reservation.emailStatus || null,
       updatedAt: reservation.updatedAt || null,
       updatedBy: reservation.updatedBy || null,
       deletedAt: reservation.deletedAt || null,
       deletedBy: reservation.deletedBy || null,
-      emailStatus: reservation.emailStatus || null,
       errorMessage: reservation.errorMessage || null,
     };
   }
@@ -217,14 +219,14 @@ class ReservationRepository {
       if (filters.serviceCategory) {
         query = query.where('serviceCategory', '==', filters.serviceCategory);
       }
-      if (filters.frequency) {
-        query = query.where('frequency', '==', filters.frequency);
+      if (filters.hour) {
+        query = query.where('hour', '==', filters.hour);
       }
       if (filters.dateFrom) {
-        query = query.where('date', '>=', formatDate(new Date(filters.dateFrom)));
+        query = query.where('date', '>=', filters.dateFrom);
       }
       if (filters.dateTo) {
-        query = query.where('date', '<=', formatDate(new Date(filters.dateTo)));
+        query = query.where('date', '<=', filters.dateTo);
       }
       if (filters.withReply) {
         query = query.where('reply', '!=', null);
@@ -232,8 +234,8 @@ class ReservationRepository {
       if (filters.repliedOnly) {
         query = query.where('status', '==', 'replied');
       }
-      if (filters.hasOptions) {
-        query = query.where('options', '!=', null);
+      if (filters.address) {
+        query = query.where('address', '>=', filters.address).where('address', '<=', filters.address + '\uf8ff');
       }
 
       query = query.orderBy(sortBy, sortOrder);
@@ -274,7 +276,7 @@ class ReservationRepository {
         completed: reservations.filter(r => r.status === 'completed').length,
         cancelled: reservations.filter(r => r.status === 'cancelled').length,
         deleted: reservations.filter(r => r.status === 'deleted').length,
-        withOptions: reservations.filter(r => r.options).length,
+        replied: reservations.filter(r => r.status === 'replied').length,
         averageMessageLength: reservations.length > 0 ? reservations.reduce((sum, r) => sum + (r.message?.length || 0), 0) / reservations.length : 0,
         reservationsByStatus: {
           pending: reservations.filter(r => r.status === 'pending').length,
@@ -282,6 +284,7 @@ class ReservationRepository {
           completed: reservations.filter(r => r.status === 'completed').length,
           cancelled: reservations.filter(r => r.status === 'cancelled').length,
           deleted: reservations.filter(r => r.status === 'deleted').length,
+          replied: reservations.filter(r => r.status === 'replied').length,
         },
         reservationsByDate: reservations.reduce((acc, r) => {
           const date = r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : 'unknown';
@@ -290,12 +293,13 @@ class ReservationRepository {
         }, {}),
         topServices: reservations
           .reduce((acc, r) => {
-            acc[r.serviceName] = (acc[r.serviceName] || 0) + 1;
+            const serviceKey = `${r.serviceName} (${r.serviceCategory})`;
+            acc[serviceKey] = (acc[serviceKey] || 0) + 1;
             return acc;
           }, {}),
-        topFrequencies: reservations
+        topHours: reservations
           .reduce((acc, r) => {
-            acc[r.frequency] = (acc[r.frequency] || 0) + 1;
+            acc[r.hour] = (acc[r.hour] || 0) + 1;
             return acc;
           }, {}),
         responseTime: reservations

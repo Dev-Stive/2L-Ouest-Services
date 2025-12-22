@@ -21,7 +21,7 @@ const colors = {
   light: '#F8F9FA',
   dark: '#212529',
   primary: '#3582AE',
-  accent: '#23953D',
+  accent: '#22c55e',
   secondary: '#6C757D',
   border: '#DEE2E6',
   background: '#F5F7F9'
@@ -29,16 +29,15 @@ const colors = {
 
 const company = {
   name: 'L&L Ouest Services',
-  logo: 'https://i.ibb.co/WW2NGrFM/logo.jpg',
-  website: 'https://llouestservices.fr',
+  logo: 'https://i.ibb.co/sp61qqVw/logo.jpg',
+  website: 'https://ll-ouest-services.fr',
   phone: '+33 7 56 98 45 12',
-  email: 'contact@llouestservices.com',
+  email: 'll.ouest.services@gmail.com',
   address: 'France'
 };
 
 const currentYear = new Date().getFullYear();
 
-// Validation de la date pour éviter "Invalid Date"
 const getFormattedDate = (createdAt) => {
   const date = new Date(createdAt || Date.now());
   if (isNaN(date.getTime())) {
@@ -534,10 +533,10 @@ const emailTemplates = {
           <p>Si vous n'avez pas initié cette demande, veuillez ignorer cet email ou contacter notre service client.</p>
           
           <div class="action-buttons">
-            <a href="${company.website}/pages/auth/code-check.html" class="outline-button accent">
+            <a href="${company.website}/#pages/auth/code-check.html" class="outline-button accent">
               <i class="fas fa-check-circle"></i> Vérifier mon compte
             </a>
-            <a href="${company.website}/contact" class="outline-button secondary">
+            <a href="${company.website}/#contact" class="outline-button secondary">
               <i class="fas fa-headset"></i> Contacter le support
             </a>
           </div>
@@ -610,7 +609,7 @@ const emailTemplates = {
           <p>Si vous n'êtes pas à l'origine de cette demande, contactez-nous immédiatement.</p>
           
           <div class="action-buttons">
-            <a href="${company.website}/pages/auth/code-check.html" class="outline-button accent">
+            <a href="${company.website}/#pages/auth/code-check.html" class="outline-button accent">
               <i class="fas fa-key"></i> Réinitialiser
             </a>
             <a href="tel:${company.phone}" class="outline-button secondary">
@@ -704,7 +703,7 @@ const emailTemplates = {
             <a href="${company.website}" class="outline-button">
               <i class="fas fa-globe"></i> Notre site
             </a>
-            <a href="${company.website}/services" class="outline-button accent">
+            <a href="${company.website}/##services" class="outline-button accent">
               <i class="fas fa-concierge-bell"></i> Nos services
             </a>
             <a href="tel:${company.phone}" class="outline-button secondary">
@@ -842,7 +841,7 @@ const emailTemplates = {
             <a href="mailto:${data.email}?subject=Re:%20${encodeURIComponent(data.subjects || 'Votre message')}" class="outline-button accent">
               <i class="fas fa-reply"></i> Répondre
             </a>
-            <a href="${company.website}/admin/contacts/${data.id}" class="outline-button">
+            <a href="${company.website}/#admin/contacts/${data.id}" class="outline-button">
               <i class="fas fa-eye"></i> Voir dans l'admin
             </a>
             <a href="tel:${data.phone || company.phone}" class="outline-button secondary">
@@ -918,10 +917,10 @@ const emailTemplates = {
           <p>Si vous n'avez pas demandé ce changement, contactez immédiatement notre service client.</p>
           
           <div class="action-buttons">
-            <a href="${company.website}/pages/auth/code-check.html" class="outline-button accent">
+            <a href="${company.website}/#pages/auth/code-check.html" class="outline-button accent">
               <i class="fas fa-check-circle"></i> Confirmer
             </a>
-            <a href="${company.website}/contact" class="outline-button secondary">
+            <a href="${company.website}/#contact" class="outline-button secondary">
               <i class="fas fa-headset"></i> Support
             </a>
           </div>
@@ -991,7 +990,7 @@ const emailTemplates = {
           <p>Si vous n'avez pas demandé cette connexion, veuillez ignorer cet email.</p>
           
           <div class="action-buttons">
-            <a href="${company.website}/contact" class="outline-button secondary">
+            <a href="${company.website}/#contact" class="outline-button secondary">
               <i class="fas fa-headset"></i> Support
             </a>
           </div>
@@ -1068,7 +1067,7 @@ const emailTemplates = {
             <a href="${data.link || '#'}" class="outline-button accent">
               <i class="fas fa-eye"></i> Voir facture
             </a>
-            <a href="${company.website}/contact" class="outline-button secondary">
+            <a href="${company.website}/#contact" class="outline-button secondary">
               <i class="fas fa-headset"></i> Comptabilité
             </a>
           </div>
@@ -1170,7 +1169,7 @@ const emailTemplates = {
           <div class="divider"></div>
           
           <div class="action-buttons">
-            <a href="${company.website}/contact" class="outline-button accent">
+            <a href="${company.website}/#contact" class="outline-button accent">
               <i class="fas fa-envelope"></i> Nouveau message
             </a>
             <a href="${company.website}" class="outline-button">
@@ -1187,216 +1186,296 @@ const emailTemplates = {
     </body>
     </html>
   `,
-    reservationClientConfirmation: (data) => `
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      ${commonStyles}
-    </head>
-    <body>
-      <div class="email-container">
-        <div class="email-header">
-          <div class="logo-container">
-            <img src="${company.logo}" alt="${company.name}" class="logo">
-          </div>
-          <h1 class="header-title">Confirmation de Réservation</h1>
-          <p class="header-subtitle">Votre demande a bien été enregistrée</p>
-          <div class="email-date">
-            ${getFormattedDate(data.createdAt)}
-          </div>
+ reservationClientConfirmation: (data) => `
+  <!DOCTYPE html>
+  <html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    ${commonStyles}
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        <div class="logo-container">
+          <img src="${company.logo}" alt="${company.name}" class="logo">
         </div>
-        
-        <div class="email-content">
-          <p class="salutation">Cher(e) ${data.name || 'Client'},</p>
-          
-          <div class="message-section">
-            <p>Nous accusons réception de votre réservation pour le service "${data.serviceName}" et vous remercions pour votre confiance. Notre équipe l'examinera et vous contactera sous 24h pour confirmer les détails et planifier l'intervention.</p>
-          </div>
-          
-          <div class="info-section">
-            <div class="info-section-title">
-              <i class="fas fa-user-circle"></i> Vos Coordonnées
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-value">${data.name || 'Non spécifié'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">${data.email || 'Non spécifié'}</span>
-              </div>
-              ${data.phone ? `
-              <div class="info-item">
-                <span class="info-value">${data.phone}</span>
-              </div>
-              ` : ''}
-              <div class="info-item">
-                <span class="info-value">${data.address || 'Non spécifié'}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="info-section">
-            <div class="info-section-title">
-              <i class="fas fa-calendar-check"></i> Détails de la Réservation
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-value">Service : ${data.serviceName} (${data.serviceCategory})</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">Date souhaitée : ${data.date || 'Non spécifiée'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">Fréquence : ${data.frequency || 'Non spécifiée'}</span>
-              </div>
-              ${data.options ? `
-              <div class="info-item">
-                <span class="info-value">Options : ${data.options.replace(/-/g, ', ')}</span>
-              </div>
-              ` : ''}
-            </div>
-          </div>
-          
-          ${data.message ? `
-          <div class="message-box">
-            <div class="message-box-title">
-              <i class="fas fa-comment-alt"></i> Vos Instructions
-            </div>
-            <p>${data.message}</p>
-          </div>
-          ` : ''}
-          
-          <div class="divider"></div>
-          
-          <div class="action-buttons">
-            <a href="${company.website}" class="outline-button">
-              <i class="fas fa-globe"></i> Notre site
-            </a>
-            <a href="${company.website}/services" class="outline-button accent">
-              <i class="fas fa-concierge-bell"></i> Nos services
-            </a>
-            <a href="tel:${company.phone}" class="outline-button secondary">
-              <i class="fas fa-phone"></i> Nous appeler
-            </a>
-          </div>
+        <h1 class="header-title">Confirmation de Réservation</h1>
+        <p class="header-subtitle">Votre service a été planifié avec succès</p>
+        <div class="email-date">
+          ${getFormattedDate(data.createdAt)}
         </div>
-        
-        ${getEmailFooter()}
       </div>
-    </body>
-    </html>
-  `,
+      
+      <div class="email-content">
+        <p class="salutation">Cher(e) ${data.name || 'Client'},</p>
+        
+        <div class="message-section">
+          <p>Nous vous remercions d'avoir choisi <strong>${company.name}</strong> pour votre demande de service.</p>
+          <p>Votre réservation pour <strong>"${data.serviceName}"</strong> a bien été enregistrée dans notre système. Voici le récapitulatif de votre demande :</p>
+        </div>
+        
+        <div class="info-section">
+          <div class="info-section-title">
+            <i class="fas fa-user-circle"></i> Vos Informations
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Nom</div>
+              <span class="info-value">${data.name || 'Non spécifié'}</span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Email</div>
+              <span class="info-value">${data.email || 'Non spécifié'}</span>
+            </div>
+            ${data.phone ? `
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Téléphone</div>
+              <span class="info-value">${data.phone}</span>
+            </div>
+            ` : ''}
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Adresse</div>
+              <span class="info-value">${data.address || 'Non spécifié'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <div class="info-section-title">
+            <i class="fas fa-calendar-check"></i> Détails de la Réservation
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Service</div>
+              <span class="info-value">${data.serviceName || 'Non spécifié'} <span style="color: ${colors.accent}; font-size: 12px;">(${data.serviceCategory || 'Catégorie'})</span></span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Date</div>
+              <span class="info-value" style="color: ${colors.primary}; font-weight: 600;">
+                ${data.date}
+              </span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase;">Horaire</div>
+              <span class="info-value" style="color: ${colors.accent}; font-weight: 600;">${data.hour || 'Heure flexible'}</span>
+            </div>
+           
+          </div>
+        </div>
+        
+        ${data.message ? `
+        <div class="info-section">
+          <div class="info-section-title">
+            <i class="fas fa-comment-alt"></i> Vos Instructions Spéciales
+          </div>
+          <div class="message-box" style="background-color: ${colors.light}; padding: 15px; border-radius: 6px; border-left: 4px solid ${colors.accent};">
+            <p style="margin: 0; font-style: italic; line-height: 1.6;">"${data.message}"</p>
+          </div>
+        </div>
+        ` : ''}
+        
+        <div class="divider"></div>
+        
+        <div class="info-section" style="background-color: rgba(53, 130, 174, 0.05); border-color: ${colors.primary};">
+          <div class="info-section-title" style="color: ${colors.primary};">
+            <i class="fas fa-clock"></i> Prochaines Étapes
+          </div>
+          <div style="padding: 15px;">
+            <ol style="padding-left: 20px; margin: 0;">
+              <li style="margin-bottom: 10px;"><strong>Confirmation sous 24h</strong> : Notre équipe vous contactera pour finaliser les détails.</li>
+              <li style="margin-bottom: 10px;"><strong>Préparation</strong> : Préparez l'accès à votre espace pour l'intervention.</li>
+            </ol>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="${company.website}/#contact" class="outline-button">
+            <i class="fas fa-headset"></i> Modifier ma réservation
+          </a>
+          <a href="tel:${company.phone}" class="outline-button accent">
+            <i class="fas fa-phone"></i> Nous appeler (${company.phone})
+          </a>
+          <a href="${company.website}/#services" class="outline-button secondary">
+            <i class="fas fa-concierge-bell"></i> Découvrir nos autres services
+          </a>
+        </div>
+        
+        <div style="text-align: center; margin-top: 25px; padding: 15px; background-color: ${colors.light}; border-radius: 8px; border: 1px solid ${colors.border};">
+          <i class="fas fa-info-circle" style="color: ${colors.accent}; margin-right: 8px;"></i>
+          <span style="font-size: 13px; color: ${colors.secondary};">
+            Cette confirmation ne garantit pas la disponibilité exacte. Un membre de notre équipe vous contactera pour confirmer.
+          </span>
+        </div>
+      </div>
+      
+      ${getEmailFooter()}
+    </div>
+  </body>
+  </html>
+`,
 
-  reservationAdminNotification: (data) => `
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      ${commonStyles}
-    </head>
-    <body>
-      <div class="email-container">
-        <div class="email-header">
-          <div class="logo-container">
-            <img src="${company.logo}" alt="${company.name}" class="logo">
-          </div>
-          <h1 class="header-title">Nouvelle Réservation</h1>
-          <p class="header-subtitle">Action requise - Planification</p>
-          <div class="email-date">
-            ${getFormattedDate(data.createdAt)}
-          </div>
+reservationAdminNotification: (data) => `
+  <!DOCTYPE html>
+  <html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    ${commonStyles}
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        <div class="logo-container">
+          <img src="${company.logo}" alt="${company.name}" class="logo">
         </div>
-        
-        <div class="email-content">
-          <p class="salutation">Cher administrateur,</p>
-          
-          <div class="message-section">
-            <p>Une nouvelle réservation a été reçue et nécessite votre attention pour planification et confirmation.</p>
-          </div>
-          
-          <div class="info-section">
-            <div class="info-section-title">
-              <i class="fas fa-user-tie"></i> Informations Client
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-value">${data.name || 'Non spécifié'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">${data.email || 'Non spécifié'}</span>
-              </div>
-              ${data.phone ? `
-              <div class="info-item">
-                <span class="info-value">${data.phone}</span>
-              </div>
-              ` : ''}
-              <div class="info-item">
-                <span class="info-value">${data.address || 'Non spécifié'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">ID Réservation : ${data.id}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="info-section">
-            <div class="info-section-title">
-              <i class="fas fa-calendar-check"></i> Détails Réservation
-            </div>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-value">Service : ${data.serviceName} (${data.serviceCategory})</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">Date souhaitée : ${data.date || 'Non spécifiée'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-value">Fréquence : ${data.frequency || 'Non spécifiée'}</span>
-              </div>
-              ${data.options ? `
-              <div class="info-item">
-                <span class="info-value">Options : ${data.options.replace(/-/g, ', ')}</span>
-              </div>
-              ` : ''}
-            </div>
-          </div>
-          
-          ${data.message ? `
-          <div class="message-box">
-            <div class="message-box-title">
-              <i class="fas fa-comment-alt"></i> Instructions Spéciales
-            </div>
-            <p>${data.message}</p>
-          </div>
-          ` : ''}
-          
-          <div class="divider"></div>
-          
-          <div class="action-buttons">
-            <a href="mailto:${data.email}?subject=Re:%20Confirmation%20Réservation%20${data.id}" class="outline-button accent">
-              <i class="fas fa-reply"></i> Confirmer par email
-            </a>
-            <a href="${company.website}/admin/reservations/${data.id}" class="outline-button">
-              <i class="fas fa-eye"></i> Voir dans l'admin
-            </a>
-            <a href="tel:${data.phone || company.phone}" class="outline-button secondary">
-              <i class="fas fa-phone"></i> Appeler le client
-            </a>
-          </div>
+        <h1 class="header-title">🔔 NOUVELLE RÉSERVATION</h1>
+        <p class="header-subtitle">Action requise - Planification urgente</p>
+        <div class="email-date">
+          ${getFormattedDate(data.createdAt)}
         </div>
-        
-        ${getEmailFooter()}
       </div>
-    </body>
-    </html>
-  `,
+      
+      <div class="email-content">
+        <p class="salutation">Cher équipe ${company.name},</p>
+        
+        <div class="message-section">
+          <p>Une nouvelle réservation vient d'être reçue sur le site. Voici les détails complets nécessaires pour planifier et confirmer l'intervention.</p>
+          <p style="color: ${colors.primary}; font-weight: 600;">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+            Cette réservation nécessite une réponse sous 24h maximum.
+          </p>
+        </div>
+        
+        <div class="info-section" style="border-left: 4px solid ${colors.primary};">
+          <div class="info-section-title">
+            <i class="fas fa-user-tie"></i> FICHE CLIENT
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Nom complet</div>
+              <span class="info-value" style="font-size: 16px; font-weight: 700;">${data.name || 'Non spécifié'}</span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Email</div>
+              <span class="info-value">
+                <a href="mailto:${data.email}" style="color: ${colors.primary}; text-decoration: none;">${data.email || 'Non spécifié'}</a>
+              </span>
+            </div>
+            ${data.phone ? `
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Téléphone</div>
+              <span class="info-value">
+                <a href="tel:${data.phone}" style="color: ${colors.primary}; text-decoration: none; font-weight: 600;">${data.phone}</a>
+              </span>
+            </div>
+            ` : ''}
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Adresse complète</div>
+              <span class="info-value">${data.address || 'Non spécifié'}</span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Référence</div>
+              <span class="info-value" style="font-family: 'Courier New', monospace; background: ${colors.light}; padding: 4px 8px; border-radius: 4px;">${data.id || 'N/A'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-section" style="border-left: 4px solid ${colors.accent};">
+          <div class="info-section-title">
+            <i class="fas fa-calendar-alt"></i> DÉTAILS DE L'INTERVENTION
+          </div>
+          <div class="info-grid">
+            <div class="info-item" style="background-color: rgba(35, 149, 61, 0.05);">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Service demandé</div>
+              <span class="info-value" style="color: ${colors.accent}; font-weight: 700; font-size: 16px;">
+                ${data.serviceName || 'Non spécifié'} 
+                <span style="display: block; font-size: 12px; color: ${colors.dark}; font-weight: 400;">(${data.serviceCategory || 'Catégorie'})</span>
+              </span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Date souhaitée</div>
+              <span class="info-value" style="color: ${colors.primary}; font-weight: 600;">
+                ${data.date}
+              </span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Créneau horaire</div>
+              <span class="info-value" style="background-color: ${colors.light}; padding: 6px 12px; border-radius: 20px; font-weight: 600; border: 1px solid ${colors.border};">
+                ${data.hour || 'Heure flexible'}
+              </span>
+            </div>
+            <div class="info-item">
+              <div style="font-size: 11px; color: ${colors.secondary}; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Date de soumission</div>
+              <span class="info-value">${getFormattedDate(data.createdAt)}</span>
+            </div>
+          </div>
+        </div>
+        
+        ${data.message ? `
+        <div class="info-section" style="border-left: 4px solid #ff9800;">
+          <div class="info-section-title" style="color: #ff9800;">
+            <i class="fas fa-sticky-note"></i> INSTRUCTIONS DU CLIENT
+          </div>
+          <div style="padding: 20px; background-color: rgba(255, 152, 0, 0.05); border-radius: 6px; margin-top: 10px;">
+            <div style="font-size: 12px; color: ${colors.secondary}; margin-bottom: 8px; text-transform: uppercase;">Message important</div>
+            <div style="padding: 15px; background-color: ${colors.white}; border: 1px solid ${colors.border}; border-radius: 4px; font-style: italic;">
+              "${data.message}"
+            </div>
+          </div>
+        </div>
+        ` : ''}
+        
+        <div class="divider"></div>
+        
+        <div class="action-buttons">
+          <a href="mailto:${data.email}?subject=Confirmation%20de%20votre%20réservation%20${data.id}&body=Bonjour%20${encodeURIComponent(data.name || 'Client')}%2C%0A%0ANous%20accusons%20r%C3%A9ception%20de%20votre%20r%C3%A9servation%20pour%20le%20service%20%22${encodeURIComponent(data.serviceName)}%22.%20Nous%20vous%20contacterons%20dans%20les%2024h%20pour%20finaliser%20les%20d%C3%A9tails.%0A%0ACordialement%2C%0AL%26L%20Ouest%20Services" 
+             class="outline-button accent">
+            <i class="fas fa-envelope"></i> Confirmer par email
+          </a>
+          <a href="tel:${data.phone || company.phone}" class="outline-button">
+            <i class="fas fa-phone"></i> Appeler le client
+          </a>
+          <a href="${company.website}/#admin/reservations/${data.id}" class="outline-button secondary">
+            <i class="fas fa-tasks"></i> Gérer dans l'admin
+          </a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background-color: ${colors.light}; border-radius: 8px; border: 2px dashed ${colors.primary};">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <i class="fas fa-lightbulb" style="color: ${colors.accent}; font-size: 24px; margin-right: 15px;"></i>
+            <div>
+              <h3 style="color: ${colors.primary}; margin: 0 0 5px 0;">Check-list de suivi</h3>
+              <p style="margin: 0; color: ${colors.secondary}; font-size: 13px;">À vérifier avant la confirmation</p>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+            <div style="padding: 10px; background-color: ${colors.white}; border-radius: 4px; border: 1px solid ${colors.border};">
+              <div style="font-size: 12px; color: ${colors.secondary};">☐ Disponibilité équipe</div>
+            </div>
+            <div style="padding: 10px; background-color: ${colors.white}; border-radius: 4px; border: 1px solid ${colors.border};">
+              <div style="font-size: 12px; color: ${colors.secondary};">☐ Devis à préparer</div>
+            </div>
+            <div style="padding: 10px; background-color: ${colors.white}; border-radius: 4px; border: 1px solid ${colors.border};">
+              <div style="font-size: 12px; color: ${colors.secondary};">☐ Accessibilité adresse</div>
+            </div>
+            <div style="padding: 10px; background-color: ${colors.white}; border-radius: 4px; border: 1px solid ${colors.border};">
+              <div style="font-size: 12px; color: ${colors.secondary};">☐ Matériel nécessaire</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      ${getEmailFooter()}
+    </div>
+  </body>
+  </html>
+`,
 };
 
 function getEmailFooter() {
@@ -1406,7 +1485,7 @@ function getEmailFooter() {
         <div class="company-info">
           <div class="company-name">${company.name}</div>
           <div class="contact-info">
-            ${company.phone} • <a href="mailto:${company.email}">${company.email}</a><br>
+             <a href="tel:${company.phone}">${company.phone}</a> • <a href="mailto:${company.email}">${company.email}</a><br>
             ${company.address}
           </div>
         </div>

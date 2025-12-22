@@ -19,7 +19,7 @@ async function getFirebaseConfig() {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-cache' // Éviter le cache du navigateur pour les configs
+      cache: 'no-cache'
     });
     
     if (!response.ok) {

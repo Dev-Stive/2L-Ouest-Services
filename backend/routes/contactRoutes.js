@@ -15,23 +15,15 @@ const {
   deleteContact,
   getAllContacts,
   replyToContact,
-  createReservation,
-  getReservation,
-  updateReservation,
-  deleteReservation,
-  getAllReservations,
-  replyToReservation,
 } = require('../controllers/contactController');
 const { 
   contactSchema, 
   idSchema, 
   paginationSchema, 
   replySchema,
-  reservationSchema 
 } = require('../utils/validation/contactValidation');
 
 router.post('/', [rateLimitMiddleware, validationMiddleware(contactSchema)], createContact);
-router.post('/reservations', [rateLimitMiddleware, validationMiddleware(reservationSchema)], createReservation);
 
 router.use(authenticate);
 router.get('/:id', [validationMiddleware(idSchema)], getContact);
@@ -40,11 +32,5 @@ router.delete('/:id', [restrictTo(['client', 'admin']), validationMiddleware(idS
 router.get('/', [restrictTo(['admin']), validationMiddleware(paginationSchema)], getAllContacts);
 router.post('/:id/reply', [restrictTo(['admin']), validationMiddleware(replySchema)], replyToContact);
 
-// Routes pour les réservations
-router.get('/reservations/:id', [validationMiddleware(idSchema)], getReservation);
-router.put('/reservations/:id', [restrictTo(['client', 'admin']), validationMiddleware(reservationSchema)], updateReservation);
-router.delete('/reservations/:id', [restrictTo(['client', 'admin']), validationMiddleware(idSchema)], deleteReservation);
-router.get('/reservations', [restrictTo(['admin']), validationMiddleware(paginationSchema)], getAllReservations);
-router.post('/reservations/:id/reply', [restrictTo(['admin']), validationMiddleware(replySchema)], replyToReservation);
 
 module.exports = router;

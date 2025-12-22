@@ -14,6 +14,8 @@ const reviewRoutes = require('./reviewRoutes');
 const serviceRoutes = require('./serviceRoutes');
 const userRoutes = require('./userRoutes');
 const configRoutes = require('./config');
+const reservationRoutes = require('./reservationRoutes');
+
 
 module.exports = {
   authRoutes,
@@ -26,4 +28,5 @@ module.exports = {
   serviceRoutes,
   userRoutes,
   configRoutes,
+  reservationRoutes
 };

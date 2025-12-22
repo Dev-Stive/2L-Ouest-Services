@@ -457,6 +457,7 @@ html.transition-none, html.transition-none * {
 
 .animate-fade-in-right {
     animation: fade-in-right 1s ease-out;
+    color: #3191ff;
 }
 
 #banner-carousel, #product-carousel {

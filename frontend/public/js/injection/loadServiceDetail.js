@@ -8,9 +8,7 @@
  * Ajout: Main dédié pour affichage loading du service (#service-loading-main), togglé explicitement ici pour cohérence.
  * Ajout: Paramètre URL 'reserve=true' pour ouvrir directement la modale de réservation après rendu.
  *
- * MODIFICATIONS: Refactorisation du chargement dans loadAndRenderServiceDetail pour une vérification anticipée
- * et une gestion plus robuste de la disponibilité du service avant affichage.
- */
+ * */
 
 import { loadUserData } from '../loadData.js';
 import reservation from '../modules/reservation.js';
@@ -21,6 +19,172 @@ import { loadServices, renderServicesSidebar } from './loadService.js';
 let allServices = [];
 let currentUser = null;
 let currentServiceIndex = 0;
+
+// Configuration des équipements avec images PNG
+const equipmentIcons = {
+    vacuum: {
+        name: 'Aspirateur',
+        image: '/assets/images/equipments/vacuum.png'
+    },
+    mop: {
+        name: 'Balai',
+        image: '/assets/images/equipments/mop.png'
+    },
+    spray: {
+        name: 'Pulvérisateur',
+        image: '/assets/images/equipments/spray.png'
+    },
+    broom: {
+        name: 'Balai',
+        image: '/assets/images/equipments/broom.png'
+    },
+    bucket: {
+        name: 'Seau',
+        image: '/assets/images/equipments/bucket.png'
+    },
+    cloth: {
+        name: 'Chiffon',
+        image: '/assets/images/equipments/cloth.png'
+    },
+    polisher: {
+        name: 'Polisseuse',
+        image: '/assets/images/equipments/polisher.png'
+    },
+    brush: {
+        name: 'Brosse',
+        image: '/assets/images/equipments/brush.png'
+    },
+    duster: {
+        name: 'Plumeau',
+        image: '/assets/images/equipments/duster.png'
+    },
+    scraper: {
+        name: 'Raclette',
+        image: '/assets/images/equipments/scraper.png'
+    },
+    pressure_washer: {
+        name: 'Nettoyeur haute pression',
+        image: '/assets/images/equipments/pressure_washer.png'
+    },
+    steam_cleaner: {
+        name: 'Nettoyeur vapeur',
+        image: '/assets/images/equipments/steam_cleaner.png'
+    },
+    floor_machine: {
+        name: 'Machine à laver les sols',
+        image: '/assets/images/equipments/floor_machine.png'
+    },
+    car_machine: {
+        name: 'Machine à laver les voitures',
+        image: '/assets/images/equipments/car_machine.png'
+    },
+    feather_duster: {
+        name: 'Plumeau à poussière',
+        image: '/assets/images/equipments/feather_duster.png'
+    },
+    microfiber_cloth: {
+        name: 'Chiffon microfibre',
+        image: '/assets/images/equipments/microfiber_cloth.png'
+    },
+    window_squeegee: {
+        name: 'Raclette à vitres',
+        image: '/assets/images/equipments/window_squeegee.png'
+    },
+    industrial_vacuum: {
+        name: 'Aspirateur industriel',
+        image: '/assets/images/equipments/industrial_vacuum.png'
+    },
+    disinfectant_sprayer: {
+        name: 'Pulvérisateur désinfectant',
+        image: '/assets/images/equipments/disinfectant_sprayer.png'
+    },
+    uv_sanitizer: {
+        name: 'Sanitiseur UV',
+        image: '/assets/images/equipments/uv_sanitizer.png'
+    },
+    medical_waste_container: {
+        name: 'Conteneur déchets médicaux',
+        image: '/assets/images/equipments/medical_waste_container.png'
+    },
+    car_vacuum: {
+        name: 'Aspirateur auto',
+        image: '/assets/images/equipments/car_vacuum.png'
+    },
+    // Fallback générique
+    fallback: {
+        name: 'Équipement',
+        image: '/assets/images/equipments/fallback.png'
+    }
+};
+
+/**
+ * Fonction utilitaire pour gérer les images manquantes avec fallback et retry
+ * @param {HTMLElement} imgElement - L'élément image
+ */
+function handleImageError(imgElement) {
+    const originalSrc = imgElement.dataset.src;
+    const fallbackSrc = imgElement.dataset.fallback || '/assets/images/equipments/fallback.png';
+    
+    if (imgElement.src !== fallbackSrc) {
+        // Premier échec, essayer le fallback
+        imgElement.src = fallbackSrc;
+        imgElement.classList.remove('filter', 'blur-sm', 'loading-image');
+        
+        // Retry l'image originale après 2 secondes
+        setTimeout(() => {
+            const retryImg = new Image();
+            retryImg.onload = () => {
+                imgElement.src = originalSrc;
+                imgElement.classList.remove('filter', 'blur-sm');
+            };
+            retryImg.src = originalSrc;
+        }, 2000);
+    }
+}
+
+/**
+ * Fonction pour précharger les images d'équipement
+ * @param {Array} services - Liste des services
+ */
+async function preloadEquipmentImages(services) {
+    const imagePromises = [];
+    const loadedImages = new Set();
+    
+    services.forEach(service => {
+        if (service.equipment && Array.isArray(service.equipment)) {
+            service.equipment.forEach(eq => {
+                if (eq.image && !loadedImages.has(eq.image)) {
+                    loadedImages.add(eq.image);
+                    
+                    const promise = new Promise((resolve) => {
+                        const img = new Image();
+                        img.src = eq.image;
+                        
+                        img.onload = () => {
+                            resolve({ src: eq.image, success: true });
+                        };
+                        
+                        img.onerror = () => {
+                            const fallbackImg = new Image();
+                            fallbackImg.src = '/assets/images/equipments/fallback.png';
+                            eq.image = '/assets/images/equipments/fallback.png';
+                            resolve({ src: eq.image, success: false });
+                        };
+                    });
+                    
+                    imagePromises.push(promise);
+                }
+            });
+        }
+    });
+    
+    try {
+        await Promise.allSettled(imagePromises);
+        console.log('Images d\'équipement préchargées avec succès');
+    } catch (error) {
+        console.warn('Certaines images n\'ont pas pu être préchargées:', error);
+    }
+}
 
 /**
  * Toggle pour le main de chargement du service
@@ -52,7 +216,6 @@ function renderStarRating(rating, prefix = '') {
 
     let stars = '';
     
-    // Étoiles pleines
     for (let i = 0; i < fullStars; i++) {
         stars += `
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="url(#gold-gradient-${prefix}${i})" stroke="currentColor" stroke-width="1" class="star-filled hover:scale-110 transition-all duration-300" data-rating="${i + 1}" aria-hidden="true">
@@ -112,7 +275,6 @@ function renderContent(isFound, service = null, index = 0, total = 1) {
         showNotification('Service non trouvé.', 'error');
     }
 
-    // Masquer loading overlay et main loading
     toggleServiceLoadingMain(false);
 }
 
@@ -145,12 +307,12 @@ export function renderServiceDetail(service, index = 0, total = 1) {
                 'Garantie satisfaction 100%'
             ],
             equipment: [
-                { icon: equipmentIcons.vacuum.svg, name: equipmentIcons.vacuum.name },
-                { icon: equipmentIcons.mop.svg, name: equipmentIcons.mop.name },
-                { icon: equipmentIcons.spray.svg, name: equipmentIcons.spray.name },
-                { icon: equipmentIcons.brush.svg, name: 'Brosse spécialisée' },
-                { icon: equipmentIcons.glove.svg, name: 'Équipement de protection' },
-                { icon: equipmentIcons.truck.svg, name: 'Flotte de véhicules' }
+                { name: equipmentIcons.vacuum.name, image: equipmentIcons.vacuum.image },
+                { name: equipmentIcons.mop.name, image: equipmentIcons.mop.image },
+                { name: equipmentIcons.spray.name, image: equipmentIcons.spray.image },
+                { name: equipmentIcons.brush.name, image: equipmentIcons.brush.image },
+                { name: 'Équipement de protection', image: '/assets/images/equipments/fallback.png' },
+                { name: 'Flotte de véhicules', image: '/assets/images/equipments/fallback.png' }
             ],
             members: [
                 { name: 'Jean Dupont', role: 'Responsable Technique Senior', photo: '/assets/images/team/technician-1.jpg', experience: '8 ans' },
@@ -303,23 +465,42 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         featuresEl.innerHTML = featureElements;
     }
 
-    // 5. Équipements premium avec animations
+    // 5. Équipements premium avec images PNG et effet de flou pendant chargement
     const equipmentEl = document.getElementById('service-equipment-detailed');
     if (equipmentEl) {
         const equipment = service.equipment || [];
-        equipmentEl.innerHTML = equipment.map((eq, idx) => `
-            <div class="equipment-item group relative perspective-[100px]" data-aos="zoom-in" data-aos-delay="${idx * 150}">
-                <div class="w-full aspect-square bg-gradient-to-br from-ll-white to-ll-light-bg dark:from-ll-black dark:to-l-black/50 rounded-3xl shadow-lg hover:shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500 hover:scale-105 [transform-style:preserve-3d] hover:rotate-y-5 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                    <div class="text-5xl mb-3 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2">
-                        ${eq.icon}
+        equipmentEl.innerHTML = equipment.map((eq, idx) => {
+            const fallbackImage = '/assets/images/equipments/fallback.png';
+            const imageSrc = eq.image || fallbackImage;
+            const equipmentName = eq.name || equipmentIcons.fallback.name;
+            
+            return `
+                <div class="equipment-item group relative perspective-[100px]" data-aos="zoom-in" data-aos-delay="${idx * 150}">
+                    <div class="w-full aspect-square bg-gradient-to-br from-ll-white to-ll-light-bg dark:from-ll-black dark:to-l-black/50 rounded-3xl shadow-lg hover:shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500 hover:scale-105 [transform-style:preserve-3d] hover:rotate-y-5 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                        <!-- Conteneur d'image avec effet de flou -->
+                        <div class="relative w-20 h-20 mb-3 overflow-hidden flex items-center justify-center">
+                            <img 
+                                src="${imageSrc}" 
+                                alt="${equipmentName}"
+                                class="w-full h-full object-contain no-lightbox filter blur-sm transition-all duration-500 group-hover:filter-none loading-image"
+                                data-src="${imageSrc}"
+                                data-fallback="${fallbackImage}"
+                                 onerror="this.src='${fallbackImage}'; this.classList.remove('filter', 'blur-sm')"
+                                onload="this.classList.remove('filter', 'blur-sm', 'loading-image')"
+                            />
+                            <!-- Indicateur de chargement -->
+                            <div class="absolute inset-0 flex items-center justify-center loading-overlay">
+                                <div class="w-6 h-6 border-2 border-ll-blue border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-600 dark:text-gray-400 font-medium capitalize block mt-2">${equipmentName}</span>
+                        <div class="absolute bottom-0 left-0 right-0 dark:bg-gradient-to-t from-ll-black/80 to-transparent p-4 text-center transform translate-y-0 group-hover:translate-y-full transition-transform duration-300">
+                            <span class="text-ll-white text-sm font-medium block">${equipmentName}</span>
+                        </div>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 dark:bg-gradient-to-t from-ll-black/80 to-transparent p-4 text-center transform translate-y-0 group-hover:translate-y-full transition-transform duration-300">
-                        <span class="text-ll-white text-sm font-medium block">${eq.name}</span>
-                    </div>
-                   
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     // 6. Équipe professionnelle avec cartes détaillées
@@ -408,14 +589,13 @@ export function renderServiceDetail(service, index = 0, total = 1) {
         });
     });
 
-    
-    // 11. Mise à jour de la sidebar
-    renderServicesSidebar(allServices);
-
+    // 10. Mise à jour de la sidebar
+    if (allServices.length > 0) {
+        renderServicesSidebar(allServices);
+    }
 
     console.log('Service detail rendered professionally:', service.name);
 }
-
 
 /**
  * Chargement async principal avec gestion d'erreur robuste, vérification du service en amont.
@@ -451,13 +631,15 @@ async function loadAndRenderServiceDetail() {
 
         if (serviceIndex === -1) {
             console.error('Service non trouvé:', serviceId);
-            // On appelle renderContent(false) pour afficher la page d'erreur
             renderContent(false);
             return;
         }
 
         // 5. Service trouvé : Démarrer le rendu et les actions
         const foundService = allServices[serviceIndex];
+        
+        // Précharger les images d'équipement
+        await preloadEquipmentImages([foundService]);
         
         await updatePageTitle(foundService);
         
@@ -470,7 +652,6 @@ async function loadAndRenderServiceDetail() {
             reservation.openReservationModal(foundService, currentUser);
         }
 
-        // 7. Initialisation du système de réservation (si formulaire présent)
         if (document.getElementById('reservation-form')) {
             reservation.init();
         }
@@ -511,8 +692,6 @@ async function updatePageTitle(service) {
         console.error('Erreur lors de la mise à jour du titre:', error);
     }
 }
-
-
 
 /**
  * Écouteur principal

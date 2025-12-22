@@ -10,7 +10,7 @@ import {
   handleApiError,
   monitorBackend,
   stopMonitoring,
-  waitForAuthState
+  waitForAuthState,
 } from './modules/utils.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
 import Api from './api.js';
@@ -57,22 +57,56 @@ function initLoadingElements() {
  * @param {string} subtext - Sous-texte optionnel.
  * @param {string} iconType - Type d'icône : 'network', 'firebase', 'auth', 'backend', 'modules', 'default'.
  */
-function updateLoadingStatus(text, subtext = '', iconType = 'default') {
-  if (!loadingTextElement) return;
+export function updateLoadingStatus(text, subtext = '', iconType = 'default') {
+  if (!loadingTextElement || !loadingSubtextElement || !loadingIconElement) return;
 
-  // Messages par défaut
-  const statusMessages = {
-    network: { text: 'Vérification de votre connexion...', subtext: 'Assurons-nous que tout est connecté.' },
-    firebase: { text: 'Initialisation de Firebase...', subtext: 'Chargement des services sécurisés.' },
-    auth: { text: 'Vérification de votre session...', subtext: 'Récupération de vos informations personnelles.' },
-    backend: { text: 'Connexion au serveur...', subtext: 'Le backend se réveille (cold start Render ?).' },
-    modules: { text: 'Chargement des modules...', subtext: 'Préparation de l\'interface utilisateur.' },
-    default: { text: 'Chargement de L&L Ouest Services', subtext: 'Veuillez patienter...' }
+  // Messages adaptés pour les utilisateurs
+  const messages = {
+    network: { 
+      text: 'Connexion en cours...', 
+      subtext: 'Vérification de votre accès internet.' 
+    },
+    backend: { 
+      text: 'Préparation en cours...', 
+      subtext: 'Veuillez patienter quelques instants.' 
+    },
+    firebase: { 
+      text: 'Sécurité en cours...', 
+      subtext: 'Chargement des protections.' 
+    },
+    auth: { 
+      text: 'Vérification de compte...', 
+      subtext: 'Récupération de vos informations.' 
+    },
+    modules: { 
+      text: 'Interface en préparation...', 
+      subtext: 'Chargement des fonctionnalités.' 
+    },
+    success: {
+      text: 'Prêt !',
+      subtext: 'Ouverture de votre espace...'
+    },
+    default: { 
+      text: 'Bienvenue chez L&L Ouest Services', 
+      subtext: 'Chargement en cours...' 
+    }
   };
 
-  const status = statusMessages[iconType] || statusMessages.default;
-  loadingTextElement.textContent = text || status.text;
-  loadingSubtextElement.textContent = subtext || status.subtext;
+  const status = messages[iconType] || messages.default;
+  
+  // Transition fluide
+  loadingTextElement.style.opacity = '0';
+  loadingSubtextElement.style.opacity = '0';
+  
+  setTimeout(() => {
+    loadingTextElement.textContent = text || status.text;
+    loadingSubtextElement.textContent = subtext || status.subtext;
+    
+    loadingTextElement.style.transition = 'opacity 0.3s ease';
+    loadingSubtextElement.style.transition = 'opacity 0.3s ease';
+    loadingTextElement.style.opacity = '1';
+    loadingSubtextElement.style.opacity = '1';
+  }, 150);
 
   const icons = {
     network: '<svg class="w-6 h-6 text-blue-400 animate-pulse"version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect x="10.779" y="60.901" style="fill:#FF7D46;" width="490.442" height="130.07"></rect> <rect x="371.874" y="104.017" style="fill:#EFEFEF;" width="86.232" height="43.835"></rect> <rect x="10.779" y="190.971" style="fill:#FF7D46;" width="490.442" height="130.07"></rect> <rect x="371.874" y="234.086" style="fill:#EFEFEF;" width="86.232" height="43.835"></rect> <rect x="10.779" y="321.029" style="fill:#FF7D46;" width="490.442" height="130.07"></rect> <rect x="371.874" y="364.145" style="fill:#EFEFEF;" width="86.232" height="43.835"></rect> <g> <path style="fill:#231F20;" d="M501.221,50.122H10.779C4.827,50.122,0,54.948,0,60.901v390.198c0,5.953,4.827,10.779,10.779,10.779 h490.442c5.952,0,10.779-4.826,10.779-10.779V60.901C512,54.948,507.173,50.122,501.221,50.122z M21.558,201.746h468.884v108.508 H21.558V201.746z M21.558,71.68h468.884v108.508H21.558V71.68z M490.442,440.32H21.558V331.812h468.884V440.32z"></path> <path style="fill:#231F20;" d="M458.105,93.238h-86.232c-5.952,0-10.779,4.826-10.779,10.779v43.835 c0,5.953,4.827,10.779,10.779,10.779h86.232c5.952,0,10.779-4.826,10.779-10.779v-43.835 C468.884,98.064,464.057,93.238,458.105,93.238z M447.326,137.073h-64.674v-22.277h64.674V137.073z"></path> <path style="fill:#231F20;" d="M458.105,223.304h-86.232c-5.952,0-10.779,4.826-10.779,10.779v43.835 c0,5.953,4.827,10.779,10.779,10.779h86.232c5.952,0,10.779-4.826,10.779-10.779v-43.835 C468.884,228.13,464.057,223.304,458.105,223.304z M447.326,267.138h-64.674v-22.277h64.674V267.138z"></path> <path style="fill:#231F20;" d="M371.874,418.762h86.232c5.952,0,10.779-4.826,10.779-10.779v-43.835 c0-5.953-4.827-10.779-10.779-10.779h-86.232c-5.952,0-10.779,4.826-10.779,10.779v43.835 C361.095,413.936,365.922,418.762,371.874,418.762z M382.653,374.927h64.674v22.277h-64.674V374.927z"></path> <path style="fill:#231F20;" d="M66.829,115.151c-2.847,0-5.616,1.153-7.621,3.158s-3.158,4.786-3.158,7.621 c0,2.846,1.152,5.616,3.158,7.621c2.005,2.016,4.775,3.158,7.621,3.158c2.835,0,5.616-1.143,7.62-3.158 c2.005-2.005,3.159-4.775,3.159-7.621c0-2.835-1.153-5.616-3.159-7.621C72.445,116.304,69.664,115.151,66.829,115.151z"></path> <path style="fill:#231F20;" d="M118.568,115.151c-5.951,0-10.779,4.829-10.779,10.779c0,5.961,4.828,10.779,10.779,10.779 c5.95,0,10.779-4.818,10.779-10.779C129.347,119.98,124.518,115.151,118.568,115.151z"></path> <path style="fill:#231F20;" d="M170.307,115.151c-2.835,0-5.616,1.153-7.621,3.158c-2.005,2.005-3.158,4.786-3.158,7.621 c0,2.835,1.152,5.616,3.158,7.621c2.005,2.016,4.786,3.158,7.621,3.158s5.616-1.143,7.62-3.158 c2.005-2.005,3.159-4.786,3.159-7.621c0-2.835-1.153-5.616-3.159-7.621C175.923,116.304,173.142,115.151,170.307,115.151z"></path> <path style="fill:#231F20;" d="M66.829,245.221c-2.847,0-5.616,1.153-7.621,3.158s-3.158,4.786-3.158,7.621 c0,2.835,1.152,5.616,3.158,7.621c2.005,2.005,4.775,3.158,7.621,3.158c2.835,0,5.616-1.153,7.62-3.158 c2.005-2.005,3.159-4.786,3.159-7.621c0-2.835-1.153-5.616-3.159-7.621C72.445,246.373,69.664,245.221,66.829,245.221z"></path> <path style="fill:#231F20;" d="M118.568,245.221c-5.951,0-10.779,4.829-10.779,10.779c0,5.95,4.828,10.779,10.779,10.779 c5.95,0,10.779-4.829,10.779-10.779C129.347,250.05,124.518,245.221,118.568,245.221z"></path> <path style="fill:#231F20;" d="M170.307,245.221c-2.835,0-5.616,1.153-7.621,3.158c-2.005,2.005-3.158,4.786-3.158,7.621 c0,2.835,1.152,5.616,3.158,7.621c2.005,2.005,4.786,3.158,7.621,3.158s5.616-1.153,7.62-3.158 c2.005-2.005,3.159-4.786,3.159-7.621c0-2.835-1.153-5.616-3.159-7.621C175.923,246.373,173.142,245.221,170.307,245.221z"></path> <path style="fill:#231F20;" d="M66.829,396.847c2.835,0,5.616-1.153,7.62-3.158c2.005-2.005,3.159-4.786,3.159-7.621 c0-2.846-1.153-5.616-3.159-7.621c-2.004-2.016-4.785-3.158-7.62-3.158c-2.847,0-5.616,1.143-7.621,3.158 c-2.005,2.005-3.158,4.786-3.158,7.621s1.152,5.616,3.158,7.621C61.214,395.695,63.983,396.847,66.829,396.847z"></path> <path style="fill:#231F20;" d="M118.568,396.847c5.95,0,10.779-4.829,10.779-10.779c0-5.961-4.829-10.779-10.779-10.779 c-5.951,0-10.779,4.818-10.779,10.779C107.789,392.018,112.617,396.847,118.568,396.847z"></path> <path style="fill:#231F20;" d="M170.307,396.847c2.835,0,5.616-1.153,7.62-3.158c2.005-2.005,3.159-4.786,3.159-7.621 s-1.153-5.616-3.159-7.632c-2.004-2.005-4.785-3.147-7.62-3.147s-5.616,1.143-7.621,3.147c-2.005,2.016-3.158,4.797-3.158,7.632 c0,2.835,1.152,5.616,3.158,7.621C164.692,395.695,167.472,396.847,170.307,396.847z"></path> <path style="fill:#231F20;" d="M279.887,115.151H247.19c-5.952,0-10.779,4.826-10.779,10.779c0,5.953,4.827,10.779,10.779,10.779 h32.697c5.952,0,10.779-4.826,10.779-10.779C290.666,119.977,285.84,115.151,279.887,115.151z"></path> <path style="fill:#231F20;" d="M279.887,245.218H247.19c-5.952,0-10.779,4.826-10.779,10.779s4.827,10.779,10.779,10.779h32.697 c5.952,0,10.779-4.826,10.779-10.779S285.84,245.218,279.887,245.218z"></path> <path style="fill:#231F20;" d="M247.19,396.842h32.697c5.952,0,10.779-4.826,10.779-10.779s-4.827-10.779-10.779-10.779H247.19 c-5.952,0-10.779,4.826-10.779,10.779S241.238,396.842,247.19,396.842z"></path> </g> </g></svg>',
@@ -84,12 +118,104 @@ function updateLoadingStatus(text, subtext = '', iconType = 'default') {
   };
 
   loadingIconElement.innerHTML = icons[iconType] || icons.default;
-
-  loadingIconElement.classList.add('transition-all', 'duration-300');
-  loadingIconElement.style.transform = 'scale(1.1)';
+  
+  // Animation douce
+  loadingIconElement.style.transform = 'scale(0.9)';
+  loadingIconElement.style.transition = 'transform 0.3s ease';
+  
   setTimeout(() => {
     loadingIconElement.style.transform = 'scale(1)';
-  }, 150);
+  }, 50);
+}
+
+
+
+/**
+ * Vérifie si le serveur est en cold start et attend son démarrage
+ * @param {Object} options - Options de configuration
+ * @returns {Promise<boolean>} true si le serveur est prêt
+ */
+export async function waitForServerReady(options = {}) {
+  const {
+    maxAttempts = 5,
+    initialDelay = 3000,
+    maxDelay = 30000,
+    context = 'Server Ready Check'
+  } = options;
+
+  console.log('🔄 Vérification de l\'état du serveur...');
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      updateLoadingStatus?.('Connexion au serveur...', 'Le serveur se réveille, veuillez patienter.', 'backend');
+      
+      const networkStatus = await checkNetwork({ context });
+      
+      if (networkStatus.backendConnected) {
+        console.log('✅ Serveur prêt après', attempt, 'tentative(s)');
+        updateLoadingStatus?.('Serveur prêt !', 'Chargement de l\'application...', 'success');
+        return true;
+      }
+
+      // Calcul du délai avec backoff exponentiel
+      const delay = Math.min(maxDelay, initialDelay * Math.pow(1.5, attempt - 1));
+      
+      if (attempt < maxAttempts) {
+        console.log(`⏳ Tentative ${attempt}/${maxAttempts} - Nouvel essai dans ${delay}ms`);
+        
+        // Message utilisateur progressif
+        const userMessage = attempt === 1 
+          ? 'Initialisation du serveur...'
+          : attempt === 2
+          ? 'Le serveur démarre, presque prêt...'
+          : 'Presque là, préparation finale...';
+        
+        updateLoadingStatus?.(userMessage, 'Veuillez patienter quelques instants supplémentaires.', 'backend');
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    } catch (error) {
+      console.warn(`⚠️ Erreur lors de la vérification (tentative ${attempt}):`, error.message);
+      
+      if (attempt === maxAttempts) {
+        console.error('❌ Impossible de contacter le serveur après', maxAttempts, 'tentatives');
+        return false;
+      }
+      
+      const delay = Math.min(maxDelay, initialDelay * Math.pow(1.5, attempt));
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  return false;
+}
+
+
+/**
+ * Affiche des messages d'attente pendant le chargement
+ */
+function showWaitingMessage(step, totalSteps) {
+  const messages = [
+    "Initialisation en cours...",
+    "Chargement des services...",
+    "Configuration finale...",
+    "Ouverture imminente..."
+  ];
+  
+  const subMessages = [
+    "Veuillez patienter",
+    "Préparation en cours",
+    "Quelques instants",
+    "Presque terminé"
+  ];
+  
+  const index = Math.min(step - 1, messages.length - 1);
+  
+  updateLoadingStatus(
+    messages[index] || "Chargement en cours",
+    subMessages[index] || "Merci de patienter",
+    'backend'
+  );
 }
 
 /**
@@ -407,119 +533,180 @@ function hideLoadingOverlay() {
  * Initialise l'application.
  * @returns {Promise<boolean>} Succès de l'initialisation.
  */
+// Modifier la fonction initializeApp
 async function initializeApp() {
   if (appInitialized) return true;
 
-  // Init overlay
   initLoadingElements();
+  const appStartTime = Date.now();
+  window.__APP_START_TIME__ = appStartTime;
 
   try {
-    window.__APP_START_TIME__ = Date.now();
-
-    updateLoadingStatus('Vérification de votre connexion...', 'Assurons-nous que tout est connecté.', 'network');
-    const networkStatus = await checkNetwork();
+    // Étape 1: Vérification réseau rapide
+    updateLoadingStatus('Vérification de la connexion...', 'Assurons-nous que tout est connecté.', 'network');
     
+    const networkStatus = await checkNetwork({ context: 'Initial Check', fastCheck: true });
+    
+    // Si le serveur n'est pas disponible, attendre son démarrage
     if (!networkStatus.backendConnected) {
-      updateLoadingStatus('Connexion au serveur...', 'Le backend se réveille (cold start Render ?).', 'backend');
-      await monitorBackend({ context: 'App Initialization' });
+      updateLoadingStatus('Connexion au serveur...', 'Le serveur se réveille, veuillez patienter.', 'backend');
+      
+      const serverReady = await waitForServerReady({
+        maxAttempts: 4,
+        initialDelay: 5000,
+        maxDelay: 15000,
+        context: 'App Initialization'
+      });
+      
+      if (!serverReady) {
+        await showNotification(
+          'Le serveur est temporairement indisponible. Mode dégradé activé.',
+          'warning',
+          false,
+          { timer: 5000 }
+        );
+        
+        // Continuer sans backend
+        firebaseInitialized = false;
+        appInitialized = true;
+        currentPage = getCurrentPage();
+        
+        // Masquer l'overlay rapidement
+        setTimeout(() => hideLoadingOverlay(), 1000);
+        return true;
+      }
     }
 
-    updateLoadingStatus('Initialisation de Firebase...', 'Chargement des services sécurisés.', 'firebase');
+    // Étape 2: Initialiser Firebase (sans bloquer sur les erreurs)
+    updateLoadingStatus('Initialisation des services...', 'Chargement des modules sécurisés.', 'firebase');
+    
     try {
-      const app = await initializeFirebase();
+      const app = await withRetries(() => initializeFirebase(), 3, 2000);
       firebaseInitialized = true;
       auth = getAuth(app);
-    } catch (error) {
+    } catch (firebaseError) {
+      console.warn('⚠️ Firebase non disponible, continuation en mode dégradé:', firebaseError.message);
       firebaseInitialized = false;
-      await handleApiError(error, 'Échec de l\'initialisation de l\'application', {
-        context: 'App Initialization',
-        isCritical: true,
-        sourceContext: 'initialization'
-      });
-      return false;
+      // Continuer sans Firebase
     }
 
-/*
-   
-*/
-
-
-    for (const module of Object.values(Api).filter(m => m.init)) {
-      await module.init();
+    // Étape 3: Initialiser les API (mode résilient)
+    updateLoadingStatus('Chargement des modules...', 'Préparation des fonctionnalités.', 'modules');
+    
+    const apiInitPromises = [];
+    for (const moduleName in Api) {
+      if (typeof Api[moduleName]?.init === 'function') {
+        apiInitPromises.push(
+          (async () => {
+            try {
+              await Api[moduleName].init();
+            } catch (error) {
+              console.warn(`⚠️ Module ${moduleName} non initialisé:`, error.message);
+              // Continuer sans ce module
+            }
+          })()
+        );
+      }
     }
+    
+    await Promise.allSettled(apiInitPromises);
+
+    // Étape 4: Démarrer la surveillance réseau
+    startNetworkMonitoring();
 
     appInitialized = true;
     currentPage = getCurrentPage();
 
-    startNetworkMonitoring();
-
+    const totalLoadTime = Date.now() - appStartTime;
+    console.log(`🚀 Application initialisée en ${totalLoadTime}ms`);
+    
     return true;
   } catch (error) {
-    await showNotification(`Erreur démarrage: ${error.message}`, 'error');
+    console.error('❌ Erreur critique d\'initialisation:', error);
+    
+    // Essayer de masquer l'overlay même en cas d'erreur
+    setTimeout(() => {
+      hideLoadingOverlay();
+      showNotification(
+        'Application chargée en mode limité. Certaines fonctionnalités peuvent être indisponibles.',
+        'warning',
+        false,
+        { timer: 8000 }
+      );
+    }, 2000);
+    
     return false;
   }
 }
 
+
 // Initialisation principale
 (async () => {
-  if (!await initializeApp()) return;
+  initLoadingElements();
+  
+  // Démarrer l'initialisation avec un léger délai pour lisser l'expérience
+  setTimeout(async () => {
+    if (!await initializeApp()) {
+      // Même en cas d'échec, on masque l'overlay après un délai
+      setTimeout(() => {
+        hideLoadingOverlay();
+        showNotification(
+          'Application disponible en mode limité. Rechargez la page pour réessayer.',
+          'info',
+          false,
+          { timer: 8000 }
+        );
+      }, 3000);
+      return;
+    }
 
-  if (firebaseInitialized && auth) {
-    try {
-      const user = await waitForAuthState(auth); 
-      const { isAuthenticated, userData } = await verifyAuthState(user);
-      
-      updateUIWithUserData(userData);
-      const pageInitSuccess = await initializePage(currentPage || getCurrentPage(), isAuthenticated, userData);
-      
-      if (pageInitSuccess) {
+    // Suite du code existant pour l'authentification et le chargement de la page...
+    if (firebaseInitialized && auth) {
+      try {
+        const user = await waitForAuthState(auth); 
+        const { isAuthenticated, userData } = await verifyAuthState(user);
+        
+        updateUIWithUserData(userData);
+        
+        // Mettre à jour le statut juste avant le chargement de la page
+        updateLoadingStatus('Chargement de la page...', 'Préparation du contenu.', 'modules');
+        
+        const pageInitSuccess = await initializePage(currentPage || getCurrentPage(), isAuthenticated, userData);
+        
+        if (pageInitSuccess) {
+          // Petit délai pour montrer le message de succès
+          updateLoadingStatus('Prêt !', 'Redirection vers votre espace...', 'success');
+          setTimeout(() => hideLoadingOverlay(), 1000);
+          
+          document.dispatchEvent(new CustomEvent('app:pageReady', {
+            detail: { page: currentPage, isAuthenticated, userData, timestamp: Date.now() }
+          }));
+        } else {
+          hideLoadingOverlay();
+        }
+      } catch (error) {
+        // En cas d'erreur, masquer l'overlay et continuer
         hideLoadingOverlay();
-        document.dispatchEvent(new CustomEvent('app:pageReady', {
-          detail: { page: currentPage, isAuthenticated, userData, timestamp: Date.now() }
-        }));
+        console.error('Erreur lors du chargement:', error);
       }
-    } catch (error) {
+    } else {
+      // Mode sans authentification
+      updateLoadingStatus('Chargement...', 'Préparation de l\'interface.', 'modules');
       const pageInitSuccess = await initializePage(currentPage || getCurrentPage(), false, null);
+      
       if (pageInitSuccess) {
-        hideLoadingOverlay();
-        document.dispatchEvent(new CustomEvent('app:pageReady', {
-          detail: { page: currentPage, isAuthenticated: false, userData: null, timestamp: Date.now(), mode: 'degraded' }
-        }));
+        setTimeout(() => hideLoadingOverlay(), 500);
       }
     }
     
-    document.addEventListener('auth:updated', async () => {
-      const userData = await loadUserData();
-      updateUIWithUserData(userData);
+    // Événements et nettoyage...
+    document.dispatchEvent(new CustomEvent('app:initialized', {
+      detail: { timestamp: Date.now(), firebaseReady: firebaseInitialized, page: currentPage }
+    }));
+
+    window.addEventListener('beforeunload', () => {
+      stopNetworkMonitoring();
     });
 
-  } else {
-    const pageInitSuccess = await initializePage(currentPage || getCurrentPage(), false, null);
-    if (pageInitSuccess) {
-      hideLoadingOverlay();
-      document.dispatchEvent(new CustomEvent('app:pageReady', {
-        detail: { page: currentPage, isAuthenticated: false, userData: null, timestamp: Date.now(), mode: 'degraded' }
-      }));
-    }
-  }
-
-  document.dispatchEvent(new CustomEvent('app:initialized', {
-    detail: { timestamp: Date.now(), firebaseReady: firebaseInitialized, page: currentPage }
-  }));
-
-  window.addEventListener('beforeunload', () => {
-    stopNetworkMonitoring();
-  });
-
-  window.addEventListener('popstate', async event => {
-    if (event.state?.page) {
-      currentPage = event.state.page;
-      const isAuthenticated = !!getStoredToken();
-      const userData = getCachedUserData();
-      const pageInitSuccess = await initializePage(currentPage, isAuthenticated, userData);
-      if (pageInitSuccess) {
-        hideLoadingOverlay();
-      }
-    }
-  });
+  }, 300); // Petit délai initial pour fluidité
 })();

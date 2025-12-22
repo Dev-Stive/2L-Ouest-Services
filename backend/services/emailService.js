@@ -37,9 +37,11 @@ class EmailService {
       config.mailersend.apiKey,
       'https://api.mailersend.com/v1'
     );
-    this.fromEmail = 'll-ouest-services.fr';
+
+
+    this.fromEmail = 'contact@test-pzkmgq7qkeyl059v.mlsender.net';
     this.fromName = 'L&L Ouest Services';
-    this.replyToEmail = 'contact@llouestservices.com';
+    this.replyToEmail = 'nanatchoffojunior@gmail.com';
     this.replyToName = 'L&L Ouest Services';
     this.isMailersendReady = true;
   }
@@ -209,7 +211,6 @@ class EmailService {
         throw new AppError(400, 'Données de contact incomplètes');
       }
 
-      // Charger et encoder le logo en base64
       const logoPath = path.join(__dirname, '../storage/logo.png');
       let logoBase64;
       try {
@@ -234,7 +235,7 @@ class EmailService {
         company: 'L&L Ouest Services',
         currentYear: new Date().getFullYear(),
         supportPhone: '+33 1 23 45 67 89',
-        website: 'https://www.llouestservices.com',
+        website: 'https://www.ll-ouest-services.fr',
         logoBase64,
         ...templateData,
       });
@@ -344,7 +345,7 @@ L&L Ouest Services`;
         currency: invoice.currency || '€',
         currentYear: new Date().getFullYear(),
         supportPhone: '+33 1 23 45 67 89',
-        website: 'https://www.llouestservices.com',
+        website: 'https://www.ll-ouest-services.fr',
         logoBase64,
         link: invoice.link || '#',
         ...additionalData,
@@ -460,7 +461,6 @@ L&L Ouest Services`;
         );
       }
 
-      // Envoi de la notification à l'admin (config.smtp.user ou fallback)
       if (adminHtmlTemplate) {
         const adminEmail = config.smtp?.user || 'nanatchoffojunior@gmail.com';
         adminSendResult = await this.sendContactEmail(
@@ -959,7 +959,7 @@ L&L Ouest Services`;
           createdAt: new Date(contact.createdAt).toLocaleDateString('fr-FR'),
           company: 'L&L Ouest Services',
           supportPhone: '+33 1 23 45 67 89',
-          website: 'https://www.llouestservices.com',
+          website: 'https://www.ll-ouest-services.fr',
           repliedByName: additionalData.repliedByName || 'L&L Ouest Services',
           logoBase64,
           ...additionalData,
@@ -1032,13 +1032,13 @@ L&L Ouest Services`;
                   <p>${cleanReply.replace(/\n/g, '<br>')}</p>
                   ${additionalData.repliedByName ? `<p>Répondu par : ${additionalData.repliedByName}</p>` : ''}
                 </div>
-                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 1 23 45 67 89</strong> ou par email à <a href="mailto:contact@llouestservices.com">contact@llouestservices.com</a>.</p>
-                <p><a href="https://www.llouestservices.com" class="button">Visiter notre site</a></p>
+                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 1 23 45 67 89</strong> ou par email à <a href="mailto:ll.ouest.services@gmail.com">ll.ouest.services@gmail.com</a>.</p>
+                <p><a href="https://www.ll-ouest-services.fr" class="button">Visiter notre site</a></p>
                 <p>Cordialement,<br>L&L Ouest Services</p>
               </div>
               <div class="footer">
                 <p>L&L Ouest Services &copy; ${new Date().getFullYear()} | Tous droits réservés<br>
-                   <a href="https://www.llouestservices.com">https://www.llouestservices.com</a> | Support : +33 1 23 45 67 89</p>
+                   <a href="https://www.ll-ouest-services.fr">https://www.ll-ouest-services.fr</a> | Support : +33 1 23 45 67 89</p>
               </div>
             </div>
           </body>
@@ -1058,7 +1058,7 @@ ${cleanReply.replace(/\n/g, '\n')}
 
 ${additionalData.repliedByName ? `Répondu par : ${additionalData.repliedByName}` : ''}
 
-Pour toute question supplémentaire, contactez-nous au +33 1 23 45 67 89 ou par email à contact@llouestservices.com.
+Pour toute question supplémentaire, contactez-nous au +33 1 23 45 67 89 ou par email à ll.ouest.services@gmail.com.
 
 Cordialement,
 L&L Ouest Services`;

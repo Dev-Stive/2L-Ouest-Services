@@ -86,8 +86,7 @@
   min-height: 400px;
 }
 
-
-                   /* Marquee container avec effet de bord */
+/* Marquee container avec effet de bord */
 .marquee-container {
   position: relative;
   width: 100%;
@@ -97,36 +96,30 @@
 /* Marquee line */
 .marquee {
   display: flex;
-  animation: marquee-left 15s linear infinite;
-  min-width: 200%; /* pour boucle fluide */
+  animation: marquee-left 360s linear infinite;
+  min-width: 200%; 
 }
 
 @keyframes marquee-left {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(-20%); }
+  100% { transform: translateX(-50%); }
 }
 
 @keyframes marquee-right {
-  0%   { transform: translateX(-20%); }
+  0%   { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
 
-/* Vitesses */
+/* Vitesses - plus lent pour voir tous les équipements */
 .animate-marquee-left {
-  animation: marquee-left 20s linear infinite;
+  animation: marquee-left 18s linear infinite;
 }
 
 .animate-marquee-right {
-  animation: marquee-right 20s linear infinite;
+  animation: marquee-right 18s linear infinite;
 }
 
-
-/* ✅ Logos en niveaux de gris → couleur au hover */
-.partner-item img {
-  filter: grayscale(100%) contrast(1.2);
-  transition: filter 0.4s ease;
-}
-.partner-item img:hover {
+.equipment-item img:hover {
   filter: grayscale(0%) contrast(1);
 }
 
@@ -137,7 +130,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 80px; /* largeur du dégradé */
+  width: 80px;
   pointer-events: none;
   z-index: 2;
 }
@@ -158,14 +151,14 @@
   background: linear-gradient(to left, var(--ll-black), rgba(17,17,17,0));
 }
 
-.partner-item img {
+.equipment-item img {
   transition: transform 0.3s ease;
 }
-.partner-item:hover img {
+.equipment-item:hover img {
   transform: scale(1.05);
 }
 
-.partner-item:hover > #partner-tooltip {
+.equipment-item:hover > #partner-tooltip {
     display: block;
 }
 
@@ -201,13 +194,12 @@ section a.cta {
 
 /* ✅ Bordure animée uniquement sur .header-btn et les boutons sauf ceux exclus */
 .header-btn::before,
-button:not(.faq-toggle):not(.modal-close):not(.toggle-password):not(#services button):not(#hero-slides button):not([data-conversation-id]):not([data-action]):not(#sidebar button):not(.no-border):not(#video-modal button):before,
-section a.cta::before {
+button:not(.faq-toggle):not(.modal-close):not(.toggle-password):not(#services button):not(#hero-slides button):not([data-conversation-id]):not([data-action]):not(#sidebar button):not(.no-border):not(#video-modal button):before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 2px;
   background: linear-gradient(
     270deg,
     var(--ll-dark-green),
@@ -616,27 +608,7 @@ section a.cta::before {
             margin: 80px 0;
         }
 
-        /* Loading Animation */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-
-        .dark .loading-overlay {
-            background: rgba(0, 0, 0, 0.95);
-        }
-
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        
         /* Floating Labels for Forms */
         .form-group {
             position: relative;
@@ -1360,13 +1332,13 @@ section a.cta::before {
        
         /* Custom styles for navigation arrows */
         .swiper-button-prev, .swiper-button-next {
-            color: #2563EB; /* ll-blue */
+            
             transition: all 0.3s ease;
             opacity: 0.7;
             transform: scale(0.9);
         }
         .swiper-button-prev:hover, .swiper-button-next:hover {
-            color: var(--ll-dark-blue);
+        
             opacity: 1;
            
         }
@@ -1524,7 +1496,7 @@ section a.cta::before {
         color: var(--ll-white) !important;
        } 
 
-        section:not(#faq):not(#services) button,.content-main a.inline-flex , #hero-slides a {
+        section:not(#faq):not(#services) button , #hero-slides a {
        
         font-weight: 600;
         border: 0.5px solid var(--ll-blue);
@@ -1644,12 +1616,91 @@ html:not(.dark) #blurred-header.header-light-style button:hover {
 
 
 
+.loading-image {
+    filter: blur(8px);
+    animation: blurTransition 0.5s ease-in-out;
+}
+
+@keyframes blurTransition {
+    from {
+        filter: blur(12px);
+        opacity: 0.7;
+    }
+    to {
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+.loading-overlay {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+}
+
+.loading-image + .loading-overlay {
+    opacity: 1;
+}
+
+img:not(.loading-image) + .loading-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.equipment-item:hover .loading-image {
+    filter: none !important;
+    transform: scale(1.05);
+}
 
 
 
+/* Ajoutez ces styles dans votre fichier CSS principal */
+
+/* Styles pour les bordures arrondies des champs */
+input, select, textarea {
+    border-radius: 12px !important;
+}
 
 
+/* Animation pour les transitions */
+input:focus, select:focus, textarea:focus {
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+}
 
+/* Styles responsive améliorés */
+@media (max-width: 768px) {
+    #reservation-modal .modal-content {
+        margin: 1rem;
+        max-height: 90vh;
+    }
+    
+    .grid-cols-1.md\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
 
+/* Style pour le compteur de caractères */
+#reservation-message-count.text-red-500 {
+    color: #ef4444;
+    font-weight: 600;
+}
 
+/* Amélioration de l'apparence des icônes dans les champs */
+.relative .absolute svg {
+    pointer-events: none;
+}
 
+/* Styles pour les états de validation */
+input.border-green-500, select.border-green-500, textarea.border-green-500 {
+    border-color: #10b981 !important;
+}
+
+input.border-red-500, select.border-red-500, textarea.border-red-500 {
+    border-color: #ef4444 !important;
+}
+
+/* Animation pour le bouton de confirmation */
+#reservation-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(30, 144, 255, 0.4);
+}

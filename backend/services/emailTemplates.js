@@ -490,7 +490,7 @@ const emailTemplates = {
             <p>${data.reply.replace(/\n/g, '<br>')}</p>
             ${data.repliedByName ? `<p>Répondu par : ${data.repliedByName}</p>` : ''}
           </div>
-          <p>Pour toute question supplémentaire, contactez-nous au ${data.supportPhone} ou par email à <a href="mailto:contact@llouestservices.com">contact@llouestservices.com</a>.</p>
+          <p>Pour toute question supplémentaire, contactez-nous au ${data.supportPhone} ou par email à <a href="mailto:ll.ouest.services@gmail.com">ll.ouest.services@gmail.com</a>.</p>
           <p><a href="${data.website}" class="button">Visiter notre site</a></p>
           <p>Cordialement,<br>${data.company}</p>
         </div>

@@ -7,7 +7,7 @@
  */
 
 import api from '../api.js';
-import { showNotification, validateField, showLoadingDialog, formatDate, handleApiError, validateFieldInitial } from './utils.js';
+import { showNotification, validateField, showLoadingDialog, formatDate, handleApiError, validateFieldInitial, isDarkMode } from './utils.js';
 
 let isSubmitting = false;
 
@@ -1007,12 +1007,11 @@ loadSelectedSubjects() {
 
 
   // Ajoutez ces fonctions dans l'objet contact, avant la fonction init() :
-
 /**
- * Génère un message personnalisé basé sur le sujet sélectionné et les informations de l'utilisateur.
+ * Génère un message personnalisé basé sur le sujet sélectionné.
  * @function generatePersonalizedMessage
  * @param {string} subject - Nom du sujet sélectionné.
- * @param {Object} userData - Données de l'utilisateur (nom, etc.)
+ * @param {Object} userData - Données de l'utilisateur.
  * @returns {string} Message personnalisé.
  */
 generatePersonalizedMessage(subject, userData = {}) {
@@ -1021,47 +1020,48 @@ generatePersonalizedMessage(subject, userData = {}) {
   const greeting = hour < 18 ? 'Bonjour' : 'Bonsoir';
   
   const userName = userData.name || '';
-  const userPhone = userData.phone ? userData.phone.replace('+33 ', '') : '';
   
   const subjectMessages = {
-    'Demande de devis': `${greeting} L&L Ouest Services,\n\nJe souhaiterais obtenir un devis personnalisé pour vos services de nettoyage.\n\nPourriez-vous me fournir une estimation détaillée incluant :\n- Les tarifs\n- La fréquence recommandée\n- Les produits utilisés\n- La durée estimée\n\nMerci de me recontacter pour discuter de mes besoins spécifiques.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Demande de devis': `${greeting},\n\nJe souhaite obtenir un devis pour vos services de nettoyage.\n\nPourriez-vous me contacter pour discuter de mes besoins et me transmettre une estimation ?\n\nDans l'attente de votre retour,\n${userName}`,
     
-    'Service client': `${greeting} L&L Ouest Services,\n\nJ'ai une question concernant vos services.\n\nPourriez-vous m'apporter des précisions sur :\n- Les disponibilités\n- Les zones d'intervention\n- Les méthodes de travail\n\nJe reste à votre disposition pour tout complément d'information.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Service client': `${greeting},\n\nJ'ai une question concernant vos services de nettoyage.\n\nPourriez-vous m'apporter des précisions à ce sujet ?\n\nCordialement,\n${userName}`,
     
-    'Partenariat': `${greeting} L&L Ouest Services,\n\nJe vous contacte pour discuter d'un éventuel partenariat avec votre entreprise.\n\nNotre structure pourrait bénéficier de vos services dans le cadre de :\n- Contrats réguliers\n- Événements spécifiques\n- Collaborations à long terme\n\nSerait-il possible de programmer un rendez-vous pour en discuter ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Partenariat': `${greeting},\n\nJe vous contacte pour discuter d'un éventuel partenariat avec L&L Ouest Services.\n\nSerait-il possible d'échanger sur les possibilités de collaboration ?\n\nDans cette perspective,\n${userName}`,
     
-    'Nettoyage résidentiel': `${greeting} L&L Ouest Services,\n\nJe suis intéressé(e) par vos services de nettoyage résidentiel.\n\nMa situation :\n- Type de logement : [Appartement/Maison]\n- Superficie : [XX m²]\n- Fréquence souhaitée : [Hebdomadaire/Bimensuel/Mensuel]\n- Services spécifiques : [Vitres, Sols, Salles de bain, etc.]\n\nPourriez-vous me proposer un devis adapté ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage résidentiel': `${greeting},\n\nJe suis intéressé(e) par vos services de nettoyage pour mon logement.\n\nPourriez-vous me contacter afin d'évaluer mes besoins et me proposer un devis adapté ?\n\nBien à vous,\n${userName}`,
     
-    'Nettoyage commercial': `${greeting} L&L Ouest Services,\n\nNous recherchons un service de nettoyage pour notre espace commercial.\n\nInformations sur notre local :\n- Type : [Bureau/Magasin/Restaurant]\n- Superficie : [XX m²]\n- Horaires d'intervention : [Jour/Nuit]\n- Fréquence : [Quotidien/Hebdomadaire]\n\nNous aimerions recevoir une proposition commerciale.\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage commercial': `${greeting},\n\nNous recherchons un service de nettoyage pour nos locaux professionnels.\n\nPouvez-vous nous recontacter pour une proposition commerciale ?\n\nCordialement,\n${userName}`,
     
-    'Nettoyage en profondeur': `${greeting} L&L Ouest Services,\n\nJ'aurais besoin d'un nettoyage en profondeur pour :\n\n- [Raison : déménagement, après travaux, printemps, etc.]\n- Superficie : [XX m²]\n- Zones prioritaires : [Cuisine, Salles de bain, Sols]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous me communiquer vos disponibilités et tarifs ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage en profondeur': `${greeting},\n\nJ'aurais besoin d'un nettoyage complet pour mon logement/locaux.\n\nPourriez-vous me communiquer vos disponibilités et tarifs ?\n\nMerci,\n${userName}`,
     
-    'Nettoyage de vitres': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer les vitres de mon logement/établissement.\n\nDétails :\n- Nombre de fenêtres : [XX]\n- Étage(s) : [Rez-de-chaussée/Étage]\n- Accès : [Facile/Échelle nécessaire]\n- Fréquence : [Ponctuel/Régulier]\n\nPourriez-vous me transmettre un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage de vitres': `${greeting},\n\nJe souhaite faire nettoyer les vitres de mon bien.\n\nPouvez-vous me transmettre un devis pour ce service ?\n\nDans l'attente,\n${userName}`,
     
-    'Nettoyage de tapis et moquettes': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer les tapis et moquettes de mon logement/établissement.\n\nDétails :\n- Surface approximative : [XX m²]\n- Type de tapis/moquette : [Profond/Léger]\n- Taches spécifiques : [Vin, Graisse, etc.]\n- Fréquence souhaitée : [Ponctuel/Annuel]\n\nPouvez-vous me proposer un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage de tapis et moquettes': `${greeting},\n\nJe souhaite faire nettoyer les tapis/moquettes de mon intérieur.\n\nQuelles sont vos conditions et tarifs pour ce type de prestation ?\n\nBien cordialement,\n${userName}`,
     
-    'Désinfection': `${greeting} L&L Ouest Services,\n\nJe recherche un service de désinfection professionnelle.\n\nContexte :\n- Type de lieu : [Domicile/Bureau/Commerce]\n- Surface totale : [XX m²]\n- Raison : [Prévention/Traitement spécifique]\n- Produits souhaités : [Écologiques/Standard]\n\nQuelles sont vos disponibilités et tarifs ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Désinfection': `${greeting},\n\nJe recherche un service de désinfection professionnelle.\n\nPourriez-vous me renseigner sur vos prestations dans ce domaine ?\n\nRespectueusement,\n${userName}`,
     
-    'Nettoyage après travaux': `${greeting} L&L Ouest Services,\n\nNous venons de terminer des travaux et avons besoin d'un nettoyage complet.\n\nType de travaux : [Rénovation/Construction]\n- Superficie : [XX m²]\n- Débris à enlever : [Poussière, Déchets de chantier]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous intervenir rapidement ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage après travaux': `${greeting},\n\nNous venons de terminer des travaux et avons besoin d'un nettoyage.\n\nPouvez-vous nous contacter pour discuter d'une intervention ?\n\nCordialement,\n${userName}`,
     
-    'Nettoyage écologique': `${greeting} L&L Ouest Services,\n\nJe recherche un service de nettoyage utilisant des produits écologiques.\n\nMes attentes :\n- Engagement écoresponsable\n- Produits naturels et biodégradables\n- Certification écologique si possible\n- Surface : [XX m²]\n\nAvez-vous des forfaits adaptés à ces critères ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage écologique': `${greeting},\n\nJe recherche un service de nettoyage utilisant des produits écologiques.\n\nProposez-vous ce type de prestation ?\n\nSincèrement,\n${userName}`,
     
-    'Nettoyage de fin de bail': `${greeting} L&L Ouest Services,\n\nJe dois réaliser un nettoyage de fin de bail pour mon logement.\n\nDétails :\n- Date de l'état des lieux : [JJ/MM/AAAA]\n- Type de logement : [Appartement/Maison]\n- Superficie : [XX m²]\n- État actuel : [Normale/Nécessite attention particulière]\n\nProposez-vous des forfaits spécifiques pour cette situation ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage de fin de bail': `${greeting},\n\nJe dois réaliser un nettoyage de fin de bail pour mon logement.\n\nProposez-vous des forfaits adaptés à cette situation ?\n\nBien à vous,\n${userName}`,
     
-    'Nettoyage après événement': `${greeting} L&L Ouest Services,\n\nNous venons d'organiser un événement et avons besoin d'un nettoyage complet.\n\nType d'événement : [Mariage, Fête, Réunion]\n- Nombre de participants : [XX]\n- Superficie : [XX m²]\n- Date souhaitée : [JJ/MM/AAAA]\n\nPouvez-vous intervenir rapidement ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage après événement': `${greeting},\n\nNous avons organisé un événement et avons besoin d'un nettoyage.\n\nPouvez-vous intervenir rapidement ?\n\nMerci,\n${userName}`,
     
-    'Maintenance régulière': `${greeting} L&L Ouest Services,\n\nJe recherche un contrat de maintenance régulière pour mon logement/établissement.\n\nDétails :\n- Type de local : [Résidentiel/Commercial]\n- Superficie : [XX m²]\n- Fréquence souhaitée : [Hebdomadaire/Bimensuel/Mensuel]\n- Services inclus : [Nettoyage complet, Vitres, Sols]\n\nPouvez-vous me faire une proposition ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Maintenance régulière': `${greeting},\n\nJe recherche un contrat d'entretien régulier pour mon bien.\n\nPourriez-vous me faire une proposition adaptée ?\n\nCordialement,\n${userName}`,
     
-    'Nettoyage de véhicules': `${greeting} L&L Ouest Services,\n\nJe souhaite faire nettoyer mon véhicule/véhicule de société.\n\nDétails :\n- Type de véhicule : [Voiture, Camionnette, Utilitaire]\n- Nettoyage : [Intérieur/Extérieur/Complet]\n- Nombre de véhicules : [1/Flotte]\n- Fréquence souhaitée : [Ponctuel/Régulier]\n\nPouvez-vous me proposer un devis ?\n\nCordialement${userName ? `,\n${userName}` : ''}`,
+    'Nettoyage de véhicules': `${greeting},\n\nJe souhaite faire nettoyer mon/mes véhicule(s).\n\nPouvez-vous me proposer un devis pour ce service ?\n\nBien cordialement,\n${userName}`,
     
-    'Autre': `${greeting} L&L Ouest Services,\n\nJe vous contacte concernant : [Précisez votre demande]\n\n[Votre message détaillé ici]\n\nMes coordonnées :\n- Téléphone : ${userPhone || '[À préciser]'}\n- Email : ${userData.email || '[À préciser]'}\n\nMerci de me recontacter pour discuter de ma demande.\n\nCordialement${userName ? `,\n${userName}` : ''}`
+    'Autre': `${greeting},\n\nJe vous contacte pour une demande spécifique.\n\nJe vous laisse me recontacter pour en discuter plus en détail.\n\n${userName}`
   };
 
   return subjectMessages[subject] || 
-    `${greeting} L&L Ouest Services,\n\nJe vous contacte concernant "${subject}".\n\n[Votre message détaillé ici]\n\nCordialement${userName ? `,\n${userName}` : ''}`;
+    `${greeting} L&L Ouest Services,\n\nJe vous contacte concernant "${subject}".\n\nCordialement,\n${userName}`;
 },
 
-/**
+
+
+  /**
  * Met à jour le message dans le textarea en fonction des informations actuelles.
  * @function updateMessageBasedOnInfo
  * @param {Array} selectedSubjects - Liste des sujets sélectionnés.
@@ -1700,8 +1700,6 @@ watchFormChangesForMessageUpdate() {
  * @returns {Promise<boolean>} Confirmation de l'utilisateur.
  */
 async showPreConfirmationModal(contactData) {
-  // Assurez-vous que swalLoaded est une promesse résolue
-  // await swalLoaded; 
   const isDark = document.documentElement.classList.contains('dark');
   
   // Couleurs principales
@@ -1793,11 +1791,10 @@ async showPreConfirmationModal(contactData) {
     width: '100%',
 
     customClass: {
-      // BORDURE PRINCIPALE TRÈS ARRONDIE
       popup: 'swal-wide rounded-3xl shadow-xl w-full max-w-lg md:max-w-3xl', 
       
-      confirmButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
-      cancelButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
+      confirmButton: 'px-8 py-3 no-border rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
+      cancelButton: 'px-8 py-3 no-border rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
       title: 'pt-4',
     },
     background: bgMain, 
@@ -1821,14 +1818,18 @@ async showPreConfirmationModal(contactData) {
  * @returns {Promise<void>}
  */
 async showConfirmationModal(contactData) {
+
+
   const isDark = document.documentElement.classList.contains('dark');
   
-  // Couleurs principales alignées avec showPreConfirmationModal
-  const bgMain = isDark ? '#1F2937' : '#FFFFFF';
-  const bgContent = isDark ? 'bg-ll-black/20' : 'bg-ll-black/50';
-  const textTitle = isDark ? 'text-blue-300' : 'text-ll-blue';
-  const textLabel = isDark ? 'text-gray-400' : 'text-gray-600';
-  const borderSubtle = isDark ? 'border-gray-700/50' : 'border-gray-300/50';
+  const bgMain = isDarkMode() ? '#1F2937' : '#FFFFFF';
+  const bgContent = isDarkMode() ? 'bg-ll-black/20' : 'bg-ll-white/50';
+  const textTitle = isDarkMode() ? 'text-blue-300' : 'text-ll-blue';
+  const textLabel = isDarkMode() ? 'text-gray-400' : 'text-gray-600';
+  const borderSubtle = isDarkMode() ? 'border-gray-700/50' : 'border-gray-300/50';
+
+
+
 
   const formattedDate = formatDate(new Date().toISOString());
 
@@ -1840,13 +1841,13 @@ async showConfirmationModal(contactData) {
     subjectsDisplay = contactData.subjects.replace(/-/g, ' - ');
   }
 
-  // SVG stylisé pour l'icône de succès
   const successSvg = `
     <svg class="w-10 h-10 text-ll-dark-green dark:text-ll-light-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
     </svg>
   `;
 
+  
   await Swal.fire({
     title: `<span class="text-xl sm:text-2xl font-extrabold ${textTitle}">Message envoyé avec succès !</span>`,
     html: `
@@ -1912,7 +1913,7 @@ async showConfirmationModal(contactData) {
             </p>
           </div>
           <p class="text-sm italic ${textLabel}">
-            Merci pour votre message. Nous vous répondrons sous 48h.
+            Merci pour votre message. Nous vous répondrons dans les plus brefs délais.
           </p>
         </div>
       </div>
@@ -1924,11 +1925,11 @@ async showConfirmationModal(contactData) {
     width: '100%',
     customClass: {
       popup: 'swal-wide rounded-3xl shadow-xl w-full max-w-lg md:max-w-3xl',
-      confirmButton: 'px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
+      confirmButton: 'px-8 py-3 no-border rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02] shadow-lg',
       title: 'pt-4',
     },
     background: bgMain,
-    color: isDark ? '#FDFDFC' : '#1B1B18',
+    color: isDarkMode() ? '#FDFDFC' : '#1B1B18',
     showClass: {
       popup: 'animate__animated animate__zoomIn'
     },

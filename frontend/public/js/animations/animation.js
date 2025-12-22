@@ -19,7 +19,7 @@
 // Imports essentiels
 import { showNotification, openLightbox } from '../modules/utils.js';
 import api from '../api.js';
-import loadServicesModule, { allFilteredServices, getServiceIndex, highlightSearchTerms, resetHighlights, setServiceIndex } from '../injection/loadService.js';
+import loadServicesModule, { allFilteredServices, equipmentIcons, getServiceIndex, highlightSearchTerms, resetHighlights, setServiceIndex } from '../injection/loadService.js';
 const { loadServices, renderServicesSidebar, renderServiceDetail, navigateService, toggleServicesLoading } = loadServicesModule;
 
 
@@ -592,24 +592,45 @@ function shuffleSlides(array) {
  * Lazy load images with IntersectionObserver
  * @param {NodeList} images - List of images to lazy load
  */
+/**
+ * Lazy load images with IntersectionObserver and apply blur-up effect
+ * @param {NodeList} images - List of images to lazy load
+ */
 function lazyLoadImages(images) {
   images.forEach((img) => {
+    const onImageLoad = () => {
+      img.classList.remove('opacity-0', 'blur-lg');
+      const container = img.closest('.image-container');
+      if (container) {
+          container.style.backgroundImage = 'none';
+      }
+    };
+
     if ('loading' in HTMLImageElement.prototype) {
       img.src = img.dataset.src || img.src;
+
+      
+      img.addEventListener('load', onImageLoad, { once: true });
     } else {
+
       const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src || img.src;
-            obs.unobserve(img);
+            const currentImg = entry.target;
+
+            currentImg.src = currentImg.dataset.src || currentImg.src;
+         
+            currentImg.addEventListener('load', onImageLoad, { once: true });
+            obs.unobserve(currentImg);
           }
         });
-      });
+      }, { rootMargin: '0px 0px 50% 0px' });
+
       observer.observe(img);
     }
   });
 }
+
 
 let activeSlide = 0;
 let swiperInstance = null;
@@ -674,23 +695,27 @@ async function initHeroCarousel() {
         ` : isGridSlide ? `
           <div class="absolute inset-0 z-0 grid ${gridCols} ${gridRows} gap-0">
             ${slide.images.map((img, idx) => `
-              <div class="${gridItems[idx]?.class || 'col-span-1 row-span-1'} relative rounded-none overflow-hidden transform transition-transform duration-500 ease-out group-[.swiper-slide-active]:scale-${gridItems[idx]?.scale || '100'} ${gridItems[idx]?.visible ? '' : 'hidden'}">
-                ${img.type === 'image' ? `
-                  <img src="${img.src}" alt="${img.alt}" class="w-full h-full object-cover object-center transition-all duration-500 ease-out" loading="lazy">
-                ` : `
-                  <video class="w-full h-full object-cover object-center transition-all duration-500 ease-out" poster="${img.poster}" muted loop playsinline preload="metadata" src="${img.src}" aria-hidden="true">
-                    <source src="${img.src}" type="video/mp4">
-                  </video>
-                `}
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/${idx === 0 ? '60' : '40'} transition-opacity duration-500 ease-out"></div>
-              </div>
-            `).join('')}
+    <div class="${gridItems[idx]?.class || 'col-span-1 row-span-1'} relative rounded-none overflow-hidden transform transition-transform duration-500 ease-out group-[.swiper-slide-active]:scale-${gridItems[idx]?.scale || '100'} ${gridItems[idx]?.visible ? '' : 'hidden'}">
+      ${img.type === 'image' ? `
+        <div class="image-container w-full h-full relative" style="background-image: url('${img.placeholderSrc || img.src}'); background-size: cover;">
+          <img 
+            data-src="${img.src}" 
+            alt="${img.alt}" 
+            class="lazy-image w-full h-full object-cover object-center transition-opacity duration-700 ease-out opacity-0 blur-lg" 
+            loading="lazy" 
+          >
+        </div>
+      ` : `
+        `}
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/${idx === 0 ? '60' : '40'} transition-opacity duration-500 ease-out"></div>
+    </div>
+  `).join('')}
           </div>
         ` : ''}
         <div class="relative z-10 flex flex-col justify-center md:justify-end items-center text-center text-white pb-4 md:pb-12 px-4 sm:px-6 lg:px-8 w-full max-w-4xl mx-auto transition-all duration-500 ease-in-out group-[.swiper-slide-active]:translate-y-0 group-[.swiper-slide-active]:opacity-100 translate-y-10 opacity-0">
           <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-cinzel font-bold mb-2 sm:mb-3 tracking-tight text-shadow-lg">${slide.title}</h1>
           <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed font-light line-clamp-2">${slide.subtitle}</p>
-          <a href="#contact" class="btn-container flex items-center gap-2 py-2.5 bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-50  transition-colors duration-200 flex items-center justify-center">
+          <a href="#contact" class="btn-container flex items-center backdrop-blur gap-2 py-2.5 bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold  transition-colors duration-200 flex items-center justify-center">
            <div class="btn-content shine-effect relative z-10 flex items-center">
               <div class="icon-wrapper text-white mr-2 sm:mr-3 flex-shrink-0">
                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -778,7 +803,7 @@ async function initHeroCarousel() {
     }, 100);
   });
 
-  lazyLoadImages(document.querySelectorAll('img[loading="lazy"]'));
+ lazyLoadImages(document.querySelectorAll('.lazy-image'));
 }
 
 
@@ -1089,15 +1114,16 @@ function initFAQSection() {
               <p class="faq-answer-text text-gray-700 dark:text-gray-300 leading-relaxed text-base pl-4 mb-6 min-h-[60px]"></p>
             </div>
             <div class="flex flex-wrap gap-3 mt-4 pl-4">
-              <a href="#contact" class="flex items-center gap-2 py-2.5 bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
+              <a href="#contact" class="flex items-center hidden lg:flex gap-2 py-2.5 bg-white dark:bg-gray-600/30 shadow-xl border-2 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="12" y1="16" x2="12" y2="12"></line>
                   <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
                 Besoin de précisions ?
+                
               </a>
-              <a href="#contact" class="inline-flex shadow-xl items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+              <a href="#contact" class="flex shadow-xl  items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M13 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V9l-7-7z"></path>
                   <path d="M13 3v6h6"></path>
@@ -1113,7 +1139,7 @@ function initFAQSection() {
     const totalPages = Math.ceil(filteredFAQ.length / ITEMS_PER_PAGE);
     paginationContainer.innerHTML = `
       <div class="flex items-center gap-2">
-        <button class="faq-prev-page no-border w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === 1 ? 'disabled' : ''}>
+        <button class="faq-prev-page no-border bg-gradient-to-r from-green-500 to-emerald-600 w-10 h-10 rounded-xl  text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === 1 ? 'disabled' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 18l-6-6 6-6"></path>
           </svg>
@@ -1129,7 +1155,7 @@ function initFAQSection() {
             </button>
           `).join('')}
         </div>
-        <button class="faq-next-page no-border w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === totalPages ? 'disabled' : ''}>
+        <button class="faq-next-page no-border w-10 h-10 rounded-xl bg-gradient-to-r from-green-500  to-emerald-600 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105" ${currentPage === totalPages ? 'disabled' : ''}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18l6-6-6-6"></path>
           </svg>
@@ -1728,7 +1754,7 @@ function initPartnersSection() {
 
   // Create two marquee lines
   const marqueeContainer = document.createElement('div');
-  marqueeContainer.className = 'space-y-8 marquee-container';
+  marqueeContainer.className = 'space-y-8 marquee-container lg:w-[50rem] relative';
   marqueeContainer.innerHTML = `
     <div class="marquee-wrapper relative flex overflow-hidden">
       <ul class="marquee flex animate-marquee-left"></ul>
@@ -1754,7 +1780,7 @@ function initPartnersSection() {
   }
 
   renderPartners(marqueeLeft, MOCK_PARTNERS);
-  renderPartners(marqueeRight, MOCK_PARTNERS.slice().reverse()); // Reverse for opposite direction
+  renderPartners(marqueeRight, MOCK_PARTNERS.slice().reverse());
 
   // Tooltip (simple)
   const tooltipEl = document.createElement('div');
@@ -1807,7 +1833,7 @@ marqueeContainer.querySelectorAll('.partner-item').forEach(li => {
   });
 
   li.addEventListener('mouseleave', () => {
-    li.parentElement.style.animationPlayState = 'running'; // reprend immédiatement
+    li.parentElement.style.animationPlayState = 'running';
     hideTooltip();
   });
 
@@ -1822,9 +1848,297 @@ marqueeContainer.querySelectorAll('.partner-item').forEach(li => {
 }
 
 
+const EQUIPMENT_DATA = [
+    {
+        id: 'vacuum',
+        name: 'Aspirateur Professionnel',
+        image: '/assets/images/equipments/vacuum.png',
+        description: 'Aspirateur haute performance pour surfaces variées avec filtration HEPA avancée.'
+    },
+    {
+        id: 'mop',
+        name: 'Système de Nettoyage Microfibre',
+        image: '/assets/images/equipments/mop.png',
+        description: 'Balai à microfibre réutilisable, optimal pour tous types de sols sans traces.'
+    },
+    {
+        id: 'spray',
+        name: 'Pulvérisateur Professionnel',
+        image: '/assets/images/equipments/spray.png',
+        description: 'Pulvérisateur haute pression pour application uniforme de produits de nettoyage.'
+    },
+    {
+        id: 'bucket',
+        name: 'Seau de Nettoyage',
+        image: '/assets/images/equipments/bucket.png',
+        description: 'Seau ergonomique avec essorage intégré pour maximum d\'efficacité.'
+    },
+    {
+        id: 'cloth',
+        name: 'Chiffons Microfibre',
+        image: '/assets/images/equipments/cloth.png',
+        description: 'Chiffons ultra-absorbants, durables et réutilisables pour tous les nettoyages.'
+    },
+    {
+        id: 'polisher',
+        name: 'Polisseuse Automatique',
+        image: '/assets/images/equipments/polisher.png',
+        description: 'Machine de polissage professionnelle pour finitions brillantes et durables.'
+    },
+    {
+        id: 'brush',
+        name: 'Brosse Robuste',
+        image: '/assets/images/equipments/brush.png',
+        description: 'Brosse résistante à poils naturels pour brossage intensif des surfaces.'
+    },
+    {
+        id: 'duster',
+        name: 'Plumeau Antipoussière',
+        image: '/assets/images/equipments/duster.png',
+        description: 'Plumeau électrostatique capturant la poussière sans la disperser.'
+    },
+    {
+        id: 'scraper',
+        name: 'Raclette Professionnelle',
+        image: '/assets/images/equipments/scraper.png',
+        description: 'Raclette fine lame pour enlever résidus et traces sans endommager les surfaces.'
+    },
+    {
+        id: 'pressure_washer',
+        name: 'Nettoyeur Haute Pression',
+        image: '/assets/images/equipments/pressure_washer.png',
+        description: 'Système haute pression puissant pour nettoyage en profondeur des surfaces extérieures.'
+    },
+    {
+        id: 'steam_cleaner',
+        name: 'Nettoyeur Vapeur',
+        image: '/assets/images/equipments/steam_cleaner.png',
+        description: 'Nettoyage vapeur écologique tuant 99.9% des bactéries sans chimie agressive.'
+    },
+    {
+        id: 'floor_machine',
+        name: 'Machine à Laver les Sols',
+        image: '/assets/images/equipments/floor_machine.png',
+        description: 'Machine professionnelle de nettoyage sols automatisée haute performance.'
+    },
+    {
+        id: 'window_squeegee',
+        name: 'Raclette à Vitres',
+        image: '/assets/images/equipments/window_squeegee.png',
+        description: 'Raclette caoutchouc premium pour vitres sans traces et brillantes.'
+    },
+    {
+        id: 'industrial_vacuum',
+        name: 'Aspirateur Industriel',
+        image: '/assets/images/equipments/industrial_vacuum.png',
+        description: 'Aspirateur grande capacité pour zones de grand volume de débris.'
+    },
+    {
+        id: 'disinfectant_sprayer',
+        name: 'Pulvérisateur Désinfectant',
+        image: '/assets/images/equipments/disinfectant_sprayer.png',
+        description: 'Système de pulvérisation pour produits désinfectants antimicrobiens.'
+    },
+    {
+        id: 'microfiber_cloth',
+        name: 'Chiffon Microfibre Spécialisé',
+        image: '/assets/images/equipments/microfiber_cloth.png',
+        description: 'Microfibre premium avec des propriétés antistatiques et antisalissures.'
+    },
+    {
+        id: 'feather_duster',
+        name: 'Plumeau à Poussière',
+        image: '/assets/images/equipments/feather_duster.png',
+        description: 'Plumeau poils naturels pour époussetage délicat des surfaces sensibles.'
+    },
+    {
+        id: 'car_vacuum',
+        name: 'Aspirateur Auto',
+        image: '/assets/images/equipments/car_vacuum.png',
+        description: 'Aspirateur portatif adapté aux espaces restreints des véhicules.'
+    }
+];
 
 
+/**
+ * Initialise la section Équipements avec animation défilement infini
+ */
+function initEquipmentSection() {
+    const equipmentSection = document.getElementById('equipment');
+    if (!equipmentSection) return;
 
+    // Créer l'élément modal s'il n'existe pas
+    let modal = document.getElementById('equipment-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'equipment-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden';
+        modal.innerHTML = `
+            <div class="modal-content bg-white dark:bg-ll-black rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-500">
+                <button id="close-equipment-modal" class="modal-close absolute top-4 right-4 z-10 bg-white dark:bg-ll-black/30 shadow-xl sdhadow-white rounded-xl p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-md" aria-label="Fermer la modale">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                
+                <div class="text-center mb-6">
+                     <img 
+                        id="equipment-modal-image"
+                        data-fallback="/assets/images/equipments/fallback.png"
+                        class="w-full h-full object-contain filter transition-all duration-500 rounded-xl group-hover:filter-none loading-image lazy-load"
+                        loading="lazy"
+                        onerror="this.src='/assets/images/equipments/fallback.png'; this.classList.remove('filter', 'blur-sm')"
+                        onload="this.classList.remove('filter', 'blur-sm', 'loading-image'); this.classList.add('loaded')"
+                    >
+                    <h3 id="equipment-modal-name" class="text-2xl font-cinzel font-bold text-ll-black dark:text-ll-white mt-4"></h3>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="text-lg font-semibold text-ll-white flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                        </svg>
+                        Caractéristiques
+                    </h4>
+                    <p id="equipment-modal-description" class="text-ll-text-gray dark:text-ll-medium-gray leading-relaxed"></p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeEquipmentModal();
+        });
+
+        document.getElementById('close-equipment-modal').addEventListener('click', closeEquipmentModal);
+    }
+
+    function closeEquipmentModal() {
+        const modalContent = modal.querySelector('div');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modalContent.classList.remove('scale-95', 'opacity-0');
+        }, 300);
+    }
+
+    function openEquipmentModal(equipment) {
+        document.getElementById('equipment-modal-image').src = equipment.image;
+        document.getElementById('equipment-modal-name').textContent = equipment.name;
+        document.getElementById('equipment-modal-description').textContent = equipment.description;
+        modal.classList.remove('hidden');
+        const modalContent = modal.querySelector('div');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+    }
+
+    // Créer le conteneur marquee
+    const marqueeContainer = document.createElement('div');
+    marqueeContainer.className = 'space-y-8 marquee-container';
+    marqueeContainer.innerHTML = `
+        <div class="marquee-wrapper relative flex overflow-hidden rounded-xl">
+            <ul class="marquee flex animate-marquee-left"></ul>
+        </div>
+        <div class="marquee-wrapper relative flex overflow-hidden rounded-xl">
+            <ul class="marquee flex animate-marquee-right"></ul>
+        </div>
+    `;
+
+    document.getElementById('equipment-list').replaceWith(marqueeContainer);
+
+    const marqueeLeft = marqueeContainer.querySelector('.animate-marquee-left');
+    const marqueeRight = marqueeContainer.querySelector('.animate-marquee-right');
+
+    function renderEquipment(marquee, equipment) {
+        const fallbackImage = '/assets/images/equipments/fallback.png';
+
+        const items = equipment.map(item => `
+            <li class="flex-shrink-0 mx-4 equipment-item" role="button" tabindex="0" aria-label="${item.name}" data-equipment-name="${item.name}">
+                <div class="bg-white rounded-xl hover:shadow-xl transition-all duration-300 cursor-pointer w-[15rem] dark:bg-gray-600/30 border-2 border-gray-200 dark:border-gray-600">
+                    <div class="relative overflow-hidden rounded-lg h-40 flex items-center justify-center">
+                       <img 
+                            src="${item.image}"
+                            data-fallback="${fallbackImage}"
+                            alt="${item.name}"
+                            class="w-full h-full object-contain no-lightbox p-2 transition-all duration-500 filter-none loading-image lazy-load"
+                            loading="lazy"
+                            onerror="this.src='${fallbackImage}'; this.classList.remove('filter', 'blur-sm')"
+                            onload="this.classList.remove('filter', 'blur-sm', 'loading-image'); this.classList.add('loaded')"
+                        />
+                    </div>
+                    <span class="text-sm text-ll-black italic dark:text-ll-white mt-3 text-center line-clamp-2">${item.name}</span>
+                </div>
+            </li>
+        `).join('');
+        marquee.innerHTML = items + items; // Duplication pour l'effet infini
+    }
+
+    renderEquipment(marqueeLeft, EQUIPMENT_DATA);
+    renderEquipment(marqueeRight, EQUIPMENT_DATA.slice().reverse());
+
+    const tooltipEl = document.createElement('div');
+    tooltipEl.id = 'equipment-tooltip';
+    tooltipEl.className = 'fixed hidden bg-ll-white dark:bg-ll-black p-4 rounded-lg shadow-lg z-50 transition-opacity duration-300 max-w-xs w-fit text-sm border-l-4 border-ll-blue';
+    document.body.appendChild(tooltipEl);
+
+    let tooltipTimeout;
+
+    function showTooltip(e, equipment) {
+        clearTimeout(tooltipTimeout);
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        tooltipEl.innerHTML = `
+            <h4 class="font-bold text-base text-ll-black dark:text-ll-white">${equipment.name}</h4>
+            <p class="text-sm mt-1 text-ll-text-gray dark:text-ll-medium-gray">${equipment.description.slice(0, 100)}...</p>
+        `;
+
+        tooltipEl.classList.remove('hidden');
+        tooltipEl.style.opacity = '0';
+
+        const offset = 12;
+        tooltipEl.style.left = `${rect.left + rect.width / 2}px`;
+        tooltipEl.style.top = `${rect.top - offset}px`;
+        tooltipEl.style.transform = 'translate(-50%, -100%)';
+
+        setTimeout(() => {
+            tooltipEl.style.opacity = '1';
+        }, 10);
+    }
+
+    function hideTooltip() {
+        tooltipEl.style.opacity = '0';
+        tooltipTimeout = setTimeout(() => {
+            tooltipEl.classList.add('hidden');
+        }, 200);
+    }
+
+    // Event listeners pour tous les éléments d'équipement
+    marqueeContainer.querySelectorAll('.equipment-item').forEach(li => {
+        const equipmentName = li.getAttribute('data-equipment-name');
+        // Trouver l'équipement correspondant dans EQUIPMENT_DATA
+        const equipment = EQUIPMENT_DATA.find(item => item.name === equipmentName);
+
+        if (!equipment) return;
+
+        li.addEventListener('mouseenter', (e) => {
+            li.parentElement.style.animationPlayState = 'paused';
+            showTooltip(e, equipment);
+        });
+
+        li.addEventListener('mouseleave', () => {
+            li.parentElement.style.animationPlayState = 'running';
+            hideTooltip();
+        });
+
+        li.addEventListener('click', () => openEquipmentModal(equipment));
+
+        li.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') openEquipmentModal(equipment);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initEquipmentSection);
 
 /**
  * Initialise la section Blog avec carrousel
@@ -4328,33 +4642,41 @@ function initAbout() {
     const lottieSlides = document.querySelectorAll('.lottie-slide');
     let currentSlide = 0;
 
+
+lottieSlides.forEach((slide, index) => {
+    const lottieUrl = slide.dataset.lottieUrl;
+    const imgUrl = slide.dataset.imgUrl;
+    
+    if (imgUrl) {
+        slide.innerHTML = `<img src="${imgUrl}" alt="" class="w-full h-full no-lightbox object-contain" />`;
+    } else if (lottieUrl) {
+        lottie.loadAnimation({
+            container: slide,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: lottieUrl
+        });
+    }
+});
+
+   function showNextSlide() {
     lottieSlides.forEach((slide, index) => {
-        const lottieUrl = slide.dataset.lottieUrl;
-        if (lottieUrl) {
-            lottie.loadAnimation({
-                container: slide,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: lottieUrl
-            });
+        const anim = slide.querySelector('svg')?.parentNode?.__animation;
+        if (index === currentSlide) {
+            slide.style.opacity = '1';
+            if (anim) anim.play();
+        } else {
+            slide.style.opacity = '0';
+            if (anim) anim.stop();
         }
     });
+    currentSlide = (currentSlide + 1) % lottieSlides.length;
+    setTimeout(showNextSlide, 5000);
+}
 
-    function showNextSlide() {
-        lottieSlides.forEach((slide, index) => {
-            const anim = slide.querySelector('svg')?.parentNode?.__animation;
-            if (index === currentSlide) {
-                slide.style.opacity = '1';
-                if (anim) anim.play();
-            } else {
-                slide.style.opacity = '0';
-                if (anim) anim.stop();
-            }
-        });
-        currentSlide = (currentSlide + 1) % lottieSlides.length;
-        setTimeout(showNextSlide, 5000);
-    }
+
+
     if (lottieSlides.length > 0) {
         showNextSlide();
     }
@@ -4508,12 +4830,15 @@ function initAbout() {
  * Initialisation globale
  */
 document.addEventListener('DOMContentLoaded', async() => {
+
+  initHeroCarousel();
   await loadMockData();
 
+    initServiceInteractions();
+    await updateServices();
 
 
   initAbout();
-  initHeroCarousel();
   initTestimonialsCarousel();
   initFAQSection();
   initTeamSection();
@@ -4536,8 +4861,6 @@ document.addEventListener('DOMContentLoaded', async() => {
 
 
 
-    initServiceInteractions();
-    await updateServices();
    
     const observerOptions = {
         threshold: 0.1,

@@ -6,7 +6,7 @@
  */
 
 const { messaging } = require('../config/firebase');
-const { userRepo, chatRepo, serviceRepo, reviewRepo, contactRepo } = require('../repositoriesMANDENG');
+const { userRepo, chatRepo, serviceRepo, reviewRepo, contactRepo } = require('../repositories');
 const  socketService  = require('./socketService');
 const { logger, logInfo, logError, logAudit } = require('./loggerService');
 const { AppError } = require('../utils/errorUtils');

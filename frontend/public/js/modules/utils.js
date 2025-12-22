@@ -31,6 +31,7 @@ let accumulatedErrors = [];
 
 let networkStatusCache = null;
 const NETWORK_CACHE_TTL = 5 * 60 * 1000;
+const RENDER_COLD_START_THRESHOLD = 45000;
 
 // Chargement asynchrone de SweetAlert2
 const swalScript = document.createElement('script');
@@ -353,91 +354,87 @@ export function cacheUserData(userData) {
  * @returns {Promise<{backendConnected: boolean, details: Object}>} Résultat avec détails.
  */
 export async function checkNetwork(options = {}) {
-  const { context = 'Network Check' } = options;
+  const { context = 'Network Check', fastCheck = false } = options;
   const errorId = generateString(8);
 
-  // Cache : Si backend OK récemment, retourne true sans fetch
+  // Cache optimisé
   if (networkStatusCache?.backendConnected && Date.now() - networkStatusCache.timestamp < NETWORK_CACHE_TTL) {
-    console.log(`✅ Cache réseau valide pour ${context} (TTL: ${Math.round((NETWORK_CACHE_TTL - (Date.now() - networkStatusCache.timestamp)) / 1000)}s)`);
     return networkStatusCache;
   }
 
-  // Retry interne pour cold starts (3 tentatives avec backoff)
-  const maxRetries = 3;
-  let lastError;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      const startTime = performance.now();
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
+  const startTime = performance.now();
+  const timeout = fastCheck ? 10000 : 30000; // 10s pour les checks rapides, 30s pour les complets
 
-      const response = await fetch(`${API_BASE_URL}/check`, {
-        method: 'GET',
-        signal: controller.signal,
-        cache: 'no-cache'
-      });
-      clearTimeout(timeoutId);
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-      const responseTime = performance.now() - startTime;
-
-      if (!response.ok) {
-        throw new Error(`Réponse non-OK: ${response.status}`);
+    const response = await fetch(`${API_BASE_URL}/check`, {
+      method: 'GET',
+      signal: controller.signal,
+      cache: 'no-cache',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
       }
+    });
+    
+    clearTimeout(timeoutId);
+    const responseTime = performance.now() - startTime;
 
-      const data = await response.json(); 
-      if (data.status !== 'ok') {
-        throw new Error('Statut serveur non OK');
-      }
-
-      const result = {
-        backendConnected: true,
-        details: {
-          status: response.status,
-          responseTime,
-          endpoint: '/check',
-          errorId,
-          coldStartSuspected: false
-        },
-        timestamp: Date.now()
-      };
-
-      networkStatusCache = result;
-      console.log(`✅ Serveur disponible pour ${context} (temps: ${Math.round(responseTime)}ms, tentative ${attempt})`);
-      return result;
-    } catch (error) {
-      lastError = error;
-      const coldStartSuspected = error.name === 'AbortError' || (error.message && error.message.includes('null') || error.message.includes('CORS'));
-      console.error(`❌ Erreur vérification réseau pour ${context} (tentative ${attempt}/${maxRetries}):`, error, { coldStartSuspected });
-
-      if (coldStartSuspected) {
-        console.log('🔍 Cold start Render suspecté : retry dans ' + (2 ** (attempt - 1) * 2000) + 'ms');
-      }
-
-      logError({
-        context,
-        errorId,
-        message: `Échec vérification réseau: ${error.message}`,
-        details: { error, attempt, coldStartSuspected }
-      });
-
-      if (attempt < maxRetries && coldStartSuspected) {
-        await new Promise(resolve => setTimeout(resolve, 2 ** (attempt - 1) * 2000));
-      } else if (attempt === maxRetries) {
-        networkStatusCache = {
-          backendConnected: false,
-          details: { reason: 'erreur_reseau', message: lastError.message || 'Serveur inaccessible', errorId, coldStartSuspected },
-          timestamp: Date.now()
-        };
-      }
+    if (!response.ok) {
+      throw new Error(`Health check failed: ${response.status}`);
     }
-  }
 
-  const result = networkStatusCache || {
-    backendConnected: false,
-    details: { reason: 'erreur_reseau', message: lastError?.message || 'Serveur inaccessible', errorId }
-  };
-  return result;
+    const data = await response.json();
+    
+    const result = {
+      backendConnected: data.status === 'healthy' || data.status === 'ok',
+      details: {
+        status: response.status,
+        responseTime,
+        serverStatus: data.status,
+        coldStartSuspected: responseTime > 10000, // >10s = possible cold start
+        errorId
+      },
+      timestamp: Date.now()
+    };
+
+    networkStatusCache = result;
+    
+    if (result.details.coldStartSuspected) {
+      console.log(`🌡️ Cold start suspecté (${Math.round(responseTime)}ms)`);
+    }
+    
+    return result;
+  } catch (error) {
+    const responseTime = performance.now() - startTime;
+    const coldStartSuspected = 
+      error.name === 'AbortError' || 
+      responseTime > 15000 ||
+      (error.message && error.message.includes('Failed to fetch'));
+    
+    console.error(`❌ Erreur vérification réseau pour ${context}:`, error.message, {
+      responseTime: Math.round(responseTime),
+      coldStartSuspected
+    });
+
+    networkStatusCache = {
+      backendConnected: false,
+      details: {
+        reason: 'erreur_reseau',
+        message: error.message || 'Serveur inaccessible',
+        responseTime,
+        coldStartSuspected,
+        errorId
+      },
+      timestamp: Date.now()
+    };
+
+    return networkStatusCache;
+  }
 }
+
+
 
 
   let isMonitoring = false;
@@ -1073,28 +1070,14 @@ export function validateField(field, value, signIn = false, contact = false, res
     // ===== TÉLÉPHONE =====
     case 'phone':
     case 'telephone':
-      if (reservation) {
-        if (!cleanedValue) return ''; // Optionnel en mode réservation
-        // Format national français si fourni
-        const nationalPattern = /^0[1-9](?:[\s\-]?\d{2}){4}$/;
-        if (!nationalPattern.test(cleanedValue)) {
-          return 'Format : 06 12 34 56 78 (10 chiffres)';
-        }
-      } else if (contact) {
+    
         // Format international +33 (optionnel)
+
         if (!cleanedValue) return ''; // Optionnel en mode contact
         const intlPattern = /^\+33[\s\-]?[1-9](?:[\s\-]?\d{2}){4}$/;
         if (!intlPattern.test(cleanedValue.replace(/\s/g, ''))) {
           return 'Format : +33 6 12 34 56 78';
         }
-      } else {
-        if (!cleanedValue) return 'Le numéro de téléphone est requis.';
-        // Format national français
-        const nationalPattern = /^0[1-9](?:[\s\-]?\d{2}){4}$/;
-        if (!nationalPattern.test(cleanedValue)) {
-          return 'Format : 06 12 34 56 78 (10 chiffres)';
-        }
-      }
       return null;
 
     // ===== DATE =====
@@ -1158,9 +1141,6 @@ export function validateField(field, value, signIn = false, contact = false, res
     case 'rue':
     case 'address':
       if (!cleanedValue) return 'L\'adresse est requise.';
-      if (cleanedValue.length < 5 || cleanedValue.length > 200) {
-        return 'L\'adresse doit contenir entre 5 et 200 caractères.';
-      }
       return null;
 
     // ===== MESSAGE =====
@@ -1242,7 +1222,6 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
     case 'email':
     case 'currentemail':
     case 'newemail':
-      // 1. Vérification de la présence
       if (!cleanedValue) return '';
 
       // 2. Vérification de la longueur totale
@@ -1380,9 +1359,9 @@ export function validateFieldInitial(field, value, signIn = false, contact = fal
         
        if (!cleanedValue) return 'Le numéro de téléphone est requis.';
         // Format national français
-        const nationalPattern = /^0[1-9](?:[\s\-]?\d{2}){4}$/;
+        const nationalPattern =  /^0[1-9](?:[\s\-]?\d{2}){4}$/;
         if (!nationalPattern.test(cleanedValue)) {
-          return 'Format : 06 12 34 56 78 (10 chiffres)';
+          return 'Format : 06 12 34 56 78 (1d0 chiffres)';
         }
       }
       return null;
@@ -1861,6 +1840,9 @@ export async function fetchLogoBase64() {
 }
 
 
+
+
+
 /**
  * Requête API simplifiée sans checks réseau avancés ni retries.
  * Effectue un fetch unitaire avec gestion basique d'auth, timeout, et erreurs.
@@ -1878,11 +1860,13 @@ export async function fetchLogoBase64() {
  * @returns {Promise<Object|undefined>} - Réponse JSON/text ou undefined en cas d'erreur non critique.
  * @throws {Error} - En cas d'erreur critique (ex. : missing token, timeout, fetch fail).
  */
+
 export async function apiFetch(endpoint, method = 'GET', body = null, requireAuth = true, options = {}) {
   const { 
-    timeout = 120000, // 2 minutes par défaut
+    timeout = 120000, 
     context = 'Général',
-    retryOnColdStart = false // Nouveau : auto-retry sur cold start
+    retryOnColdStart = true,
+    isCritical = false // Nouveau: si false, retourne null au lieu de throw
   } = options;
 
   const headers = new Headers({ 'Content-Type': 'application/json' });
@@ -1899,7 +1883,6 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  // Fonction retry pour cold start
   const performFetch = async (retryCount = 0) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -1921,8 +1904,17 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
     console.log(`🚀 API ${method} ${endpoint} (tentative ${retryCount + 1})`);
 
     try {
+      const startTime = Date.now();
       const response = await fetch(`${API_BASE_URL}${endpoint}`, requestConfig);
+      const responseTime = Date.now() - startTime;
+      
       clearTimeout(timeoutId);
+
+      // Détection de cold start basée sur le temps de réponse
+      const isPotentialColdStart = responseTime > RENDER_COLD_START_THRESHOLD;
+      if (isPotentialColdStart) {
+        console.log(`🌡️ Cold start détecté (${responseTime}ms) pour ${endpoint}`);
+      }
 
       let data;
       const contentType = response.headers.get('content-type');
@@ -1933,7 +1925,7 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
       }
 
       if (!response.ok) {
-        const { message, reason, suggestion, isCritical } = formatErrorMessage(
+        const { message, reason, suggestion, isCritical: errorCritical } = formatErrorMessage(
           response.status,
           data?.message || data || response.statusText,
           context
@@ -1942,16 +1934,17 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
         error.status = response.status;
         error.reason = reason;
         error.suggestion = suggestion;
-        error.isCritical = isCritical;
+        error.isCritical = errorCritical;
         error.context = context;
         error.backendMessage = data?.message || data || null;
         throw error;
       }
 
-      console.log(`✅ API ${method} ${endpoint} OK`);
+      console.log(`✅ API ${method} ${endpoint} OK (${responseTime}ms)`);
       return data;
     } catch (error) {
       clearTimeout(timeoutId);
+      
       if (error.name === 'AbortError') {
         const timeoutError = new Error('Le serveur est injoignable. Vérifiez votre connexion internet ou réessayez plus tard.');
         timeoutError.reason = 'timeout';
@@ -1960,22 +1953,30 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
         throw timeoutError;
       }
 
-      if (
+      // Détection améliorée des cold starts
+      const isLikelyColdStart = 
         error.message?.includes('NetworkError') ||
         error.message?.includes('Failed to fetch') ||
-        error.name === 'TypeError'
-      ) {
-        error.message = 'Le serveur est indisponible ou en maintenance pour le moment. Veuillez réessayer plus tard.';
-        error.reason = 'network';
-        error.isCritical = true;
-        error.context = context;
+        error.name === 'TypeError' ||
+        (retryOnColdStart && retryCount < 3);
+
+      if (isLikelyColdStart && retryCount < 3) {
+        // Backoff exponentiel avec notification progressive
+        const delay = Math.min(10000, 2000 * Math.pow(2, retryCount));
+        
+        // Notification discrète pour l'utilisateur (seulement après 2 essais)
+        if (retryCount >= 1) {
+          console.log(`⏳ Serveur en cours de démarrage... (tentative ${retryCount + 1}/3)`);
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return performFetch(retryCount + 1);
       }
 
-      const isColdStart = retryOnColdStart && (error.message.includes('null') || error.message.includes('CORS') || retryCount < 2);
-      if (isColdStart && retryCount < 2) {
-        console.log(`🔍 Cold start suspecté pour ${endpoint} : retry dans 5s (tentative ${retryCount + 1}/2)`);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        return performFetch(retryCount + 1);
+      // Pour les requêtes non-critiques, retourner null au lieu de throw
+      if (!isCritical) {
+        console.warn(`⚠️ Requête non-critique échouée (${endpoint}):`, error.message);
+        return null;
       }
 
       error.context = context;
@@ -1986,7 +1987,6 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
 
   return await performFetch();
 }
-
 
 /**
  * Formatage intelligent des messages d'erreur API.
