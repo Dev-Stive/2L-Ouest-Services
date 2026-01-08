@@ -628,11 +628,12 @@ function validateCodeData(data) {
   }
   return true;
 }
-
+/*
 fetchFirebaseConfig().catch(error => {
   console.error('Échec de l\'initialisation des configurations Firebase:', error);
   showNotification('Erreur lors du chargement des configurations', 'error', false);
 });
+*/
 
 /**
  * API d'authentification pour gérer les opérations liées à Firebase Auth et le backend.

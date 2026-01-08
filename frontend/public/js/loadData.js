@@ -392,7 +392,7 @@ function updateDashboardWithUserData(userData) {
 
 // Exécution au chargement
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('Chargement des données utilisateur...');
-  const userData = await loadUserData();
-  updateUIWithUserData(userData);
+  //console.log('Chargement des données utilisateur...');
+ // const userData = await loadUserData();
+ // updateUIWithUserData(userData);
 });

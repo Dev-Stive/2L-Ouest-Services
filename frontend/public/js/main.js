@@ -646,21 +646,10 @@ async function initializeApp() {
   
   // Démarrer l'initialisation avec un léger délai pour lisser l'expérience
   setTimeout(async () => {
-    if (!await initializeApp()) {
-      // Même en cas d'échec, on masque l'overlay après un délai
-      setTimeout(() => {
-        hideLoadingOverlay();
-        showNotification(
-          'Application disponible en mode limité. Rechargez la page pour réessayer.',
-          'info',
-          false,
-          { timer: 8000 }
-        );
-      }, 3000);
-      return;
-    }
-
-    // Suite du code existant pour l'authentification et le chargement de la page...
+   /* if (!await initializeApp()) {*/
+    
+    
+    /* Suite du code existant pour l'authentification et le chargement de la page...
     if (firebaseInitialized && auth) {
       try {
         const user = await waitForAuthState(auth); 
@@ -690,14 +679,14 @@ async function initializeApp() {
         console.error('Erreur lors du chargement:', error);
       }
     } else {
-      // Mode sans authentification
+      */// Mode sans authentification
       updateLoadingStatus('Chargement...', 'Préparation de l\'interface.', 'modules');
       const pageInitSuccess = await initializePage(currentPage || getCurrentPage(), false, null);
       
       if (pageInitSuccess) {
         setTimeout(() => hideLoadingOverlay(), 500);
       }
-    }
+    //}
     
     // Événements et nettoyage...
     document.dispatchEvent(new CustomEvent('app:initialized', {
@@ -708,5 +697,5 @@ async function initializeApp() {
       stopNetworkMonitoring();
     });
 
-  }, 300); // Petit délai initial pour fluidité
+  }, 100); // Petit délai initial pour fluidité
 })();

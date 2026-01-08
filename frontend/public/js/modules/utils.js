@@ -1866,7 +1866,7 @@ export async function apiFetch(endpoint, method = 'GET', body = null, requireAut
     timeout = 120000, 
     context = 'Général',
     retryOnColdStart = true,
-    isCritical = false // Nouveau: si false, retourne null au lieu de throw
+    isCritical = false 
   } = options;
 
   const headers = new Headers({ 'Content-Type': 'application/json' });
