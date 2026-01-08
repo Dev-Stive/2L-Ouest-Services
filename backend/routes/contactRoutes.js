@@ -29,7 +29,7 @@ router.use(authenticate);
 router.get('/:id', [validationMiddleware(idSchema)], getContact);
 router.put('/:id', [restrictTo(['client', 'admin']), validationMiddleware(contactSchema)], updateContact);
 router.delete('/:id', [restrictTo(['client', 'admin']), validationMiddleware(idSchema)], deleteContact);
-router.get('/', [restrictTo(['admin']), validationMiddleware(paginationSchema)], getAllContacts);
+router.get('/', [validationMiddleware(paginationSchema)], getAllContacts);
 router.post('/:id/reply', [restrictTo(['admin']), validationMiddleware(replySchema)], replyToContact);
 
 
