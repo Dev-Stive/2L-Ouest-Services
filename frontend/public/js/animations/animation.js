@@ -406,7 +406,6 @@ async function loadMockData() {
       },
     ];
 
-    showNotification('Données mock chargées en secours.', 'warning');
   }
 }
 
