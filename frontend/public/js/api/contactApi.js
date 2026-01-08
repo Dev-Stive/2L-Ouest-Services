@@ -221,7 +221,7 @@ const contactApi = {
         createdAt: new Date(normalizedContactData.createdAt).toLocaleDateString('fr-FR'),
         company: 'L&L Ouest Services',
         currentYear: new Date().getFullYear(),
-        supportPhone: '+33 1 23 45 67 89',
+        supportPhone: '+33 7 66 88 16 79',
         website: 'https://www.ll-ouest-services.fr',
         logoBase64: await fetchLogoBase64(),
       };
@@ -322,7 +322,7 @@ async createReservation(reservationData) {
       createdAt: new Date(normalizedReservationData.createdAt).toLocaleDateString('fr-FR'),
       company: 'L&L Ouest Services',
       currentYear: new Date().getFullYear(),
-      supportPhone: '+33 1 23 45 67 89',
+      supportPhone: '+33 7 66 88 16 79',
       website: 'https://www.ll-ouest-services.fr',
       logoBase64: await fetchLogoBase64(),
     };
@@ -718,7 +718,7 @@ async getAllReservations(page = 1, limit = 10, filters = {}) {
           replyMessage,
           company: 'L&L Ouest Services',
           currentYear: new Date().getFullYear(),
-          supportPhone: '+33 1 23 45 67 89',
+          supportPhone: '+33 7 66 88 16 79',
           website: 'https://www.ll-ouest-services.fr',
           logoBase64: await fetchLogoBase64(),
         }),

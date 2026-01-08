@@ -234,7 +234,7 @@ class EmailService {
         createdAt: contact.createdAt ? new Date(contact.createdAt).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR'),
         company: 'L&L Ouest Services',
         currentYear: new Date().getFullYear(),
-        supportPhone: '+33 1 23 45 67 89',
+        supportPhone: '+33 7 66 88 16 79',
         website: 'https://www.ll-ouest-services.fr',
         logoBase64,
         ...templateData,
@@ -344,7 +344,7 @@ L&L Ouest Services`;
         company: 'L&L Ouest Services',
         currency: invoice.currency || '€',
         currentYear: new Date().getFullYear(),
-        supportPhone: '+33 1 23 45 67 89',
+        supportPhone: '+33 7 66 88 16 79',
         website: 'https://www.ll-ouest-services.fr',
         logoBase64,
         link: invoice.link || '#',
@@ -958,7 +958,7 @@ L&L Ouest Services`;
           reply: cleanReply,
           createdAt: new Date(contact.createdAt).toLocaleDateString('fr-FR'),
           company: 'L&L Ouest Services',
-          supportPhone: '+33 1 23 45 67 89',
+          supportPhone: '+33 7 66 88 16 79',
           website: 'https://www.ll-ouest-services.fr',
           repliedByName: additionalData.repliedByName || 'L&L Ouest Services',
           logoBase64,
@@ -1032,13 +1032,13 @@ L&L Ouest Services`;
                   <p>${cleanReply.replace(/\n/g, '<br>')}</p>
                   ${additionalData.repliedByName ? `<p>Répondu par : ${additionalData.repliedByName}</p>` : ''}
                 </div>
-                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 1 23 45 67 89</strong> ou par email à <a href="mailto:ll.ouest.services@gmail.com">ll.ouest.services@gmail.com</a>.</p>
+                <p>Pour toute question supplémentaire, contactez-nous au <strong>+33 7 66 88 16 79</strong> ou par email à <a href="mailto:ll.ouest.services@gmail.com">ll.ouest.services@gmail.com</a>.</p>
                 <p><a href="https://www.ll-ouest-services.fr" class="button">Visiter notre site</a></p>
                 <p>Cordialement,<br>L&L Ouest Services</p>
               </div>
               <div class="footer">
                 <p>L&L Ouest Services &copy; ${new Date().getFullYear()} | Tous droits réservés<br>
-                   <a href="https://www.ll-ouest-services.fr">https://www.ll-ouest-services.fr</a> | Support : +33 1 23 45 67 89</p>
+                   <a href="https://www.ll-ouest-services.fr">https://www.ll-ouest-services.fr</a> | Support : +33 7 66 88 16 79</p>
               </div>
             </div>
           </body>
@@ -1058,7 +1058,7 @@ ${cleanReply.replace(/\n/g, '\n')}
 
 ${additionalData.repliedByName ? `Répondu par : ${additionalData.repliedByName}` : ''}
 
-Pour toute question supplémentaire, contactez-nous au +33 1 23 45 67 89 ou par email à ll.ouest.services@gmail.com.
+Pour toute question supplémentaire, contactez-nous au +33 7 66 88 16 79 ou par email à ll.ouest.services@gmail.com.
 
 Cordialement,
 L&L Ouest Services`;

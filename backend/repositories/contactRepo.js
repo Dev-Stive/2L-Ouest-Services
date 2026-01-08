@@ -24,31 +24,48 @@ class ContactRepository {
   }
 
   /**
-   * Convertit un document Firestore en format API contact.
-   * @param {Object} doc - Document Firestore avec ID.
-   * @returns {Object} Contact formaté.
-   */
-  fromFirestore(doc) {
+ * Convertit un document Firestore en format API contact.
+ * @param {admin.firestore.DocumentSnapshot} doc - Document Firestore.
+ * @returns {Object|null} Contact formaté ou null si le document est invalide.
+ */
+fromFirestore(doc) {
+  if (!doc) return null;
+
+  try {
+    // Si doc est un DocumentSnapshot, on appelle data(), sinon on prend doc directement
+    const data = (typeof doc.data === 'function') ? doc.data() : doc;
+    const id = doc.id || data.id;
+
+    if (!data || !data.name || !data.email) {
+      return null;
+    }
     return {
       id: doc.id,
-      userId: doc.data().userId || null,
-      name: doc.data().name,
-      email: doc.data().email,
-      phone: doc.data().phone || null,
-      subjects: doc.data().subjects || null,
-      message: doc.data().message,
-      createdAt: doc.data().createdAt || null,
-      reply: doc.data().reply || null,
-      repliedAt: doc.data().repliedAt || null,
-      status: doc.data().status || 'pending',
-      updatedAt: doc.data().updatedAt || null,
-      updatedBy: doc.data().updatedBy || null,
-      deletedAt: doc.data().deletedAt || null,
-      deletedBy: doc.data().deletedBy || null,
-      emailStatus: doc.data().emailStatus || null,
-      errorMessage: doc.data().errorMessage || null,
+      userId: data.userId || null,
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      subjects: data.subjects || null, // Ici, subjects peut être null
+      message: data.message || '',
+      createdAt: data.createdAt || null,
+      reply: data.reply || null,
+      repliedAt: data.repliedAt || null,
+      status: data.status || 'pending',
+      updatedAt: data.updatedAt || null,
+      updatedBy: data.updatedBy || null,
+      deletedAt: data.deletedAt || null,
+      deletedBy: data.deletedBy || null,
+      emailStatus: data.emailStatus || null,
+      errorMessage: data.errorMessage || null,
     };
+  } catch (error) {
+    logError('Erreur lors de la conversion du document Firestore', { 
+      error: error.message, 
+      docId: doc.id 
+    });
+    return null;
   }
+}
 
   /**
    * Convertit un contact API en format Firestore.
@@ -91,9 +108,12 @@ class ContactRepository {
       }
 
       const docRef = this.collection.doc(value.id);
-      await docRef.set(this.toFirestore(value));
+      const contactToSave = this.toFirestore(value);
+      await docRef.set(contactToSave);
+      
+      const createdDoc = await docRef.get();
       logInfo('Message de contact créé', { contactId: value.id, email: value.email });
-      return this.fromFirestore({ id: value.id, data: () => value });
+      return this.fromFirestore(createdDoc);
     } catch (error) {
       logError('Erreur lors de la création du message de contact', { error: error.message });
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la création du message de contact', error.message);
@@ -114,7 +134,7 @@ class ContactRepository {
         throw new AppError(404, 'Message de contact non trouvé');
       }
       logInfo('Message de contact récupéré', { id });
-      return this.fromFirestore({ id: doc.id, data: () => doc.data() });
+      return this.fromFirestore(doc);
     } catch (error) {
       logError('Erreur lors de la récupération du message de contact', { error: error.message, id });
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la récupération du message de contact', error.message);
@@ -130,17 +150,25 @@ class ContactRepository {
    */
   async update(id, contactData) {
     try {
-      const existingContact = await this.getById(id);
+      const doc = await this.collection.doc(id).get();
+      if (!doc.exists) {
+        logError('Message de contact non trouvé pour mise à jour', { id });
+        throw new AppError(404, 'Message de contact non trouvé');
+      }
+
+      const existingContact = this.fromFirestore(doc);
       const { value, error } = validate({ ...existingContact, ...contactData, id }, contactSchema);
       if (error) {
         logError('Erreur de validation lors de la mise à jour du message de contact', { error: error.details });
         throw new AppError(400, 'Données de contact invalides', error.details);
       }
 
-      const docRef = this.collection.doc(id);
-      await docRef.update(this.toFirestore({ ...value, updatedAt: formatDate(new Date()) }));
+      const updateData = this.toFirestore({ ...value, updatedAt: formatDate(new Date()) });
+      await this.collection.doc(id).update(updateData);
+      
+      const updatedDoc = await this.collection.doc(id).get();
       logAudit('Message de contact mis à jour', { contactId: id, updatedFields: Object.keys(contactData) });
-      return this.fromFirestore({ id, data: () => value });
+      return this.fromFirestore(updatedDoc);
     } catch (error) {
       logError('Erreur lors de la mise à jour du message de contact', { error: error.message, id });
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la mise à jour du message de contact', error.message);
@@ -160,13 +188,20 @@ class ContactRepository {
         logError('Message de contact non trouvé pour suppression', { id });
         throw new AppError(404, 'Message de contact non trouvé');
       }
+      
       const deletedAt = formatDate(new Date());
       await this.collection.doc(id).update({
         status: 'deleted',
         deletedAt,
       });
+      
       logAudit('Message de contact supprimé (soft delete)', { id, deletedAt });
-      return { id, deletedAt, message: 'Contact supprimé avec succès' };
+      return { 
+        id, 
+        deletedAt, 
+        message: 'Contact supprimé avec succès',
+        status: 'deleted'
+      };
     } catch (error) {
       logError('Erreur lors de la suppression du message de contact', { error: error.message, id });
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la suppression du message de contact', error.message);
@@ -174,57 +209,85 @@ class ContactRepository {
   }
 
   /**
-   * Récupère tous les messages de contact avec pagination et filtres.
-   * @async
-   * @param {number} page - Numéro de page.
-   * @param {number} limit - Limite par page.
-   * @param {Object} filters - Filtres pour la requête.
-   * @param {string} sortBy - Champ de tri.
-   * @param {string} sortOrder - Ordre de tri ('asc' ou 'desc').
-   * @returns {Promise<{ contacts: Object[], total: number, page: number, totalPages: number }>}
-   */
-  async getAll(page = 1, limit = 10, filters = {}, sortBy = 'createdAt', sortOrder = 'desc') {
-    try {
-      let query = this.collection;
-      
-      if (filters.name) {
-        query = query.where('name', '>=', filters.name).where('name', '<=', filters.name + '\uf8ff');
-      }
-      if (filters.email) {
-        query = query.where('email', '==', filters.email);
-      }
-      if (filters.status) {
-        query = query.where('status', '==', filters.status);
-      }
-      if (filters.subjects) {
-        query = query.where('subjects', '>=', filters.subjects).where('subjects', '<=', filters.subjects + '\uf8ff');
-      }
-      if (filters.dateFrom) {
-        query = query.where('createdAt', '>=', formatDate(new Date(filters.dateFrom)));
-      }
-      if (filters.dateTo) {
-        query = query.where('createdAt', '<=', formatDate(new Date(filters.dateTo)));
-      }
-      if (filters.withReply) {
-        query = query.where('reply', '!=', null);
-      }
-      if (filters.repliedOnly) {
-        query = query.where('status', '==', 'replied');
-      }
-      if (filters.hasSubjects) {
-        query = query.where('subjects', '!=', null);
-      }
-
-      query = query.orderBy(sortBy, sortOrder);
-      const { results, total, totalPages } = await paginateResults(query, page, limit);
-      const contacts = results.map(doc => this.fromFirestore({ id: doc.id, data: () => doc.data() }));
-      logInfo('Messages de contact récupérés', { page, limit, total, filtersApplied: Object.keys(filters).length });
-      return { contacts, total, page, totalPages };
-    } catch (error) {
-      logError('Erreur lors de la récupération des messages de contact', { error: error.message, page, limit, filters });
-      throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la récupération des messages de contact', error.message);
+ 
+ * Récupère tous les messages de contact avec pagination et filtres.
+ * @async
+ * @param {number} page - Numéro de page.
+ * @param {number} limit - Limite par page.
+ * @param {Object} filters - Filtres pour la requête.
+ * @param {string} sortBy - Champ de tri.
+ * @param {string} sortOrder - Ordre de tri ('asc' ou 'desc').
+ * @returns {Promise<{ contacts: Object[], total: number, page: number, totalPages: number }>}
+ */
+async getAll(page = 1, limit = 10, filters = {}, sortBy = 'createdAt', sortOrder = 'desc') {
+  try {
+    let query = this.collection;
+    
+    // Appliquer les filtres
+    if (filters.name) {
+      query = query.where('name', '>=', filters.name).where('name', '<=', filters.name + '\uf8ff');
     }
+    if (filters.email) {
+      query = query.where('email', '==', filters.email);
+    }
+    if (filters.status) {
+      query = query.where('status', '==', filters.status);
+    }
+    if (filters.subjects) {
+      query = query.where('subjects', '>=', filters.subjects).where('subjects', '<=', filters.subjects + '\uf8ff');
+    }
+    if (filters.dateFrom) {
+      query = query.where('createdAt', '>=', formatDate(new Date(filters.dateFrom)));
+    }
+    if (filters.dateTo) {
+      query = query.where('createdAt', '<=', formatDate(new Date(filters.dateTo)));
+    }
+    if (filters.withReply) {
+      query = query.where('reply', '!=', null);
+    }
+    if (filters.repliedOnly) {
+      query = query.where('status', '==', 'replied');
+    }
+    if (filters.hasSubjects) {
+      query = query.where('subjects', '!=', null);
+    }
+
+    // Appliquer le tri
+    query = query.orderBy(sortBy, sortOrder);
+    
+    // Utiliser la pagination
+    const { results, total, totalPages } = await paginateResults(query, page, limit);
+    
+    // Convertir les documents et filtrer les contacts null
+    const contacts = results
+      .map(doc => this.fromFirestore(doc))
+      .filter(contact => contact !== null); // ⬅️ FILTRER LES CONTACTS NULL
+    
+    logInfo('Messages de contact récupérés', { 
+      page, 
+      limit, 
+      total, 
+      contactsCount: contacts.length, // Nombre réel de contacts valides
+      invalidDocuments: results.length - contacts.length, // Nombre de documents invalides
+      filtersApplied: Object.keys(filters).length 
+    });
+    
+    return { 
+      contacts, 
+      total, 
+      page, 
+      totalPages 
+    };
+  } catch (error) {
+    logError('Erreur lors de la récupération des messages de contact', { 
+      error: error.message, 
+      page, 
+      limit, 
+      filters 
+    });
+    throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la récupération des messages de contact', error.message);
   }
+}
 
   /**
    * Récupère les statistiques des messages de contact.
@@ -233,9 +296,11 @@ class ContactRepository {
    * @returns {Promise<Object>} Statistiques des contacts.
    */
   async getStats(filters = {}) {
+    
     try {
       let query = this.collection;
 
+      // Appliquer les filtres de date si présents
       if (filters.dateFrom) {
         query = query.where('createdAt', '>=', formatDate(new Date(filters.dateFrom)));
       }
@@ -244,8 +309,9 @@ class ContactRepository {
       }
 
       const snapshot = await query.get();
-      const contacts = snapshot.docs.map(doc => this.fromFirestore({ id: doc.id, data: () => doc.data() }));
+      const contacts = snapshot.docs.map(doc => this.fromFirestore(doc));
 
+      // Calculer les statistiques
       const stats = {
         total: contacts.length,
         pending: contacts.filter(c => c.status === 'pending').length,
@@ -253,7 +319,8 @@ class ContactRepository {
         archived: contacts.filter(c => c.status === 'archived').length,
         deleted: contacts.filter(c => c.status === 'deleted').length,
         withSubjects: contacts.filter(c => c.subjects).length,
-        averageMessageLength: contacts.length > 0 ? contacts.reduce((sum, c) => sum + (c.message?.length || 0), 0) / contacts.length : 0,
+        averageMessageLength: contacts.length > 0 ? 
+          contacts.reduce((sum, c) => sum + (c.message?.length || 0), 0) / contacts.length : 0,
         contactsByStatus: {
           pending: contacts.filter(c => c.status === 'pending').length,
           replied: contacts.filter(c => c.status === 'replied').length,
@@ -278,23 +345,41 @@ class ContactRepository {
         responseTime: contacts
           .filter(c => c.repliedAt && c.createdAt)
           .reduce((acc, c) => {
-            const diff = (new Date(c.repliedAt) - new Date(c.createdAt)) / (1000 * 60 * 60 * 24);
+            const diff = (new Date(c.repliedAt) - new Date(c.createdAt)) / (1000 * 60 * 60 * 24); // en jours
             acc.total += diff;
             acc.count += 1;
-            acc.min = Math.min(acc.min || diff, diff);
-            acc.max = Math.max(acc.max || diff, diff);
+            acc.min = acc.min !== null ? Math.min(acc.min, diff) : diff;
+            acc.max = acc.max !== null ? Math.max(acc.max, diff) : diff;
             return acc;
           }, { total: 0, count: 0, min: null, max: null }),
       };
 
-      stats.averageDaysToReply = stats.responseTime.count > 0 ? stats.responseTime.total / stats.responseTime.count : 0;
+      // Calculer les moyennes
+      stats.averageDaysToReply = stats.responseTime.count > 0 ? 
+        stats.responseTime.total / stats.responseTime.count : 0;
       stats.fastestReply = stats.responseTime.min;
       stats.slowestReply = stats.responseTime.max;
 
-      logInfo('Statistiques des contacts récupérées', { total: stats.total, filtersApplied: Object.keys(filters).length });
+      // Trier les sujets les plus populaires
+      stats.topSubjects = Object.entries(stats.topSubjects)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {});
+
+      logInfo('Statistiques des contacts récupérées', { 
+        total: stats.total, 
+        filtersApplied: Object.keys(filters).length 
+      });
+      
       return stats;
     } catch (error) {
-      logError('Erreur lors de la récupération des statistiques', { error: error.message, filters });
+      logError('Erreur lors de la récupération des statistiques', { 
+        error: error.message, 
+        filters 
+      });
       throw error instanceof AppError ? error : new AppError(500, 'Erreur serveur lors de la récupération des statistiques', error.message);
     }
   }

@@ -91,7 +91,7 @@
   },
   {
     "question": "Comment prendre rendez-vous ?",
-    "answer": "Vous pouvez nous appeler au 02 41 23 45 67, remplir notre formulaire en ligne ou nous écrire à contact@propre-angers.fr",
+    "answer": "Vous pouvez nous appeler au +33 7 66 88 16 79, remplir notre formulaire en ligne ou nous écrire à ll.ouest.services@gmail.com",
     "category": "contact",
     "icon": "bi-telephone-plus"
   },
@@ -115,7 +115,7 @@
   },
   {
     "question": "Proposez-vous le repassage ?",
-    "answer": "Oui, nous proposons un service de repassage à domicile. Après crédit d'impôt, cela revient à environ 9€ de l'heure.",
+    "answer": "Oui, nous proposons un service de repassage à domicile.",
     "category": "prestations",
     "icon": "bi-thermometer-snow"
   },

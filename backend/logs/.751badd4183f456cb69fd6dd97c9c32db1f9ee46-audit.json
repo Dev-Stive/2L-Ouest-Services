@@ -6,34 +6,9 @@
     "auditLog": "logs/.751badd4183f456cb69fd6dd97c9c32db1f9ee46-audit.json",
     "files": [
         {
-            "date": 1765673938655,
-            "name": "logs/app-prod.log-rejections-2025-12-14.log",
-            "hash": "1e14b057fea4ed8a93007f3bbab7164d958eda324a6842b4f3d0cfccb41de2e0"
-        },
-        {
-            "date": 1765831527326,
-            "name": "logs/app-prod.log-rejections-2025-12-15.log",
-            "hash": "3f407eb72cddecc84ab297f26075c7955f3dc29c7e1c3951c301604886a6dfd3"
-        },
-        {
-            "date": 1765894441423,
-            "name": "logs/app-prod.log-rejections-2025-12-16.log",
-            "hash": "ca56318ffa95c3a4403deb1b45998bb161fa24ccd250f1ad67ab1865e405b388"
-        },
-        {
-            "date": 1766020413096,
-            "name": "logs/app-prod.log-rejections-2025-12-18.log",
-            "hash": "a80af22524525d3de0efdf552be8949cf99154e640af73764f4ec97aefeab52b"
-        },
-        {
-            "date": 1766100163951,
-            "name": "logs/app-prod.log-rejections-2025-12-19.log",
-            "hash": "e163eb166eca64520460debed4816b1cbe2f786e6bcfdda305ef627d1f51347a"
-        },
-        {
-            "date": 1766361083224,
-            "name": "logs/app-prod.log-rejections-2025-12-22.log",
-            "hash": "943b384d1302c5cf51a614086587869f929deb3f7ed5757697a1ba0ef14f4a6e"
+            "date": 1767837848597,
+            "name": "logs/app-prod.log-rejections-2026-01-08.log",
+            "hash": "5d28b4644136a20686412b83ff7bad5b7752b542ad9e9650bd8293746211c7ef"
         }
     ],
     "hashType": "sha256"

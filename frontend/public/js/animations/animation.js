@@ -330,7 +330,7 @@ async function loadMockData() {
       MOCK_CONTACTS = await contactsResponse.json();
     } else {
       MOCK_CONTACTS = [
-        { id: 'c1', name: 'Support Général', email: 'support@llouests.com', phone: '+33 1 23 45 67 89' },
+        { id: 'c1', name: 'Support Général', email: 'support@llouests.com', phone: '+33 7 66 88 16 79' },
         { id: 'c2', name: 'Service Commercial', email: 'sales@llouests.com', phone: '+33 1 23 45 67 90' },
         { id: 'c3', name: 'Recrutement', email: 'hr@llouests.com', phone: '+33 1 23 45 67 91' },
       ];
@@ -2053,7 +2053,7 @@ function initEquipmentSection() {
 
         const items = equipment.map(item => `
             <li class="flex-shrink-0 mx-4 equipment-item" role="button" tabindex="0" aria-label="${item.name}" data-equipment-name="${item.name}">
-                <div class="bg-white rounded-xl hover:shadow-xl transition-all duration-300 cursor-pointer w-[15rem] dark:bg-gray-600/30 border-2 border-gray-200 dark:border-gray-600">
+                <div class="bg-white rounded-xl hover:shadow-xl transition-all duration-300 cursor-pointer w-[15rem] dark:bg-gray-600/30 border boder-1 border-gray-200 dark:border-gray-600">
                     <div class="relative overflow-hidden rounded-lg h-40 flex items-center justify-center">
                        <img 
                             src="${item.image}"
